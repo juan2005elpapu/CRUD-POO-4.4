@@ -3,7 +3,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import sqlite3
-
+#Juan Ramirez
 class Inscripciones:
     def __init__(self, master=None):
         # Vewntan principal
