@@ -5,7 +5,7 @@ _Proyecto Final de Programación Orientada a Objetos (2024-1S)_
 ## Integrantes
 - Juan David Peña
 - Juan Sebastián Ramirez
-- Jesús David Sanchez
+- Jesús David Sánchez Cobos (jesanchezco@unal.edu.co)
 - Juan Camilo Vergara (juvergarat@unal.edu.co)
 
 ---
