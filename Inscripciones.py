@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import *
+import os
 import sqlite3
 
 
@@ -19,7 +19,9 @@ class Inscripciones_2:
         self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
-        
+        ruta = os.path.dirname(os.path.abspath(__file__))
+        ruta += "\img\icon.ico"
+        self.win.iconbitmap(bitmap=ruta)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
