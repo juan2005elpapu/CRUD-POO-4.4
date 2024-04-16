@@ -21,7 +21,6 @@ class Inscripciones_2:
         self.win.title("Inscripciones de Materias y Cursos")
         ruta = os.path.dirname(os.path.abspath(__file__))
         ruta += "\\img\\icon.ico"
-        print(ruta)
         self.win.iconbitmap(bitmap=ruta)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
@@ -48,9 +47,10 @@ class Inscripciones_2:
             lista = []
             for i, char in enumerate(fecha_ingresada):
                 if i == 2 or i == 5:
-                    self.fecha.insert(i, "/")
+                    lista.append(char == "/")
                 else:
                     lista.append(char.isdecimal())
+            print(lista)
             return all (lista)
         self.fecha = ttk.Entry(self.frm_1, name="fecha", 
                                validate="key", 
