@@ -20,7 +20,8 @@ class Inscripciones_2:
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
         ruta = os.path.dirname(os.path.abspath(__file__))
-        ruta += "\img\icon.ico"
+        ruta += "\\img\\icon.ico"
+        print(ruta)
         self.win.iconbitmap(bitmap=ruta)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
@@ -41,7 +42,20 @@ class Inscripciones_2:
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
         self.lblFecha.place(anchor="nw", x=630, y=80)
         #Entry Fecha
-        self.fecha = ttk.Entry(self.frm_1, name="fecha")
+        def validar_fecha(fecha_ingresada):
+            if len(fecha_ingresada) > 10:
+                return False
+            lista = []
+            for i, char in enumerate(fecha_ingresada):
+                if i == 2 or i == 5:
+                    self.fecha.insert(i, "/")
+                else:
+                    lista.append(char.isdecimal())
+            return all (lista)
+        self.fecha = ttk.Entry(self.frm_1, name="fecha", 
+                               validate="key", 
+                               validatecommand=(self.win.register(validar_fecha), "%P"),
+                               )
         self.fecha.configure(justify="center")
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
         #Label Alumno
