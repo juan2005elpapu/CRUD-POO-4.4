@@ -6,7 +6,7 @@ import os
 import sqlite3
 
 
-class Inscripciones_2:
+class Inscripciones_2:   
     def __init__(self, master=None):
         # Ventana principal
         self.db_name = 'Inscripciones.db'    
@@ -53,9 +53,9 @@ class Inscripciones_2:
             print(lista)
             return all (lista)
         self.fecha = ttk.Entry(self.frm_1, name="fecha", 
-                               validate="key", 
-                               validatecommand=(self.win.register(validar_fecha), "%P"),
-                               )
+                            validate="key", 
+                            validatecommand=(self.win.register(validar_fecha), "%P"),
+                            )
         self.fecha.configure(justify="center")
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
         #Label Alumno
@@ -154,12 +154,25 @@ class Inscripciones_2:
         # Main widget
         self.mainwindow = self.win
 
+        self.connect_db()
+        self.print_all_records()
+
     def run(self):
         self.mainwindow.mainloop()
 
 
     ''' A partir de este punto se deben incluir las funciones
-     para el manejo de la base de datos '''
+    para el manejo de la base de datos '''
+
+    def connect_db(self):
+        self.conn = sqlite3.connect('db/inscripciones.db')
+        self.cursor = self.conn.cursor()
+    
+    def print_all_records(self):
+        self.cursor.execute("SELECT * FROM alumnos")
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(row)
 
 if __name__ == "__main__":
     app = Inscripciones_2()
