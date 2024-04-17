@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import tkinter.ttk as ttk
+import os
 import sqlite3
 
 
@@ -11,15 +12,22 @@ class Inscripciones_2:
         self.db_name = 'Inscripciones.db'    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
-        self.win.geometry("800x600")
+        x = self.win.winfo_screenwidth()
+        y = self.win.winfo_screenheight()
+        alto=600
+        ancho=800
+        self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
+        ruta = os.path.dirname(os.path.abspath(__file__))
+        ruta += "\\img\\icon.ico"
+        self.win.iconbitmap(bitmap=ruta)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
         self.lblNoInscripcion = ttk.Label(self.frm_1, name="lblnoinscripcion")
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
-                                        justify="left",state="normal",
+                                        justify="center",state="normal",
                                         takefocus=False,text='No.Inscripción')
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
@@ -33,7 +41,21 @@ class Inscripciones_2:
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
         self.lblFecha.place(anchor="nw", x=630, y=80)
         #Entry Fecha
-        self.fecha = ttk.Entry(self.frm_1, name="fecha")
+        def validar_fecha(fecha_ingresada):
+            if len(fecha_ingresada) > 10:
+                return False
+            lista = []
+            for i, char in enumerate(fecha_ingresada):
+                if i == 2 or i == 5:
+                    lista.append(char == "/")
+                else:
+                    lista.append(char.isdecimal())
+            print(lista)
+            return all (lista)
+        self.fecha = ttk.Entry(self.frm_1, name="fecha", 
+                               validate="key", 
+                               validatecommand=(self.win.register(validar_fecha), "%P"),
+                               )
         self.fecha.configure(justify="center")
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
         #Label Alumno
