@@ -7,7 +7,7 @@ import sqlite3
 
 class Inscripciones_2:
     def __init__(self, master=None):
-         # Ventana principal
+        # Ventana principal
         self.db_name = 'Inscripciones.db'    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
@@ -21,7 +21,7 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="left",state="normal",
                                         takefocus=False,text='No.Inscripción')
-         #Label No. Inscripción
+        #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Entry No. Inscripción
         self.num_Inscripcion = ttk.Entry(self.frm_1, name="num_inscripcion")
