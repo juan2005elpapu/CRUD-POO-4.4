@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import messagebox
 import os
 import sqlite3
 
@@ -43,15 +44,23 @@ class Inscripciones_2:
         #Entry Fecha
         def validar_fecha(fecha_ingresada):
             if len(fecha_ingresada) > 10:
+                messagebox.showerror(message="La fecha ingresada no puede superar los 8 dígitos", title="Error al ingresar fecha")
                 return False
-            lista = []
-            for i, char in enumerate(fecha_ingresada):
-                if i == 2 or i == 5:
-                    lista.append(char == "/")
-                else:
-                    lista.append(char.isdecimal())
-            print(lista)
-            return all (lista)
+            if fecha_ingresada.isdecimal():
+                return True
+            else:
+                messagebox.showerror(message="La fecha ingresada no puede contener letras", title="Error al ingresar fecha")
+                return False
+            letras = 0
+            for i in fecha_ingresada:
+                letras += 1
+            if letras == 2: 
+                self.fecha.insert(2, '/')
+                return True
+            if letras == 5: 
+                self.fecha.insert(6, '/')
+                return True
+
         self.fecha = ttk.Entry(self.frm_1, name="fecha", 
                             validate="key", 
                             validatecommand=(self.win.register(validar_fecha), "%P"),
@@ -65,11 +74,11 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
-        #Label Alumno
+        #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
         self.lblNombres.place(anchor="nw", x=20, y=130)
-        #Entry Alumno
+        #Entry Nombres
         self.nombres = ttk.Entry(self.frm_1, name="nombres")
         self.nombres.place(anchor="nw", width=200, x=100, y=130)
         #Label Apellidos
@@ -165,14 +174,16 @@ class Inscripciones_2:
     para el manejo de la base de datos '''
 
     def connect_db(self):
-        self.conn = sqlite3.connect('db/inscripciones.db')
+        ruta_db = os.path.dirname(os.path.abspath(__file__))
+        ruta_db += '\\db\\Inscripciones.db'
+        self.conn = sqlite3.connect(ruta_db)
         self.cursor = self.conn.cursor()
     
     def print_all_records(self):
         self.cursor.execute("SELECT * FROM alumnos")
         rows = self.cursor.fetchall()
-        for row in rows:
-            print(row)
+        for i in rows:
+            print(i)
 
 if __name__ == "__main__":
     app = Inscripciones_2()
