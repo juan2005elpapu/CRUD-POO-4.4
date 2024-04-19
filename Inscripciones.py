@@ -163,9 +163,11 @@ class Inscripciones_2:
         # Main widget
         self.mainwindow = self.win
 
-        self.connect_db()
-        self.print_all_records()
-    
+        #imprime la tabla de alumnos en la consola
+        
+        query = self.run_Query("SELECT * FROM Alumnos")
+        print(query)
+
     def run(self):
         self.mainwindow.mainloop()
 
@@ -191,7 +193,7 @@ class Inscripciones_2:
             result = cursor.execute(query, parameters)
             conn.commit()
         return result.fetchall()
-    
+
 
 if __name__ == "__main__":
     app = Inscripciones_2()
