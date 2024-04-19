@@ -165,7 +165,7 @@ class Inscripciones_2:
 
         self.connect_db()
         self.print_all_records()
-
+    
     def run(self):
         self.mainwindow.mainloop()
 
@@ -174,15 +174,24 @@ class Inscripciones_2:
     para el manejo de la base de datos '''
 
     def run_Query(self, query, parameters=()):
+        """
+        Executes the given SQL query with optional parameters and returns the result.
+
+        Args:
+            query (str): The SQL query to execute.
+            parameters (tuple): Optional parameters to be used in the query.
+
+        Returns:
+            result: The result of the query execution.
+        """
         ruta_db = os.path.dirname(os.path.abspath(__file__))
         ruta_db += '\\db\\Inscripciones.db'
         with sqlite3.connect(ruta_db) as conn:
             cursor = conn.cursor()
             result = cursor.execute(query, parameters)
             conn.commit()
-        return result
+        return result.fetchall()
     
-
 
 if __name__ == "__main__":
     app = Inscripciones_2()
