@@ -150,6 +150,10 @@ class Inscripciones_2:
         self.tView.heading("#0", anchor="w", text='Curso')
         self.tView.heading("tV_descripción", anchor="w", text='Descripción')
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+        #configura los datos de la tabla
+        query = self.run_Query("SELECT * FROM cursos")
+        for i in query:
+            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
         #Scrollbars
         self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h")
         self.scroll_H.configure(orient="horizontal")
@@ -165,7 +169,7 @@ class Inscripciones_2:
 
         #imprime la tabla de alumnos en la consola
 
-        query = self.run_Query("SELECT * FROM Alumnos")
+        
         print(query)
 
     def run(self):
