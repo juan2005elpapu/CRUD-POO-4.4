@@ -173,17 +173,16 @@ class Inscripciones_2:
     ''' A partir de este punto se deben incluir las funciones
     para el manejo de la base de datos '''
 
-    def connect_db(self):
+    def run_Query(self, query, parameters=()):
         ruta_db = os.path.dirname(os.path.abspath(__file__))
         ruta_db += '\\db\\Inscripciones.db'
-        self.conn = sqlite3.connect(ruta_db)
-        self.cursor = self.conn.cursor()
+        with sqlite3.connect(ruta_db) as conn:
+            cursor = conn.cursor()
+            result = cursor.execute(query, parameters)
+            conn.commit()
+        return result
     
-    def print_all_records(self):
-        self.cursor.execute("SELECT * FROM alumnos")
-        rows = self.cursor.fetchall()
-        for i in rows:
-            print(i)
+
 
 if __name__ == "__main__":
     app = Inscripciones_2()
