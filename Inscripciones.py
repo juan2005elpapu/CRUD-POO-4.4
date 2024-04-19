@@ -164,7 +164,7 @@ class Inscripciones_2:
         self.mainwindow = self.win
 
         #imprime la tabla de alumnos en la consola
-        
+
         query = self.run_Query("SELECT * FROM Alumnos")
         print(query)
 
@@ -193,7 +193,10 @@ class Inscripciones_2:
             result = cursor.execute(query, parameters)
             conn.commit()
         return result.fetchall()
-
+    
+    def delete_Treeview(self):
+        for i in self.tView.get_children():
+            self.tView.delete(i)
 
 if __name__ == "__main__":
     app = Inscripciones_2()
