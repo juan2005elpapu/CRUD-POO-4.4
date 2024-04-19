@@ -74,6 +74,7 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
+        
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
