@@ -74,6 +74,8 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
+        ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
+        self.cmbx_Id_Alumno['values'] = ids_Alumnos
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
@@ -112,6 +114,9 @@ class Inscripciones_2:
         self.horario = ttk.Entry(self.frm_1, name="entry3")
         self.horario.configure(justify="left", width=166)
         self.horario.place(anchor="nw", width=100, x=680, y=185)
+
+        # Adición automática de nombres y apellidos al seleccionar un ID
+        self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
 
         ''' Botones  de la Aplicación'''
         #Botón Guardar
@@ -170,7 +175,7 @@ class Inscripciones_2:
         #imprime la tabla de alumnos en la consola
 
         
-        print(query)
+        #print(query)
 
     def run(self):
         self.mainwindow.mainloop()
@@ -201,6 +206,19 @@ class Inscripciones_2:
     def delete_Treeview(self):
         for i in self.tView.get_children():
             self.tView.delete(i)
+
+    def change_Full_Name(self, event):
+        id_Alumno = self.cmbx_Id_Alumno.get()
+        nombres_Alumno = self.run_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        apellidos_Alumno = self.run_Query(f"SELECT Apellidos FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        self.nombres.delete(0, 'end')
+        self.apellidos.delete(0, 'end')
+        self.nombres.insert(0, nombres_Alumno[0][0])
+        self.apellidos.insert(0, apellidos_Alumno[0][0])
+        print("test", id_Alumno, nombres_Alumno, apellidos_Alumno)
+
+    #def clean_String(string):
+    #    return string.replace('{', '').replace('}', '')
 
 if __name__ == "__main__":
     app = Inscripciones_2()
