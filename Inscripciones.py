@@ -74,12 +74,8 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
-<<<<<<< HEAD
-        
-=======
         ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
         self.cmbx_Id_Alumno['values'] = ids_Alumnos
->>>>>>> 8565d861ba658e49064b1d79742cfa6568f0ef6a
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
@@ -212,6 +208,15 @@ class Inscripciones_2:
             self.tView.delete(i)
 
     def change_Full_Name(self, event):
+        """
+        Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
+
+        Args:
+            event: The event object triggered by the user action.
+
+        Returns:
+            None
+        """
         id_Alumno = self.cmbx_Id_Alumno.get()
         nombres_Alumno = self.run_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
         apellidos_Alumno = self.run_Query(f"SELECT Apellidos FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
