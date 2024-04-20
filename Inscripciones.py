@@ -37,6 +37,7 @@ class Inscripciones_2:
         self.num_Inscripcion.configure(justify="right")
         self.num_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
         
+        
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
@@ -83,6 +84,7 @@ class Inscripciones_2:
         #Entry Nombres
         self.nombres = ttk.Entry(self.frm_1, name="nombres")
         self.nombres.place(anchor="nw", width=200, x=100, y=130)
+        self.nombres.configure(state = "readonly")
         #Label Apellidos
         self.lblApellidos = ttk.Label(self.frm_1, name="lblapellidos")
         self.lblApellidos.configure(text='Apellido(s):')
@@ -90,6 +92,7 @@ class Inscripciones_2:
         #Entry Apellidos
         self.apellidos = ttk.Entry(self.frm_1, name="apellidos")
         self.apellidos.place(anchor="nw", width=200, x=485, y=130)
+        self.apellidos.configure(state = "readonly")
         #Label Curso
         self.lblIdCurso = ttk.Label(self.frm_1, name="lblidcurso")
         self.lblIdCurso.configure(background="#f7f9fd",state="normal",text='Id Curso:')
@@ -157,6 +160,7 @@ class Inscripciones_2:
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
         #configura los datos de la tabla
         query = self.run_Query("SELECT * FROM cursos")
+        print (query)
         for i in query:
             self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
         #Scrollbars
@@ -220,11 +224,14 @@ class Inscripciones_2:
         id_Alumno = self.cmbx_Id_Alumno.get()
         nombres_Alumno = self.run_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
         apellidos_Alumno = self.run_Query(f"SELECT Apellidos FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        self.nombres.configure(state = "normal")
+        self.apellidos.configure(state = "normal")
         self.nombres.delete(0, 'end')
         self.apellidos.delete(0, 'end')
         self.nombres.insert(0, nombres_Alumno[0][0])
         self.apellidos.insert(0, apellidos_Alumno[0][0])
-        print("test", id_Alumno, nombres_Alumno, apellidos_Alumno)
+        self.nombres.configure(state = "readonly")
+        self.apellidos.configure(state = "readonly")
 
     #def clean_String(string):
     #    return string.replace('{', '').replace('}', '')
