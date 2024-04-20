@@ -13,11 +13,13 @@ class Inscripciones_2:
         self.db_name = 'Inscripciones.db'    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
-        x = self.win.winfo_screenwidth()
-        y = self.win.winfo_screenheight()
         alto=600
         ancho=800
-        self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
+        self.win.eval('tk::PlaceWindow . center')
+        self.win.geometry(str(ancho)+"x"+str(alto))
+        #x = self.win.winfo_screenwidth()
+        #y = self.win.winfo_screenheight()
+        #self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
         ruta = os.path.dirname(os.path.abspath(__file__))
