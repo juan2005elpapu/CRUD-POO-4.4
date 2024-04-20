@@ -74,7 +74,12 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
+<<<<<<< HEAD
         
+=======
+        ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
+        self.cmbx_Id_Alumno['values'] = ids_Alumnos
+>>>>>>> 8565d861ba658e49064b1d79742cfa6568f0ef6a
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
@@ -114,6 +119,9 @@ class Inscripciones_2:
         self.horario.configure(justify="left", width=166)
         self.horario.place(anchor="nw", width=100, x=680, y=185)
 
+        # Adición automática de nombres y apellidos al seleccionar un ID
+        self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
+
         ''' Botones  de la Aplicación'''
         #Botón Guardar
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
@@ -151,6 +159,10 @@ class Inscripciones_2:
         self.tView.heading("#0", anchor="w", text='Curso')
         self.tView.heading("tV_descripción", anchor="w", text='Descripción')
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+        #configura los datos de la tabla
+        query = self.run_Query("SELECT * FROM cursos")
+        for i in query:
+            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
         #Scrollbars
         self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h")
         self.scroll_H.configure(orient="horizontal")
@@ -166,8 +178,8 @@ class Inscripciones_2:
 
         #imprime la tabla de alumnos en la consola
 
-        query = self.run_Query("SELECT * FROM Alumnos")
-        print(query)
+        
+        #print(query)
 
     def run(self):
         self.mainwindow.mainloop()
@@ -198,6 +210,19 @@ class Inscripciones_2:
     def delete_Treeview(self):
         for i in self.tView.get_children():
             self.tView.delete(i)
+
+    def change_Full_Name(self, event):
+        id_Alumno = self.cmbx_Id_Alumno.get()
+        nombres_Alumno = self.run_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        apellidos_Alumno = self.run_Query(f"SELECT Apellidos FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        self.nombres.delete(0, 'end')
+        self.apellidos.delete(0, 'end')
+        self.nombres.insert(0, nombres_Alumno[0][0])
+        self.apellidos.insert(0, apellidos_Alumno[0][0])
+        print("test", id_Alumno, nombres_Alumno, apellidos_Alumno)
+
+    #def clean_String(string):
+    #    return string.replace('{', '').replace('}', '')
 
 if __name__ == "__main__":
     app = Inscripciones_2()
