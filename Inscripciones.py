@@ -31,6 +31,12 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No.Inscripción')
+        #Botón Consultar
+        ruta_Lupa = os.path.dirname(os.path.abspath(__file__))
+        ruta_Lupa  += "\\img\\lupa.png"
+        self.img = PhotoImage(file=ruta_Lupa)
+        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
+        self.btnConsultar.place(anchor="nw", x=20, y=15)
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Entry No. Inscripción
@@ -139,11 +145,6 @@ class Inscripciones_2:
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
         self.btnCancelar.configure(text='Cancelar')
         self.btnCancelar.place(anchor="nw", x=500, y=260)
-        #Botón Consultar
-        #img_boton = PhotoImage(file="Lupa.png")
-        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar")
-        self.btnConsultar.configure(text='Consultar')
-        self.btnConsultar.place(anchor="nw", x=600, y=260)
         #Separador
         separator1 = ttk.Separator(self.frm_1)
         separator1.configure(orient="horizontal")
