@@ -164,12 +164,14 @@ class Inscripciones_2:
         for i in query:
             self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
         #Scrollbars
-        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h")
+        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
         self.scroll_H.configure(orient="horizontal")
-        self.scroll_H.place(anchor="s", height=12, width=1534, x=15, y=595)
-        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y")
+        self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
+        self.tView['xscrollcommand'] = self.scroll_H.set
+        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
         self.scroll_Y.configure(orient="vertical")
         self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.tView['yscrollcommand'] = self.scroll_Y.set
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
 
