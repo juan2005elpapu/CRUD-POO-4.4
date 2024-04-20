@@ -3,6 +3,7 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox
+from tkinter import PhotoImage
 import os
 import sqlite3
 
@@ -126,7 +127,6 @@ class Inscripciones_2:
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
         self.btnGuardar.place(anchor="nw", x=200, y=260)
-        
         #Botón Editar
         self.btnEditar = ttk.Button(self.frm_1, name="btneditar")
         self.btnEditar.configure(text='Editar')
@@ -139,6 +139,11 @@ class Inscripciones_2:
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
         self.btnCancelar.configure(text='Cancelar')
         self.btnCancelar.place(anchor="nw", x=500, y=260)
+        #Botón Consultar
+        #img_boton = PhotoImage(file="Lupa.png")
+        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar")
+        self.btnConsultar.configure(text='Consultar')
+        self.btnConsultar.place(anchor="nw", x=600, y=260)
         #Separador
         separator1 = ttk.Separator(self.frm_1)
         separator1.configure(orient="horizontal")
@@ -160,7 +165,6 @@ class Inscripciones_2:
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
         #configura los datos de la tabla
         query = self.run_Query("SELECT * FROM cursos")
-        print (query)
         for i in query:
             self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
         #Scrollbars
