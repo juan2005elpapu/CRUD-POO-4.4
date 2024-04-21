@@ -34,7 +34,6 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No.Inscripción')
-<<<<<<< HEAD
         #Botón Consultar
         ruta_Lupa = os.path.dirname(os.path.abspath(__file__))
         ruta_Lupa  += "\\img\\lupa.png"
@@ -43,8 +42,6 @@ class Inscripciones_2:
         self.btnConsultar.place(anchor="nw", x=20, y=15)
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
-=======
->>>>>>> d6aa4ec01dc4835b4c3a2a19b3202b0ecd14d248
         #Entry No. Inscripción
         self.num_Inscripcion = ttk.Entry(self.frm_1, name="num_inscripcion")
         self.num_Inscripcion.configure(justify="right")
@@ -150,19 +147,21 @@ class Inscripciones_2:
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
         #Columnas del Treeview
-        self.tView_cols = ['tV_descripción']
-        self.tView_dcols = ['tV_descripción']
+        self.tView_cols = ['tV_descripción', 'tV_horas']
+        self.tView_dcols = ['tV_descripción', 'tV_horas']
         self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
         self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
         self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
+        self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
         #Cabeceras
         self.tView.heading("#0", anchor="w", text='Curso')
         self.tView.heading("tV_descripción", anchor="w", text='Descripción')
+        self.tView.heading("tV_horas", anchor="w", text='Horas')
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
         #configura los datos de la tabla
         query = self.run_Query("SELECT * FROM cursos")
         for i in query:
-            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
+            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
         #Scrollbars
         self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
         self.scroll_H.configure(orient="horizontal")
