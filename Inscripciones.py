@@ -7,30 +7,34 @@ from tkinter import PhotoImage
 import os
 import sqlite3
 
-
 class Inscripciones_2:   
     def __init__(self, master=None):
-        # Ventana principal
-        self.db_name = 'Inscripciones.db'    
+        self.db_name = 'Inscripciones.db'
+        # Ventana principal    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
-        x = self.win.winfo_screenwidth()
-        y = self.win.winfo_screenheight()
         alto=600
         ancho=800
-        self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
+        self.win.eval('tk::PlaceWindow . center')
+        self.win.geometry(str(ancho)+"x"+str(alto))
+        #x = self.win.winfo_screenwidth()
+        #y = self.win.winfo_screenheight()
+        #self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
-        ruta = os.path.dirname(os.path.abspath(__file__))
+        ruta = os.path.dirname(__file__)
         ruta += "\\img\\icon.ico"
         self.win.iconbitmap(bitmap=ruta)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
+        #Label No. Inscripción
         self.lblNoInscripcion = ttk.Label(self.frm_1, name="lblnoinscripcion")
+        self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No.Inscripción')
+<<<<<<< HEAD
         #Botón Consultar
         ruta_Lupa = os.path.dirname(os.path.abspath(__file__))
         ruta_Lupa  += "\\img\\lupa.png"
@@ -39,12 +43,12 @@ class Inscripciones_2:
         self.btnConsultar.place(anchor="nw", x=20, y=15)
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
+=======
+>>>>>>> d6aa4ec01dc4835b4c3a2a19b3202b0ecd14d248
         #Entry No. Inscripción
         self.num_Inscripcion = ttk.Entry(self.frm_1, name="num_inscripcion")
         self.num_Inscripcion.configure(justify="right")
         self.num_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
-        
-        
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
@@ -54,25 +58,16 @@ class Inscripciones_2:
             if len(fecha_ingresada) > 10:
                 messagebox.showerror(message="La fecha ingresada no puede superar los 8 dígitos", title="Error al ingresar fecha")
                 return False
-            if fecha_ingresada.isdecimal():
+            if fecha_ingresada.isdigit():
                 return True
             else:
                 messagebox.showerror(message="La fecha ingresada no puede contener letras", title="Error al ingresar fecha")
-                return False
             letras = 0
             for i in fecha_ingresada:
                 letras += 1
-            if letras == 2: 
-                self.fecha.insert(2, '/')
-                return True
-            if letras == 5: 
-                self.fecha.insert(6, '/')
-                return True
-
-        self.fecha = ttk.Entry(self.frm_1, name="fecha", 
-                            validate="key", 
-                            validatecommand=(self.win.register(validar_fecha), "%P"),
-                            )
+            if letras == 2:self.fecha.insert(2, '/')
+            if letras == 5:self.fecha.insert(6, '/')
+        self.fecha = ttk.Entry(self.frm_1, name="fecha", validate="key", validatecommand=(self.win.register(validar_fecha), "%P"))
         self.fecha.configure(justify="center")
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
         #Label Alumno
@@ -169,26 +164,22 @@ class Inscripciones_2:
         for i in query:
             self.tView.insert(parent="", index= 0, text=i[0], values=(i[1],))
         #Scrollbars
-        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h")
+        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
         self.scroll_H.configure(orient="horizontal")
-        self.scroll_H.place(anchor="s", height=12, width=1534, x=15, y=595)
-        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y")
+        self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
+        self.tView['xscrollcommand'] = self.scroll_H.set
+        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
         self.scroll_Y.configure(orient="vertical")
         self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.tView['yscrollcommand'] = self.scroll_Y.set
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
 
         # Main widget
         self.mainwindow = self.win
 
-        #imprime la tabla de alumnos en la consola
-
-        
-        #print(query)
-
     def run(self):
         self.mainwindow.mainloop()
-
 
     ''' A partir de este punto se deben incluir las funciones
     para el manejo de la base de datos '''
@@ -204,8 +195,8 @@ class Inscripciones_2:
         Returns:
             result: The result of the query execution.
         """
-        ruta_db = os.path.dirname(os.path.abspath(__file__))
-        ruta_db += '\\db\\Inscripciones.db'
+        ruta_db = os.path.dirname(__file__)
+        ruta_db += "\\db\\Inscripciones.db"
         with sqlite3.connect(ruta_db) as conn:
             cursor = conn.cursor()
             result = cursor.execute(query, parameters)
