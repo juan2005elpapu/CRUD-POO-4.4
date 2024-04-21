@@ -125,54 +125,30 @@ class Inscripciones_2:
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
         self.btnGuardar.place(anchor="nw", x=200, y=260)
+        self.btnGuardar.bind("<1>", lambda _:self.action_Button('G'))
         #Botón Editar
         self.btnEditar = ttk.Button(self.frm_1, name="btneditar")
         self.btnEditar.configure(text='Editar')
         self.btnEditar.place(anchor="nw", x=300, y=260)
+        #self.btnEditar.bind("<1>", self.action_Button('Ed'))
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
         self.btnEliminar.configure(text='Eliminar')
         self.btnEliminar.place(anchor="nw", x=400, y=260)
+        #self.btnEliminar.bind("<1>", self.action_Button('El'))
         #Botón Cancelar
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
         self.btnCancelar.configure(text='Cancelar')
         self.btnCancelar.place(anchor="nw", x=500, y=260)
+        #self.btnCancelar.bind("<1>", self.action_Button('C'))
         #Separador
         separator1 = ttk.Separator(self.frm_1)
         separator1.configure(orient="horizontal")
         separator1.place(anchor="nw", width=796, x=2, y=245)
 
         ''' Treeview de la Aplicación'''
-        #Treeview
-        self.tView = ttk.Treeview(self.frm_1, name="tview")
-        self.tView.configure(selectmode="extended")
-        #Columnas del Treeview
-        self.tView_cols = ['tV_descripción', 'tV_horas']
-        self.tView_dcols = ['tV_descripción', 'tV_horas']
-        self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-        self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-        self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
-        self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
-        #Cabeceras
-        self.tView.heading("#0", anchor="w", text='Curso')
-        self.tView.heading("tV_descripción", anchor="w", text='Descripción')
-        self.tView.heading("tV_horas", anchor="w", text='Horas')
-        self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
-        #configura los datos de la tabla
-        query = self.run_Query("SELECT * FROM cursos")
-        for i in query:
-            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
-        #Scrollbars
-        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
-        self.scroll_H.configure(orient="horizontal")
-        self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
-        self.tView['xscrollcommand'] = self.scroll_H.set
-        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
-        self.scroll_Y.configure(orient="vertical")
-        self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
-        self.tView['yscrollcommand'] = self.scroll_Y.set
-        self.frm_1.pack(side="top")
-        self.frm_1.pack_propagate(0)
+        self.treeview_Cursos()
+
 
         # Main widget
         self.mainwindow = self.win
@@ -227,6 +203,76 @@ class Inscripciones_2:
         self.apellidos.insert(0, apellidos_Alumno[0][0])
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
+    def action_Button(self, option) :
+        match  option:
+            case 'G':
+                print("hola")
+            case _:
+                print("Adios")
+                
+    def treeview_Cursos(self):
+        #Treeview
+        self.tView = ttk.Treeview(self.frm_1, name="tview")
+        self.tView.configure(selectmode="extended")
+        #Columnas del Treeview
+        self.tView_cols = ['tV_descripción', 'tV_horas']
+        self.tView_dcols = ['tV_descripción', 'tV_horas']
+        self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+        self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+        self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
+        self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
+        #Cabeceras
+        self.tView.heading("#0", anchor="w", text='Curso')
+        self.tView.heading("tV_descripción", anchor="w", text='Descripción')
+        self.tView.heading("tV_horas", anchor="w", text='Horas')
+        self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+        #configura los datos de la tabla
+        query = self.run_Query("SELECT * FROM cursos")
+        for i in query:
+            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
+        #Scrollbars
+        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
+        self.scroll_H.configure(orient="horizontal")
+        self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
+        self.tView['xscrollcommand'] = self.scroll_H.set
+        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
+        self.scroll_Y.configure(orient="vertical")
+        self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.tView['yscrollcommand'] = self.scroll_Y.set
+        self.frm_1.pack(side="top")
+        self.frm_1.pack_propagate(0)
+    def treeview_Inscritos(self):
+        #Treeview
+        self.tView = ttk.Treeview(self.frm_1, name="tview")
+        self.tView.configure(selectmode="extended")
+        #Columnas del Treeview
+        self.tView_cols = ['tV_descripción', 'tV_horas']
+        self.tView_dcols = ['tV_descripción', 'tV_horas']
+        self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+        self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+        self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
+        self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
+        #Cabeceras
+        self.tView.heading("#0", anchor="w", text='Curso')
+        self.tView.heading("tV_descripción", anchor="w", text='Descripción')
+        self.tView.heading("tV_horas", anchor="w", text='Horas')
+        self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+        #configura los datos de la tabla
+        query = self.run_Query("SELECT * FROM cursos")
+        for i in query:
+            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
+        #Scrollbars
+        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
+        self.scroll_H.configure(orient="horizontal")
+        self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
+        self.tView['xscrollcommand'] = self.scroll_H.set
+        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
+        self.scroll_Y.configure(orient="vertical")
+        self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.tView['yscrollcommand'] = self.scroll_Y.set
+        self.frm_1.pack(side="top")
+        self.frm_1.pack_propagate(0)
+        
 
     #def clean_String(string):
     #    return string.replace('{', '').replace('}', '')
