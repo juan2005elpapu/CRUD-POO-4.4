@@ -10,6 +10,9 @@ import sqlite3
 class Inscripciones_2:   
     def __init__(self, master=None):
         self.db_name = 'Inscripciones.db'
+        # Renovación de tabla Inscritos al iniciar el programa
+        self.run_Query("DROP TABLE IF EXISTS Inscritos")
+        self.run_Query("CREATE TABLE Inscritos (No_Inscripción INTEGER PRIMARY KEY AUTOINCREMENT, Id_Alumno VARCHAR(20) NOT NULL, Fecha_Inscripción DATE NOT NULL, Código_Curso VARCHAR(20) NULL, FOREIGN KEY (Código_Curso) REFERENCES Cursos(Código_Curso))")
         # Ventana principal    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
