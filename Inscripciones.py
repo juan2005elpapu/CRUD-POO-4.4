@@ -386,11 +386,9 @@ class Inscripciones_2:
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
 
         # Columna 3 en adelante...
-        print('start loop')
         for i in range(0, len(self.headers)) :
             self.tView.column(self.tView_cols[i+3], anchor="w", stretch=True, width=125, minwidth=20)
             self.tView.heading(self.tView_dcols[i+3], anchor="w", text=self.headers[i])
-        print('end loop')
         #configura los datos de la tabla
         query = self.run_Query("SELECT * FROM Alumnos")
         for i in query:
