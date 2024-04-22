@@ -223,8 +223,8 @@ class Inscripciones_2:
         Returns:
             None
         """
-        for i in self.tView.get_children():
-            self.tView.delete(i)
+        self.tView.delete(*self.tView.get_children())
+        self.tView.destroy()
 
     def treeview_Cursos(self):
         """
