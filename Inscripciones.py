@@ -34,7 +34,7 @@ class Inscripciones_2:
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
-                                        takefocus=False,text='No.Inscripción')
+                                        takefocus=False,text='No. Inscripción')
         #Botón Consultar
         ruta_Lupa = path.dirname(path.abspath(__file__))
         ruta_Lupa  += "\\img\\lupa.png"
@@ -47,8 +47,8 @@ class Inscripciones_2:
         #Entry No. Inscripción
         self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbx_no_incripcion")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
-        ids_Cursos = self.run_Query("SELECT No.Inscripción FROM Inscritos")
-        self.cmbx_No_Inscripcion['values'] = ids_Cursos
+        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+        self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
@@ -242,7 +242,7 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.id_Curso.get()}')")
+                self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.cmbx_Id_Curso.get()}')")
                 self.treeview_Inscritos()
             case _:
                 print("Adios")
@@ -335,7 +335,7 @@ class Inscripciones_2:
         self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
         self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
         #configura los datos de la tabla
-        query = self.run_Query("SELECT * FROM Inscritos")
+        query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
         for i in query:
             self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
         #Scrollbars
