@@ -4,7 +4,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox
 from tkinter import PhotoImage
-import os
+from os import path
 import sqlite3
 
 class Inscripciones_2:   
@@ -23,7 +23,7 @@ class Inscripciones_2:
         #self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
-        ruta = os.path.dirname(__file__)
+        ruta = path.dirname(__file__)
         ruta += "\\img\\icon.ico"
         self.win.iconbitmap(bitmap=ruta)
         # Crea los frames
@@ -36,7 +36,7 @@ class Inscripciones_2:
                                         justify="center",state="normal",
                                         takefocus=False,text='No.Inscripción')
         #Botón Consultar
-        ruta_Lupa = os.path.dirname(os.path.abspath(__file__))
+        ruta_Lupa = path.dirname(path.abspath(__file__))
         ruta_Lupa  += "\\img\\lupa.png"
         self.img = PhotoImage(file=ruta_Lupa)
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
@@ -45,9 +45,10 @@ class Inscripciones_2:
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Entry No. Inscripción
-        self.num_Inscripcion = ttk.Entry(self.frm_1, name="num_inscripcion")
-        self.num_Inscripcion.configure(justify="right")
-        self.num_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
+        self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbx_no_incripcion")
+        self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
+        ids_Cursos = self.run_Query("SELECT No.Inscripción FROM Inscritos")
+        self.cmbx_No_Inscripcion['values'] = ids_Cursos
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
@@ -98,10 +99,11 @@ class Inscripciones_2:
         self.lblIdCurso = ttk.Label(self.frm_1, name="lblidcurso")
         self.lblIdCurso.configure(background="#f7f9fd",state="normal",text='Id Curso:')
         self.lblIdCurso.place(anchor="nw", x=20, y=185)
-        #Entry Curso
-        self.id_Curso = ttk.Entry(self.frm_1, name="id_curso")
-        self.id_Curso.configure(justify="left", width=166)
-        self.id_Curso.place(anchor="nw", width=166, x=100, y=185)
+        #Combobox Curso
+        self.cmbx_Id_Curso = ttk.Combobox(self.frm_1, name="cmbx_id_curso")
+        self.cmbx_Id_Curso.place(anchor="nw", width=166, x=100, y=185)
+        ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
+        self.cmbx_Id_Curso['values'] = ids_Cursos
         #Label Descripción del Curso
         self.lblDscCurso = ttk.Label(self.frm_1, name="lbldsccurso")
         self.lblDscCurso.configure(background="#f7f9fd",state="normal",text='Curso:')
@@ -149,7 +151,7 @@ class Inscripciones_2:
         separator1.place(anchor="nw", width=796, x=2, y=245)
 
         ''' Treeview de la Aplicación'''
-        self.treeview_Cursos()
+        self.treeview_Inscritos()
 
 
         # Main widget
@@ -172,7 +174,7 @@ class Inscripciones_2:
         Returns:
             result: The result of the query execution.
         """
-        ruta_db = os.path.dirname(__file__)
+        ruta_db = path.dirname(__file__)
         ruta_db += "\\db\\Inscripciones.db"
         with sqlite3.connect(ruta_db) as conn:
             cursor = conn.cursor()
@@ -213,7 +215,7 @@ class Inscripciones_2:
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto))
         self.ventana_btnconsultar.resizable(False,False)
         self.ventana_btnconsultar.title('Consultar')
-        ruta_ventana_btnconsultar = os.path.dirname(__file__)
+        ruta_ventana_btnconsultar = path.dirname(__file__)
         ruta_ventana_btnconsultar += "\\img\\lupa.ico"
         self.ventana_btnconsultar.iconbitmap(bitmap=ruta_ventana_btnconsultar)
 
@@ -262,7 +264,7 @@ class Inscripciones_2:
         self.tView.destroy()
 
     def treeview_Cursos(self):
-        #self.ventana_btnconsultar.destroy()
+        self.ventana_btnconsultar.destroy()
         """
         Creates the correponding TreeView to show the table Cursos.
         
@@ -272,6 +274,7 @@ class Inscripciones_2:
         Returns:
             None
         """
+        self.delete_Treeview()
         #Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
@@ -313,7 +316,6 @@ class Inscripciones_2:
         Returns:
             None
         """
-        self.delete_Treeview()
         #Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
