@@ -35,6 +35,13 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No. Inscripción')
+        #Botón Consultar
+        ruta_Lupa = path.dirname(path.abspath(__file__))
+        ruta_Lupa  += "\\img\\lupa.png"
+        self.img = PhotoImage(file=ruta_Lupa)
+        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
+        self.btnConsultar.place(anchor="nw", x=20, y=15)
+        self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Combobox No. Inscripción
@@ -199,7 +206,7 @@ class Inscripciones_2:
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
 
-    def change_Course(self):
+    def change_Course(self, event):
         """
         Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
 
@@ -268,13 +275,18 @@ class Inscripciones_2:
                 self.cmbx_Id_Curso.set("")
                 self.nombres.configure(state = "normal")
                 self.apellidos.configure(state = "normal")
+                self.descripc_Curso.configure(state = "normal")
+                self.horario.configure(state = "normal")
                 self.nombres.delete(0, "end")
                 self.apellidos.delete(0, "end")
+                self.descripc_Curso.delete(0, "end")
+                self.horario.delete(0, "end")
                 self.nombres.configure(state = "readonly")
                 self.apellidos.configure(state = "readonly")
+                self.descripc_Curso.configure(state = "readonly")
+                self.horario.configure(state = "readonly")
+                self.cmbx_No_Inscripcion.set("")
                 self.fecha.delete(0, "end")
-                print("Adios")
-
 
     '''================================================================================================================'''      
     '''Funciones para crear TreeViews'''
