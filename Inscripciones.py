@@ -35,13 +35,6 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No. Inscripción')
-        #Botón Consultar
-        ruta_Lupa = path.dirname(path.abspath(__file__))
-        ruta_Lupa  += "\\img\\lupa.png"
-        self.img = PhotoImage(file=ruta_Lupa)
-        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
-        self.btnConsultar.place(anchor="nw", x=20, y=15)
-        self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Combobox No. Inscripción
@@ -110,15 +103,15 @@ class Inscripciones_2:
         self.lblDscCurso.configure(background="#f7f9fd",state="normal",text='Curso:')
         self.lblDscCurso.place(anchor="nw", x=275, y=185)
         #Entry de Descripción del Curso 
-        self.descripc_Curso = ttk.Entry(self.frm_1, name="descripc_curso")
+        self.descripc_Curso = ttk.Entry(self.frm_1, name="descripc_curso", state = "readonly")
         self.descripc_Curso.configure(justify="left", width=166)
         self.descripc_Curso.place(anchor="nw", width=300, x=325, y=185)
         #Label Horario
-        self.lblHorario = ttk.Label(self.frm_1, name="label3")
+        self.lblHorario = ttk.Label(self.frm_1, name="labelhora")
         self.lblHorario.configure(background="#f7f9fd",state="normal",text='Hora:')
         self.lblHorario.place(anchor="nw", x=635, y=185)
         #Entry del Horario
-        self.horario = ttk.Entry(self.frm_1, name="entry3")
+        self.horario = ttk.Entry(self.frm_1, name="hora", state = "readonly")
         self.horario.configure(justify="left", width=166)
         self.horario.place(anchor="nw", width=100, x=680, y=185)
 
@@ -136,17 +129,17 @@ class Inscripciones_2:
         self.btnEditar = ttk.Button(self.frm_1, name="btneditar")
         self.btnEditar.configure(text='Editar')
         self.btnEditar.place(anchor="nw", x=300, y=260)
-        #self.btnEditar.bind("<1>", self.action_Button('Ed'))
+        #self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
         self.btnEliminar.configure(text='Eliminar')
         self.btnEliminar.place(anchor="nw", x=400, y=260)
-        #self.btnEliminar.bind("<1>", self.action_Button('El'))
+        #self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
         #Botón Cancelar
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
         self.btnCancelar.configure(text='Cancelar')
         self.btnCancelar.place(anchor="nw", x=500, y=260)
-        #self.btnCancelar.bind("<1>", self.action_Button('C'))
+        self.btnCancelar.bind("<1>", lambda _:self.action_Button('C'))
         #Separador
         separator1 = ttk.Separator(self.frm_1)
         separator1.configure(orient="horizontal")
@@ -206,7 +199,7 @@ class Inscripciones_2:
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
 
-    def change_Course(self, event):
+    def change_Course(self):
         """
         Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
 
@@ -270,7 +263,16 @@ class Inscripciones_2:
                 self.treeview_Inscritos()
                 ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
                 self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-            case _:
+            case "C":
+                self.cmbx_Id_Alumno.set("")
+                self.cmbx_Id_Curso.set("")
+                self.nombres.configure(state = "normal")
+                self.apellidos.configure(state = "normal")
+                self.nombres.delete(0, "end")
+                self.apellidos.delete(0, "end")
+                self.nombres.configure(state = "readonly")
+                self.apellidos.configure(state = "readonly")
+                self.fecha.delete(0, "end")
                 print("Adios")
 
 
