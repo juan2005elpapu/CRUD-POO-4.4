@@ -9,8 +9,8 @@ import sqlite3
 
 class Inscripciones_2:   
     def __init__(self, master=None):
+        self.dir_pro = path.dirname(__file__)
         self.db_name = 'Inscripciones.db'
-        # Renovación de tabla Inscritos al iniciar el programa
         # Ventana principal    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
@@ -23,9 +23,8 @@ class Inscripciones_2:
         #self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
-        ruta = path.dirname(__file__)
-        ruta += "\\img\\icon.ico"
-        self.win.iconbitmap(bitmap=ruta)
+        ruta_Icon = self.dir_pro + "\\img\\icon.ico"
+        self.win.iconbitmap(bitmap=ruta_Icon)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
@@ -35,13 +34,6 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No. Inscripción')
-        #Botón Consultar
-        ruta_Lupa = path.dirname(path.abspath(__file__))
-        ruta_Lupa  += "\\img\\lupa.png"
-        self.img = PhotoImage(file=ruta_Lupa)
-        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
-        self.btnConsultar.place(anchor="nw", x=20, y=15)
-        self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Combobox No. Inscripción
@@ -127,6 +119,12 @@ class Inscripciones_2:
         self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.change_Course)
 
         ''' Botones  de la Aplicación'''
+        #Botón Consultar
+        ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
+        self.img = PhotoImage(file=ruta_Lupa)
+        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
+        self.btnConsultar.place(anchor="nw", x=20, y=15)
+        self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
         #Botón Guardar
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
@@ -176,8 +174,7 @@ class Inscripciones_2:
         Returns:
             result: The result of the query execution.
         """
-        ruta_db = path.dirname(__file__)
-        ruta_db += "\\db\\Inscripciones.db"
+        ruta_db = self.dir_pro + "\\db\\Inscripciones.db"
         with sqlite3.connect(ruta_db) as conn:
             cursor = conn.cursor()
             result = cursor.execute(query, parameters)
@@ -286,7 +283,7 @@ class Inscripciones_2:
                 self.descripc_Curso.configure(state = "readonly")
                 self.horario.configure(state = "readonly")
                 self.cmbx_No_Inscripcion.set("")
-                self.fecha.delete(0, "end")
+                #self.fecha.delete(0, "end")
 
     '''================================================================================================================'''      
     '''Funciones para crear TreeViews'''
