@@ -44,8 +44,8 @@ class Inscripciones_2:
         self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
-        #Entry No. Inscripción
-        self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbx_no_incripcion")
+        #Combobox No. Inscripción
+        self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbx_no_incripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
         self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
@@ -75,10 +75,11 @@ class Inscripciones_2:
         self.lblIdAlumno.configure(background="#f7f9fd", text='Id Alumno:')
         self.lblIdAlumno.place(anchor="nw", x=20, y=80)
         #Combobox Alumno
-        self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno")
+        self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno", state="readonly")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
         ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
         self.cmbx_Id_Alumno['values'] = ids_Alumnos
+        #self.cmbx_Id_Alumno.DropDownStyle=ComboBoxStyle.DropDownList
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
@@ -100,7 +101,7 @@ class Inscripciones_2:
         self.lblIdCurso.configure(background="#f7f9fd",state="normal",text='Id Curso:')
         self.lblIdCurso.place(anchor="nw", x=20, y=185)
         #Combobox Curso
-        self.cmbx_Id_Curso = ttk.Combobox(self.frm_1, name="cmbx_id_curso")
+        self.cmbx_Id_Curso = ttk.Combobox(self.frm_1, name="cmbx_id_curso", state="readonly")
         self.cmbx_Id_Curso.place(anchor="nw", width=166, x=100, y=185)
         ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
         self.cmbx_Id_Curso['values'] = ids_Cursos
@@ -123,6 +124,7 @@ class Inscripciones_2:
 
         # Adición automática de nombres y apellidos al seleccionar un ID
         self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
+        self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.change_Course)
 
         ''' Botones  de la Aplicación'''
         #Botón Guardar
@@ -203,6 +205,28 @@ class Inscripciones_2:
         self.apellidos.insert(0, apellidos_Alumno[0][0])
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
+
+    def change_Course(self, event):
+        """
+        Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
+
+        Args:
+            event: The event object triggered by the user action.
+
+        Returns:
+            None
+        """
+        id_Curso = self.cmbx_Id_Curso.get()
+        descripcion = self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso = '{id_Curso}'")
+        hora = self.run_Query(f"SELECT Num_Horas FROM Cursos WHERE Código_Curso = '{id_Curso}'")
+        self.descripc_Curso.configure(state = "normal")
+        self.horario.configure(state = "normal")
+        self.descripc_Curso.delete(0, 'end')
+        self.horario.delete(0, 'end')
+        self.descripc_Curso.insert(0, descripcion[0][0])
+        self.horario.insert(0, hora[0][0])
+        self.descripc_Curso.configure(state = "readonly")
+        self.horario.configure(state = "readonly")
     
     #Metodo botón consultar
     
@@ -244,6 +268,8 @@ class Inscripciones_2:
             case 'G':
                 self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.cmbx_Id_Curso.get()}')")
                 self.treeview_Inscritos()
+                ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
             case _:
                 print("Adios")
 
