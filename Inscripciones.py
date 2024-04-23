@@ -43,6 +43,7 @@ class Inscripciones_2:
         self.img = PhotoImage(file=ruta_Lupa)
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
+        self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
         #Label No. Inscripción
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Entry No. Inscripción
@@ -203,6 +204,41 @@ class Inscripciones_2:
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
     
+    #Metodo botón consultar
+    
+    def action_btnconsultar(self):
+        self.ventana_btnconsultar = tk.Tk()
+        self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
+        alto=200
+        ancho=250
+        self.ventana_btnconsultar.eval('tk::PlaceWindow . center')
+        self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto))
+        self.ventana_btnconsultar.resizable(False,False)
+        self.ventana_btnconsultar.title('Consultar')
+        ruta_ventana_btnconsultar = os.path.dirname(__file__)
+        ruta_ventana_btnconsultar += "\\img\\lupa.ico"
+        self.ventana_btnconsultar.iconbitmap(bitmap=ruta_ventana_btnconsultar)
+
+        #Botones de la ventana consultar
+
+        self.btnconsultar_alumnos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_alumnos")
+        self.btnconsultar_alumnos.configure(text='Listado de alumnos')
+        self.btnconsultar_alumnos.place(anchor="nw", x=75, y=25)
+        self.btnconsultar_alumnos.bind("<1>", lambda _:self.treeview_Alumnos())
+
+        self.btnconsultar_carreras = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_carreras")
+        self.btnconsultar_carreras.configure(text='Listado de carreras')
+        self.btnconsultar_carreras.place(anchor="nw", x=75, y=75)
+        self.btnconsultar_carreras.bind("<1>", lambda _:self.treeview_Carreras())
+
+        self.btnconsultar_cursos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_cursos")
+        self.btnconsultar_cursos.configure(text='Listado de cursos')
+        self.btnconsultar_cursos.place(anchor="nw", x=75, y=125)
+        self.btnconsultar_cursos.bind("<1>", lambda _:self.treeview_Cursos())
+
+
+    #Metodo botón
+
     def action_Button(self, option) :
         match  option:
             case 'G':
@@ -210,6 +246,7 @@ class Inscripciones_2:
                 self.treeview_Inscritos()
             case _:
                 print("Adios")
+
 
     '''================================================================================================================'''      
     '''Funciones para crear TreeViews'''
@@ -227,6 +264,7 @@ class Inscripciones_2:
         self.tView.destroy()
 
     def treeview_Cursos(self):
+        #self.ventana_btnconsultar.destroy()
         """
         Creates the correponding TreeView to show the table Cursos.
         
@@ -313,6 +351,7 @@ class Inscripciones_2:
         self.frm_1.pack_propagate(0)
         
     def treeview_Carreras(self):
+        self.ventana_btnconsultar.destroy()
         """
         Creates the correponding TreeView to show the table Carreras.
         
@@ -355,6 +394,7 @@ class Inscripciones_2:
         self.frm_1.pack_propagate(0)
     
     def treeview_Alumnos(self):
+        self.ventana_btnconsultar.destroy()
         """
         Creates the correponding TreeView to show the table Alumnos.
         
