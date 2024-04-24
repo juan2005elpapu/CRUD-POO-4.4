@@ -137,7 +137,7 @@ class Inscripciones_2:
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
         self.btnEliminar.configure(text='Eliminar')
         self.btnEliminar.place(anchor="nw", x=400, y=260)
-        #self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+        self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
         #Botón Cancelar
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
         self.btnCancelar.configure(text='Cancelar')
@@ -156,10 +156,12 @@ class Inscripciones_2:
         self.mainwindow = self.win
 
     def run(self):
-        self.mainwindow.mainloop()
+        self.mainwindow.mainloop()    
 
     ''' A partir de este punto se deben incluir las funciones
     para el manejo de la base de datos '''
+
+    
 
     def run_Query(self, query, parameters=()):
         """
@@ -261,16 +263,18 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "":
+                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "" and self.fecha.get() != "":
                     self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.cmbx_Id_Curso.get()}')")
                     self.treeview_Inscritos()
                     ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
                     self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
                 else:
                     if self.cmbx_Id_Alumno.get() == "":
-                        messagebox.showerror(title="Error", message="Faltan campos por rellenar: Id Alumno")
+                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Alumno")
                     if self.cmbx_Id_Curso.get() == "":
-                        messagebox.showerror(title="Error", message="Faltan campos por rellenar: Id Curso")
+                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Curso")
+                    if self.fecha.get() == "":
+                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Fecha")
             case "C":
                 self.cmbx_Id_Alumno.set("")
                 self.cmbx_Id_Curso.set("")
@@ -288,6 +292,16 @@ class Inscripciones_2:
                 self.horario.configure(state = "readonly")
                 self.cmbx_No_Inscripcion.set("")
                 #self.fecha.delete(0, "end")
+            case "El":
+                try:
+                    alumno = self.seleccionar_Dato(event=None)
+                    self.run_Query(f"DELETE FROM Inscritos WHERE Id_Alumno = {alumno}")
+                    self.treeview_Inscritos()
+                    ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                    self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                except sqlite3.OperationalError:
+                    None
+
 
     '''================================================================================================================'''      
     '''Funciones para crear TreeViews'''
@@ -317,7 +331,7 @@ class Inscripciones_2:
         """
         self.delete_Treeview()
         #Treeview
-        self.tView = ttk.Treeview(self.frm_1, name="tview")
+        self.tView = ttk.Treeview(self.frm_1, name="tviewcur")
         self.tView.configure(selectmode="extended")
         #Columnas del Treeview
         self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion']
@@ -358,39 +372,57 @@ class Inscripciones_2:
             None
         """
         #Treeview
-        self.tView = ttk.Treeview(self.frm_1, name="tview")
-        self.tView.configure(selectmode="extended")
+        self.tViewInscritos = ttk.Treeview(self.frm_1, name="tviewins")
+        self.tViewInscritos.configure(selectmode="extended")
         #Columnas del Treeview
-        self.tView_cols = ['tV_descripción', 'tV_horas', 'tV_codigo']
-        self.tView_dcols = ['tV_descripción', 'tV_horas', 'tV_codigo']
-        self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-        self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-        self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
-        self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
-        self.tView.column("tV_codigo",anchor="w",stretch=True,width=100,minwidth=10)
+        self.tViewInscritos_cols = ['tV_descripción', 'tV_horas', 'tV_codigo']
+        self.tViewInscritos_dcols = ['tV_descripción', 'tV_horas', 'tV_codigo']
+        self.tViewInscritos.configure(columns=self.tViewInscritos_cols,displaycolumns=self.tViewInscritos_dcols)
+        self.tViewInscritos.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+        self.tViewInscritos.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
+        self.tViewInscritos.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
+        self.tViewInscritos.column("tV_codigo",anchor="w",stretch=True,width=100,minwidth=10)
         
         #Cabeceras
-        self.tView.heading("#0", anchor="w", text='No. Inscripción')
-        self.tView.heading("tV_descripción", anchor="w", text='Id Alumno')
-        self.tView.heading("tV_horas", anchor="w", text='Fecha de Inscripción')
-        self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
-        self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+        self.tViewInscritos.heading("#0", anchor="w", text='No. Inscripción')
+        self.tViewInscritos.heading("tV_descripción", anchor="w", text='Id Alumno')
+        self.tViewInscritos.heading("tV_horas", anchor="w", text='Fecha de Inscripción')
+        self.tViewInscritos.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+        self.tViewInscritos.place(anchor="nw", height=300, width=790, x=4, y=300)
+        self.tViewInscritos.bind('<ButtonRelease-1>', self.seleccionar_Dato)
         #configura los datos de la tabla
         query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
         for i in query:
-            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
+            self.tViewInscritos.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
         #Scrollbars
-        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
+        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tViewInscritos.xview)
         self.scroll_H.configure(orient="horizontal")
         self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
-        self.tView['xscrollcommand'] = self.scroll_H.set
-        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
+        self.tViewInscritos['xscrollcommand'] = self.scroll_H.set
+        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tViewInscritos.yview)
         self.scroll_Y.configure(orient="vertical")
         self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
-        self.tView['yscrollcommand'] = self.scroll_Y.set
+        self.tViewInscritos['yscrollcommand'] = self.scroll_Y.set
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
+
+    def seleccionar_Dato(self, event):
+        """
+        Select a data from the TViewInscritos
         
+        Args:
+            None
+        
+        Returns:
+            Id_Alumno
+        """
+        try:
+            curItem = self.tViewInscritos.item(self.tViewInscritos.focus()) 
+            id_Alumno = curItem["values"][0]
+            return id_Alumno
+        except IndexError:
+            messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
+
     def treeview_Carreras(self):
         self.ventana_btnconsultar.destroy()
         """
