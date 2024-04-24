@@ -34,10 +34,8 @@ class Inscripciones_2:
         self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
                                         justify="center",state="normal",
                                         takefocus=False,text='No. Inscripción')
-        #Label No. Inscripción
-        self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
         #Combobox No. Inscripción
-        self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbx_no_incripcion", state="readonly")
+        self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbxnoincripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
         self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
@@ -263,10 +261,16 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.cmbx_Id_Curso.get()}')")
-                self.treeview_Inscritos()
-                ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "":
+                    self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.cmbx_Id_Curso.get()}')")
+                    self.treeview_Inscritos()
+                    ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                    self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                else:
+                    if self.cmbx_Id_Alumno.get() == "":
+                        messagebox.showerror(title="Error", message="Faltan campos por rellenar: Id Alumno")
+                    if self.cmbx_Id_Curso.get() == "":
+                        messagebox.showerror(title="Error", message="Faltan campos por rellenar: Id Curso")
             case "C":
                 self.cmbx_Id_Alumno.set("")
                 self.cmbx_Id_Curso.set("")
