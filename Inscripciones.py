@@ -145,10 +145,23 @@ class Inscripciones_2:
         # Main widget
         self.mainwindow = self.win
 
-    def run(self):
-        self.mainwindow.mainloop()    
+    #Funciónes para validar
+    def campo_Existente(self, tabla, campo_1, campo_2, ):
+        """
+        Checks if a given field value already exists in a specified table.
 
-    #Función para fecha
+        Args:
+            campo (str): The field value to check.
+            tabla (str): The table to search in.
+
+        Returns:
+            bool: True if the field value exists in the table, False otherwise.
+        """
+        query = f"SELECT COUNT(*) FROM {tabla} WHERE Id_Alumno = {campo_1} AND Id_Curso = {campo_2}"
+        result = self.run_Query(query)
+        count = result[0][0]
+        return count > 0
+    
     def valida_Fecha(self, event=None):     
             if event.char.isdigit() or event.char == '':
                 fecha_Ingresada = self.fecha.get()
@@ -175,6 +188,9 @@ class Inscripciones_2:
                 
     ''' A partir de este punto se deben incluir las funciones
     para el manejo de la base de datos '''
+
+    def run(self):
+        self.mainwindow.mainloop()    
 
     def run_Query(self, query, parameters=()):
         """
@@ -275,7 +291,7 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "" and self.fecha.get() != "" and self.fecha_Valida():
+                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "" and self.fecha.get() != "" and self.fecha_Valida() and self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                     day, month, year = map(str, self.fecha.get().split('/'))
                     self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}')")
                     self.create_Treeview("Inscritos")
@@ -289,6 +305,8 @@ class Inscripciones_2:
                         messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Curso")
                     if self.fecha.get() == "":
                         messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Fecha")
+                    if not self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
+                        messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
             case "C":
                 self.cmbx_Id_Alumno.set("")
                 self.cmbx_Id_Curso.set("")
