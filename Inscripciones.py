@@ -6,6 +6,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from os import path
 import sqlite3
+from datetime import datetime
 
 class Inscripciones_2:   
     def __init__(self, master=None):
@@ -16,11 +17,11 @@ class Inscripciones_2:
         self.win.configure(background="#f7f9fd", height=600, width=800)
         alto=600
         ancho=800
-        self.win.eval('tk::PlaceWindow . center')
         self.win.geometry(str(ancho)+"x"+str(alto))
-        #x = self.win.winfo_screenwidth()
-        #y = self.win.winfo_screenheight()
-        #self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2)))))
+        #Centrar Ventana
+        x = self.win.winfo_screenwidth()
+        y = self.win.winfo_screenheight()
+        self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
         self.win.resizable(False, False)
         self.win.title("Inscripciones de Materias y Cursos")
         ruta_Icon = self.dir_pro + "\\img\\icon.ico"
@@ -44,22 +45,12 @@ class Inscripciones_2:
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
         self.lblFecha.place(anchor="nw", x=630, y=80)
         #Entry Fecha
-        def validar_fecha(fecha_ingresada):
-            if len(fecha_ingresada) > 10:
-                messagebox.showerror(message="La fecha ingresada no puede superar los 8 dígitos", title="Error al ingresar fecha")
-                return False
-            if fecha_ingresada.isdigit():
-                return True
-            else:
-                messagebox.showerror(message="La fecha ingresada no puede contener letras", title="Error al ingresar fecha")
-            letras = 0
-            for i in fecha_ingresada:
-                letras += 1
-            if letras == 2:self.fecha.insert(2, '/')
-            if letras == 5:self.fecha.insert(6, '/')
-        self.fecha = ttk.Entry(self.frm_1, name="fecha", validate="key", validatecommand=(self.win.register(validar_fecha), "%P"))
+        self.fecha = ttk.Entry(self.frm_1, name="fecha")
         self.fecha.configure(justify="center")
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
+        self.fecha.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
+        self.fecha.bind("<KeyRelease>", self.valida_Fecha)
+        
         #Label Alumno
         self.lblIdAlumno = ttk.Label(self.frm_1, name="lblidalumno")
         self.lblIdAlumno.configure(background="#f7f9fd", text='Id Alumno:')
@@ -151,17 +142,39 @@ class Inscripciones_2:
         ''' Treeview de la Aplicación'''
         self.treeview_Inscritos()
 
-
         # Main widget
         self.mainwindow = self.win
 
     def run(self):
         self.mainwindow.mainloop()    
 
+    #Función para fecha
+    def valida_Fecha(self, event=None):     
+            if event.char.isdigit() or event.char == '':
+                fecha_Ingresada = self.fecha.get()
+                if len(fecha_Ingresada) > 10:
+                    messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
+                    self.fecha.delete(10, "end")
+                num_char = 0
+                for i in fecha_Ingresada:
+                    num_char += 1
+                if num_char == 2: self.fecha.insert(2, "/")
+                if num_char  == 5: self.fecha.insert(6, "/")
+            else:
+                self.fecha.delete(len(self.fecha.get())-1, "end")
+                messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+
+    def fecha_Valida(self):
+        try: 
+            day, month, year = map(int, self.fecha.get().split('/'))
+            datetime(year, month, day)
+            return True
+        except ValueError: 
+            messagebox.showerror('Error!!','.. ¡Fecha equivocada! por favor corrijala ..')
+            return False            
+                
     ''' A partir de este punto se deben incluir las funciones
     para el manejo de la base de datos '''
-
-    
 
     def run_Query(self, query, parameters=()):
         """
@@ -263,11 +276,13 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "" and self.fecha.get() != "":
-                    self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{self.fecha.get()}', '{self.cmbx_Id_Curso.get()}')")
+                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "" and self.fecha.get() != "" and self.fecha_Valida():
+                    day, month, year = map(str, self.fecha.get().split('/'))
+                    self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}')")
                     self.treeview_Inscritos()
                     ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
                     self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                    messagebox.showinfo(title="Bueno", message="Guardado con éxito")
                 else:
                     if self.cmbx_Id_Alumno.get() == "":
                         messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Alumno")
@@ -299,6 +314,7 @@ class Inscripciones_2:
                     self.treeview_Inscritos()
                     ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
                     self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+
                 except sqlite3.OperationalError:
                     None
 
@@ -372,37 +388,37 @@ class Inscripciones_2:
             None
         """
         #Treeview
-        self.tViewInscritos = ttk.Treeview(self.frm_1, name="tviewins")
-        self.tViewInscritos.configure(selectmode="extended")
+        self.tView = ttk.Treeview(self.frm_1, name="tviewins")
+        self.tView.configure(selectmode="extended")
         #Columnas del Treeview
-        self.tViewInscritos_cols = ['tV_descripción', 'tV_horas', 'tV_codigo']
-        self.tViewInscritos_dcols = ['tV_descripción', 'tV_horas', 'tV_codigo']
-        self.tViewInscritos.configure(columns=self.tViewInscritos_cols,displaycolumns=self.tViewInscritos_dcols)
-        self.tViewInscritos.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-        self.tViewInscritos.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
-        self.tViewInscritos.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
-        self.tViewInscritos.column("tV_codigo",anchor="w",stretch=True,width=100,minwidth=10)
+        self.tView_cols = ['tV_descripción', 'tV_horas', 'tV_codigo']
+        self.tView_dcols = ['tV_descripción', 'tV_horas', 'tV_codigo']
+        self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+        self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+        self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
+        self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
+        self.tView.column("tV_codigo",anchor="w",stretch=True,width=100,minwidth=10)
         
         #Cabeceras
-        self.tViewInscritos.heading("#0", anchor="w", text='No. Inscripción')
-        self.tViewInscritos.heading("tV_descripción", anchor="w", text='Id Alumno')
-        self.tViewInscritos.heading("tV_horas", anchor="w", text='Fecha de Inscripción')
-        self.tViewInscritos.heading("tV_codigo", anchor="w", text='Codigo de Curso')
-        self.tViewInscritos.place(anchor="nw", height=300, width=790, x=4, y=300)
-        self.tViewInscritos.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+        self.tView.heading("#0", anchor="w", text='No. Inscripción')
+        self.tView.heading("tV_descripción", anchor="w", text='Id Alumno')
+        self.tView.heading("tV_horas", anchor="w", text='Fecha de Inscripción')
+        self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+        self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+        self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
         #configura los datos de la tabla
         query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
         for i in query:
-            self.tViewInscritos.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
+            self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
         #Scrollbars
-        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tViewInscritos.xview)
+        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
         self.scroll_H.configure(orient="horizontal")
         self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
-        self.tViewInscritos['xscrollcommand'] = self.scroll_H.set
-        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tViewInscritos.yview)
+        self.tView['xscrollcommand'] = self.scroll_H.set
+        self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
         self.scroll_Y.configure(orient="vertical")
         self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
-        self.tViewInscritos['yscrollcommand'] = self.scroll_Y.set
+        self.tView['yscrollcommand'] = self.scroll_Y.set
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
 
@@ -417,7 +433,7 @@ class Inscripciones_2:
             Id_Alumno
         """
         try:
-            item_Seleccionado = self.tViewInscritos.item(self.tViewInscritos.focus()) 
+            item_Seleccionado = self.tView.item(self.tView.focus()) 
             numero_inscripcion = item_Seleccionado["text"]
             return numero_inscripcion
         except IndexError:
