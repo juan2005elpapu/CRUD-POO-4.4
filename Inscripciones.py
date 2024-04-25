@@ -294,8 +294,8 @@ class Inscripciones_2:
                 #self.fecha.delete(0, "end")
             case "El":
                 try:
-                    alumno = self.seleccionar_Dato(event=None)
-                    self.run_Query(f"DELETE FROM Inscritos WHERE Id_Alumno = {alumno}")
+                    numero_Inscrito = self.seleccionar_Dato(event=None)
+                    self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
                     self.treeview_Inscritos()
                     ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
                     self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
@@ -417,9 +417,9 @@ class Inscripciones_2:
             Id_Alumno
         """
         try:
-            curItem = self.tViewInscritos.item(self.tViewInscritos.focus()) 
-            id_Alumno = curItem["values"][0]
-            return id_Alumno
+            item_Seleccionado = self.tViewInscritos.item(self.tViewInscritos.focus()) 
+            numero_inscripcion = item_Seleccionado["text"]
+            return numero_inscripcion
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
 
