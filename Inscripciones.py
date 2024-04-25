@@ -96,7 +96,7 @@ class Inscripciones_2:
         self.descripc_Curso.place(anchor="nw", width=300, x=325, y=185)
         #Label Horario
         self.lblHorario = ttk.Label(self.frm_1, name="labelhora")
-        self.lblHorario.configure(background="#f7f9fd",state="normal",text='Hora:')
+        self.lblHorario.configure(background="#f7f9fd",state="normal",text='Horario:')
         self.lblHorario.place(anchor="nw", x=635, y=185)
         #Entry del Horario
         self.horario = ttk.Entry(self.frm_1, name="hora", state = "readonly")
