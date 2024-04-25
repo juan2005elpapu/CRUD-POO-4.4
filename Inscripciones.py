@@ -319,7 +319,7 @@ class Inscripciones_2:
 
 
     '''================================================================================================================'''      
-    '''Funciones para crear TreeViews'''
+    '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
         if type in ["Carreras", "Cursos", "Alumnos"]: # Elimina ventana emergente y treeView anterior
             self.ventana_btnconsultar.destroy()
@@ -328,28 +328,29 @@ class Inscripciones_2:
         # Crear Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
+        
+        # Verifica el tipo de tabla para crear el TreeView correspondiente
         match type:
             case "Inscritos":
                 """
                 Creates the correponding TreeView for the table Inscritos.
                 """
                 #Columnas del Treeview
-                self.tView_cols = ['tV_descripción', 'tV_horas', 'tV_codigo']
-                self.tView_dcols = ['tV_descripción', 'tV_horas', 'tV_codigo']
+                self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo']
+                self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
                 self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-                self.tView.column("tV_descripción",anchor="w",stretch=True,width=200,minwidth=50)
-                self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
+                self.tView.column("tV_id_alumno",anchor="w",stretch=True,width=100,minwidth=50)
+                self.tView.column("tV_fecha_inscripcion",anchor="w",stretch=True,width=50,minwidth=10)
                 self.tView.column("tV_codigo",anchor="w",stretch=True,width=100,minwidth=10)
-                
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
-                self.tView.heading("tV_descripción", anchor="w", text='Id Alumno')
-                self.tView.heading("tV_horas", anchor="w", text='Fecha de Inscripción')
+                self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
+                self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
                 self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
-                #configura los datos de la tabla
+                #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
@@ -365,13 +366,12 @@ class Inscripciones_2:
                 self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
                 self.tView.column("tV_Descripcion",anchor="w",stretch=True,width=100,minwidth=50)
                 self.tView.column("tV_semestres",anchor="w",stretch=True,width=200,minwidth=50)
-
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='Codigo de Carrera')
                 self.tView.heading("tV_Descripcion", anchor="w", text='Descripcion')
                 self.tView.heading("tV_semestres", anchor="w", text='No de semestres')
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #configura los datos de la tabla
+                #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Carreras")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2],))
@@ -381,18 +381,18 @@ class Inscripciones_2:
                 Creates the correponding TreeView for the table Cursos.
                 """
                 #Columnas del Treeview
-                self.tView_cols = ['tV_id_alumno', 'tV_horas']
-                self.tView_dcols = ['tV_id_alumno', 'tV_horas']
+                self.tView_cols = ['tV_descripción', 'tV_horas']
+                self.tView_dcols = ['tV_descripción', 'tV_horas']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
                 self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-                self.tView.column("tV_id_alumno",anchor="w",stretch=True,width=150,minwidth=50)
+                self.tView.column("tV_descripción",anchor="w",stretch=True,width=150,minwidth=50)
                 self.tView.column("tV_horas",anchor="w",stretch=True,width=50,minwidth=10)
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='Curso')
-                self.tView.heading("tV_id_alumno", anchor="w", text='Descripción')
+                self.tView.heading("tV_descripción", anchor="w", text='Descripción')
                 self.tView.heading("tV_horas", anchor="w", text='Horas')
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #configura los datos de la tabla
+                #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Cursos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
@@ -404,26 +404,23 @@ class Inscripciones_2:
                 #Columnas del Treeview
                 self.tView_cols = ['tV_id_carrera', 'tV_nombres', 'tV_apellidos', 'tV_fecha_inscripcion', 'tV_dirección', 'tV_telef_celu', 'tV_telef_fijo', 'tV_ciudad', 'tV_departamento']
                 self.tView_dcols = ['tV_id_carrera', 'tV_nombres', 'tV_apellidos', 'tV_fecha_inscripcion', 'tV_dirección', 'tV_telef_celu', 'tV_telef_fijo', 'tV_ciudad', 'tV_departamento']
-                self.headers = ['Fecha de Inscripción', 'Dirección', 'Tel. Celular', 'Tel. Fijo', 'Ciudad', 'Departamento']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
                 self.tView.column("#0",anchor="w",stretch=True,width=100,minwidth=10)
                 self.tView.column("tV_id_carrera",anchor="w",stretch=True,width=100,minwidth=50)
                 self.tView.column("tV_nombres",anchor="w",stretch=True,width=150,minwidth=50)
                 self.tView.column("tV_apellidos", anchor="w", stretch=True, width=150, minwidth=50)
-                
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_id_carrera", anchor="w", text='Id Carrera')
                 self.tView.heading("tV_nombres", anchor="w", text='Nombres')
                 self.tView.heading("tV_apellidos", anchor="w", text='Apellidos')
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
-
                 # Columna 3 en adelante...
+                self.headers = ['Fecha de Inscripción', 'Dirección', 'Tel. Celular', 'Tel. Fijo', 'Ciudad', 'Departamento']
                 for i in range(0, len(self.headers)) :
                     self.tView.column(self.tView_cols[i+3], anchor="w", stretch=True, width=125, minwidth=20)
                     self.tView.heading(self.tView_dcols[i+3], anchor="w", text=self.headers[i])
-
-                #configura los datos de la tabla
+                #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Alumnos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
