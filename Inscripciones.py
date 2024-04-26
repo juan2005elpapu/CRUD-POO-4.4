@@ -99,10 +99,10 @@ class Inscripciones_2:
         self.lblHorario.configure(background="#f7f9fd",state="normal",text='Horario:')
         self.lblHorario.place(anchor="nw", x=500, y=185)
         #Entrys del Horario
-        self.cmbx_Dias = ttk.Combobox(self.frm_1, name="cmbx_Dias", state = "normal")
+        self.cmbx_Dias = ttk.Combobox(self.frm_1, name="cmbx_Dias", state="readonly")
         self.cmbx_Dias.configure(justify="left", width=166)
         self.cmbx_Dias.place(anchor="nw", width=110, x=550, y=185)
-        self.cmbx_Horario = ttk.Combobox(self.frm_1, name="hora", state = "normal")
+        self.cmbx_Horario = ttk.Combobox(self.frm_1, name="hora", state="readonly")
         self.cmbx_Horario.configure(justify="left", width=166)
         self.cmbx_Horario.place(anchor="nw", width=110, x=670, y=185)
         horarios_Dias = ["lun. y miérc.", "mar. y juev."]
@@ -152,7 +152,12 @@ class Inscripciones_2:
         # Main widget
         self.mainwindow = self.win
 
-    #Funciónes para validar
+    '''A partir de este punto se deben incluir las funciones para el manejo de la base de datos...'''
+    def run(self):
+        self.mainwindow.mainloop()    
+
+    '''================================================================================================================'''      
+    '''Funciones para validar información en la base de datos'''
     def campo_Existente(self, tabla, campo_1, campo_2):
         """
         Checks if a given field value already exists in a specified table.
@@ -227,14 +232,10 @@ class Inscripciones_2:
             return True
         except ValueError: 
             messagebox.showerror('Error!!','.. ¡Fecha equivocada! por favor corrijala ..')
-            return False            
-                
-    ''' A partir de este punto se deben incluir las funciones
-    para el manejo de la base de datos '''
+            return False   
 
-    def run(self):
-        self.mainwindow.mainloop()    
-
+    '''================================================================================================================'''      
+    '''Funciones relacionadas al manejo de base de datos y la información mostrada en la interfaz del programa'''
     def run_Query(self, query, parameters=()):
         """
         Executes the given SQL query with optional parameters and returns the result.
@@ -293,8 +294,8 @@ class Inscripciones_2:
         self.descripc_Curso.insert(0, descripcion[0][0])
         self.descripc_Curso.configure(state = "readonly")
     
-    #Metodo botón consultar
-    
+    '''================================================================================================================'''      
+    '''Función para botón Consultar (<Lupa>)'''
     def action_btnconsultar(self):
         self.ventana_btnconsultar = tk.Tk()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
@@ -325,18 +326,51 @@ class Inscripciones_2:
         self.btnconsultar_cursos.place(anchor="nw", x=75, y=125)
         self.btnconsultar_cursos.bind("<1>", lambda _:self.create_Treeview("Cursos"))
 
-    #Metodo botón
+    '''================================================================================================================'''      
+    '''Funciones auxiliares al botón Guardar (G)'''
     def check_Entries(self):
+        """
+        Checks if the needed entries to sign up a student are filled. Furthermore, it checks is the date is valid, if the student hasn't
+        already been signed up in a course and if the student doesn't have any other course at the same schedule (days + hours).
+
+        Args:
+            None
+        
+        Returns:
+            bool: False if any of the needed entries is empty or the previous mentioned conditions aren't met; True if everything is
+            alright in order to sign up the student.
+        """
         # Verifica que todos los campos estén llenos
         entries_To_Check = [self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get(), self.fecha.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()]
         for entry in entries_To_Check:
             if entry == "":
+                self.show_Error_Empty_Entries()
                 return False
         # Verifica que la fecha sea válida, que el estudiante no haya sido inscrito en ese curso anteriormente y que no haya sido inscrito en otro curso con el mismo horario
         if not self.fecha_Valida() or self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()) or self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
             return False
         return True
 
+    def show_Error_Empty_Entries(self):
+        """
+        Shows an error message indicating the empty entries that need to be filled in order to save correctly.
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
+        entries = {"Id Alumno":self.cmbx_Id_Alumno.get(), "Id Curso":self.cmbx_Id_Curso.get(), "Fecha":self.fecha.get(), "Horario (Días)":self.cmbx_Dias.get(), "Horario (Hora)":self.cmbx_Horario.get()}
+        missing_entries = []
+        for i in range(len(entries)):
+            if list(entries.values())[i] == "":
+                missing_entries.append(list(entries.keys())[i])
+        mensaje = "Faltan campos por llenar: " + ", ".join(missing_entries)
+        messagebox.askretrycancel(title="Error al guardar", message=mensaje)
+    
+    '''================================================================================================================'''      
+    '''Función para manejar botones Guardar (G), Cancelar (C), Eliminar (El) y Editar (Ed)'''
     def action_Button(self, option) :
         match  option:
             case 'G':
@@ -348,19 +382,9 @@ class Inscripciones_2:
                     self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
                     messagebox.showinfo(title="Bueno", message="Guardado con éxito")
                 else:
-                    if self.cmbx_Id_Alumno.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Alumno")
-                    if self.cmbx_Id_Curso.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Curso")
-                    if self.fecha.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Fecha")
-                    if self.cmbx_Dias.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Horario (Días)")
-                    if self.cmbx_Horario.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Horario (Horas)")
                     if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                         messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
-                    if self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
+                    elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
                         messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
             
             case "C":
@@ -379,7 +403,8 @@ class Inscripciones_2:
                 self.descripc_Curso.configure(state = "readonly")
                 self.cmbx_Horario.configure(state = "readonly")
                 self.cmbx_No_Inscripcion.set("")
-                #self.fecha.delete(0, "end")
+                self.fecha.delete(0, "end")
+
             case "El":
                 try:
                     numero_Inscrito = self.seleccionar_Dato(event=None)
@@ -390,7 +415,6 @@ class Inscripciones_2:
 
                 except sqlite3.OperationalError:
                     None
-
 
     '''================================================================================================================'''      
     '''Funciones para manejar TreeViews'''
@@ -543,10 +567,12 @@ class Inscripciones_2:
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
 
+    '''================================================================================================================'''      
     '''Funciones archivadas'''
     #def clean_String(string):
     #    return string.replace('{', '').replace('}', '')
 
+# ================================================================================================================
 if __name__ == "__main__":
     app = Inscripciones_2()
     app.run()
