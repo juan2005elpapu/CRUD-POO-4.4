@@ -406,15 +406,21 @@ class Inscripciones_2:
                 self.fecha.delete(0, "end")
 
             case "El":
-                try:
-                    numero_Inscrito = self.seleccionar_Dato(event=None)
-                    self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
-                    self.create_Treeview("Inscritos")
-                    ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                    self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                selected = self.tView.focus()
+                clave = self.tView.item(selected,'text')
+                if clave == '':
+                    messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
+                else:
+                    try:
+                        numero_Inscrito = self.seleccionar_Dato(event=None)
+                        self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
+                        self.create_Treeview("Inscritos")
+                        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                        self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                        messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
 
-                except sqlite3.OperationalError:
-                    None
+                    except sqlite3.OperationalError:
+                        None
 
     '''================================================================================================================'''      
     '''Funciones para manejar TreeViews'''
