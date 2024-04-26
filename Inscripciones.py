@@ -57,7 +57,7 @@ class Inscripciones_2:
         self.lblIdAlumno.place(anchor="nw", x=20, y=80)
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno", state="readonly")
-        self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=100, y=80)
+        self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=90, y=80)
         ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
         self.cmbx_Id_Alumno['values'] = ids_Alumnos
         #self.cmbx_Id_Alumno.DropDownStyle=ComboBoxStyle.DropDownList
@@ -67,7 +67,7 @@ class Inscripciones_2:
         self.lblNombres.place(anchor="nw", x=20, y=130)
         #Entry Nombres
         self.nombres = ttk.Entry(self.frm_1, name="nombres")
-        self.nombres.place(anchor="nw", width=200, x=100, y=130)
+        self.nombres.place(anchor="nw", width=200, x=90, y=130)
         self.nombres.configure(state = "readonly")
         #Label Apellidos
         self.lblApellidos = ttk.Label(self.frm_1, name="lblapellidos")
@@ -83,25 +83,32 @@ class Inscripciones_2:
         self.lblIdCurso.place(anchor="nw", x=20, y=185)
         #Combobox Curso
         self.cmbx_Id_Curso = ttk.Combobox(self.frm_1, name="cmbx_id_curso", state="readonly")
-        self.cmbx_Id_Curso.place(anchor="nw", width=166, x=100, y=185)
+        self.cmbx_Id_Curso.place(anchor="nw", width=100, x=90, y=185)
         ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
         self.cmbx_Id_Curso['values'] = ids_Cursos
         #Label Descripción del Curso
         self.lblDscCurso = ttk.Label(self.frm_1, name="lbldsccurso")
         self.lblDscCurso.configure(background="#f7f9fd",state="normal",text='Curso:')
-        self.lblDscCurso.place(anchor="nw", x=275, y=185)
+        self.lblDscCurso.place(anchor="nw", x=200, y=185)
         #Entry de Descripción del Curso 
         self.descripc_Curso = ttk.Entry(self.frm_1, name="descripc_curso", state = "readonly")
         self.descripc_Curso.configure(justify="left", width=166)
-        self.descripc_Curso.place(anchor="nw", width=300, x=325, y=185)
+        self.descripc_Curso.place(anchor="nw", width=250, x=240, y=185)
         #Label Horario
         self.lblHorario = ttk.Label(self.frm_1, name="labelhora")
-        self.lblHorario.configure(background="#f7f9fd",state="normal",text='Hora:')
-        self.lblHorario.place(anchor="nw", x=635, y=185)
-        #Entry del Horario
-        self.horario = ttk.Entry(self.frm_1, name="hora", state = "readonly")
-        self.horario.configure(justify="left", width=166)
-        self.horario.place(anchor="nw", width=100, x=680, y=185)
+        self.lblHorario.configure(background="#f7f9fd",state="normal",text='Horario:')
+        self.lblHorario.place(anchor="nw", x=500, y=185)
+        #Entrys del Horario
+        self.cmbx_Dias = ttk.Combobox(self.frm_1, name="cmbx_Dias", state="readonly")
+        self.cmbx_Dias.configure(justify="left", width=166)
+        self.cmbx_Dias.place(anchor="nw", width=110, x=550, y=185)
+        self.cmbx_Horario = ttk.Combobox(self.frm_1, name="hora", state="readonly")
+        self.cmbx_Horario.configure(justify="left", width=166)
+        self.cmbx_Horario.place(anchor="nw", width=110, x=670, y=185)
+        horarios_Dias = ["lun. y miérc.", "mar. y juev."]
+        self.cmbx_Dias['values'] = horarios_Dias
+        horarios_Horas = ["7:00 - 9:00", "9:00 - 11:00", "11:00 - 13:00", "14:00 - 16:00", "16:00 - 18:00"]
+        self.cmbx_Horario['values'] = horarios_Horas
 
         # Adición automática de nombres y apellidos al seleccionar un ID
         self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
@@ -145,7 +152,12 @@ class Inscripciones_2:
         # Main widget
         self.mainwindow = self.win
 
-    #Funciónes para validar
+    '''A partir de este punto se deben incluir las funciones para el manejo de la base de datos...'''
+    def run(self):
+        self.mainwindow.mainloop()    
+
+    '''================================================================================================================'''      
+    '''Funciones para validar información en la base de datos'''
     def campo_Existente(self, tabla, campo_1, campo_2):
         """
         Checks if a given field value already exists in a specified table.
@@ -158,6 +170,23 @@ class Inscripciones_2:
             bool: True if the field value exists in the table, False otherwise.
         """
         query = f"SELECT COUNT(*) FROM {tabla} WHERE Id_Alumno = '{campo_1}' AND Código_Curso = '{campo_2}'"
+        result = self.run_Query(query)
+        count = result[0][0]
+        return count > 0
+    
+    def horario_Existente(self, alumno, dias, horario):
+        """
+        Checks if a given student already has a given scheduel (days + times).
+        
+        Args:
+            alumno (str): The student id.
+            dias (str): The schedule days.
+            horario (str): The schedule time.
+        
+        Returns:
+            bool: True if the student already has a course with the given schedule, False otherwise.
+        """
+        query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{alumno}' AND Horario = '{dias + " " + horario}'"
         result = self.run_Query(query)
         count = result[0][0]
         return count > 0
@@ -203,14 +232,10 @@ class Inscripciones_2:
             return True
         except ValueError: 
             messagebox.showerror('Error!!','.. ¡Fecha equivocada! por favor corrijala ..')
-            return False            
-                
-    ''' A partir de este punto se deben incluir las funciones
-    para el manejo de la base de datos '''
+            return False   
 
-    def run(self):
-        self.mainwindow.mainloop()    
-
+    '''================================================================================================================'''      
+    '''Funciones relacionadas al manejo de base de datos y la información mostrada en la interfaz del programa'''
     def run_Query(self, query, parameters=()):
         """
         Executes the given SQL query with optional parameters and returns the result.
@@ -265,16 +290,12 @@ class Inscripciones_2:
         descripcion = self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso = '{id_Curso}'")
         hora = self.run_Query(f"SELECT Num_Horas FROM Cursos WHERE Código_Curso = '{id_Curso}'")
         self.descripc_Curso.configure(state = "normal")
-        self.horario.configure(state = "normal")
         self.descripc_Curso.delete(0, 'end')
-        self.horario.delete(0, 'end')
         self.descripc_Curso.insert(0, descripcion[0][0])
-        self.horario.insert(0, hora[0][0])
         self.descripc_Curso.configure(state = "readonly")
-        self.horario.configure(state = "readonly")
     
-    #Metodo botón consultar
-    
+    '''================================================================================================================'''      
+    '''Función para botón Consultar (<Lupa>)'''
     def action_btnconsultar(self):
         self.ventana_btnconsultar = tk.Tk()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
@@ -305,44 +326,85 @@ class Inscripciones_2:
         self.btnconsultar_cursos.place(anchor="nw", x=75, y=125)
         self.btnconsultar_cursos.bind("<1>", lambda _:self.create_Treeview("Cursos"))
 
-    #Metodo botón
+    '''================================================================================================================'''      
+    '''Funciones auxiliares al botón Guardar (G)'''
+    def check_Entries(self):
+        """
+        Checks if the needed entries to sign up a student are filled. Furthermore, it checks is the date is valid, if the student hasn't
+        already been signed up in a course and if the student doesn't have any other course at the same schedule (days + hours).
 
+        Args:
+            None
+        
+        Returns:
+            bool: False if any of the needed entries is empty or the previous mentioned conditions aren't met; True if everything is
+            alright in order to sign up the student.
+        """
+        # Verifica que todos los campos estén llenos
+        entries_To_Check = [self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get(), self.fecha.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()]
+        for entry in entries_To_Check:
+            if entry == "":
+                self.show_Error_Empty_Entries()
+                return False
+        # Verifica que la fecha sea válida, que el estudiante no haya sido inscrito en ese curso anteriormente y que no haya sido inscrito en otro curso con el mismo horario
+        if not self.fecha_Valida() or self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()) or self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
+            return False
+        return True
+
+    def show_Error_Empty_Entries(self):
+        """
+        Shows an error message indicating the empty entries that need to be filled in order to save correctly.
+
+        Args:
+            None
+        
+        Returns:
+            None
+        """
+        entries = {"Id Alumno":self.cmbx_Id_Alumno.get(), "Id Curso":self.cmbx_Id_Curso.get(), "Fecha":self.fecha.get(), "Horario (Días)":self.cmbx_Dias.get(), "Horario (Hora)":self.cmbx_Horario.get()}
+        missing_entries = []
+        for i in range(len(entries)):
+            if list(entries.values())[i] == "":
+                missing_entries.append(list(entries.keys())[i])
+        mensaje = "Faltan campos por llenar: " + ", ".join(missing_entries)
+        messagebox.askretrycancel(title="Error al guardar", message=mensaje)
+    
+    '''================================================================================================================'''      
+    '''Función para manejar botones Guardar (G), Cancelar (C), Eliminar (El) y Editar (Ed)'''
     def action_Button(self, option) :
         match  option:
             case 'G':
-                if self.cmbx_Id_Alumno.get() != "" and self.cmbx_Id_Curso.get() != "" and self.fecha.get() != "" and self.fecha_Valida() and not self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
+                if self.check_Entries():
                     day, month, year = map(str, self.fecha.get().split('/'))
-                    self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}')")
+                    self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso, Horario) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                     self.create_Treeview("Inscritos")
                     ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
                     self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
                     messagebox.showinfo(title="Bueno", message="Guardado con éxito")
                 else:
-                    if self.cmbx_Id_Alumno.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Alumno")
-                    if self.cmbx_Id_Curso.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Id Curso")
-                    if self.fecha.get() == "":
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Faltan campos por rellenar: Fecha")
                     if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                         messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                    elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
+                        messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+            
             case "C":
                 self.cmbx_Id_Alumno.set("")
                 self.cmbx_Id_Curso.set("")
                 self.nombres.configure(state = "normal")
                 self.apellidos.configure(state = "normal")
                 self.descripc_Curso.configure(state = "normal")
-                self.horario.configure(state = "normal")
+                self.cmbx_Horario.configure(state = "normal")
                 self.nombres.delete(0, "end")
                 self.apellidos.delete(0, "end")
                 self.descripc_Curso.delete(0, "end")
-                self.horario.delete(0, "end")
+                self.cmbx_Horario.delete(0, "end")
                 self.nombres.configure(state = "readonly")
                 self.apellidos.configure(state = "readonly")
                 self.descripc_Curso.configure(state = "readonly")
-                self.horario.configure(state = "readonly")
+                self.cmbx_Horario.configure(state = "readonly")
                 self.cmbx_No_Inscripcion.set("")
-                #self.fecha.delete(0, "end")
+                self.fecha.delete(0, "end")
+
             case "El":
                 try:
                     numero_Inscrito = self.seleccionar_Dato(event=None)
@@ -353,7 +415,6 @@ class Inscripciones_2:
 
                 except sqlite3.OperationalError:
                     None
-
 
     '''================================================================================================================'''      
     '''Funciones para manejar TreeViews'''
@@ -373,24 +434,26 @@ class Inscripciones_2:
                 Creates the correponding TreeView for the table Inscritos.
                 """
                 #Columnas del Treeview
-                self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo']
-                self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo']
+                self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
+                self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
                 self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-                self.tView.column("tV_id_alumno",anchor="w",stretch=True,width=100,minwidth=50)
+                self.tView.column("tV_id_alumno",anchor="w",stretch=True,width=50,minwidth=50)
                 self.tView.column("tV_fecha_inscripcion",anchor="w",stretch=True,width=50,minwidth=10)
-                self.tView.column("tV_codigo",anchor="w",stretch=True,width=100,minwidth=10)
+                self.tView.column("tV_codigo",anchor="w",stretch=True,width=50,minwidth=10)
+                self.tView.column("tV_horario", anchor="w", stretch=True, width=50, minwidth=25)
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
                 self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
                 self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+                self.tView.heading("tV_horario", anchor="w", text='Horario')
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
                 for i in query:
-                    self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
+                    self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
             
             case "Carreras":
                 """
@@ -504,10 +567,12 @@ class Inscripciones_2:
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
 
+    '''================================================================================================================'''      
     '''Funciones archivadas'''
     #def clean_String(string):
     #    return string.replace('{', '').replace('}', '')
 
+# ================================================================================================================
 if __name__ == "__main__":
     app = Inscripciones_2()
     app.run()
