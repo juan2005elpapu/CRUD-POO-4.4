@@ -260,7 +260,7 @@ class Inscripciones_2:
             conn.commit()
         return result.fetchall()
 
-    def change_Full_Name(self, event):
+    def change_Full_Name(self, event=None):
         """
         Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
 
@@ -282,7 +282,7 @@ class Inscripciones_2:
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
 
-    def change_Course(self, event):
+    def change_Course(self, event=None):
         """
         Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
 
@@ -596,6 +596,9 @@ class Inscripciones_2:
         lists = [self.lista_Ids_Alumnos, self.lista_Ids_Cursos, self.horarios_Dias, self.horarios_Horas]
         for i in range(len(entries)):
             entries[i].current(lists[i].index(result[i+1]))
+        self.change_Full_Name()
+        self.change_Course()
+        
 
     '''Función para limpiar campos'''
     def clear_Entrys(self,vaciar):
