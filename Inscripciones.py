@@ -39,7 +39,9 @@ class Inscripciones_2:
         self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbxnoincripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+        ids_No_Inscripcion.insert(0, "Todos")
         self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+        self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.create_Treeview("No_Inscripcion"))
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
@@ -63,6 +65,8 @@ class Inscripciones_2:
         for tupla in self.ids_Alumnos:
             self.lista_Ids_Alumnos.append(tupla[0])
         self.cmbx_Id_Alumno['values'] = self.ids_Alumnos
+        # Adición automática de nombres y apellidos al seleccionar un ID
+        self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
         #self.cmbx_Id_Alumno.DropDownStyle=ComboBoxStyle.DropDownList
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
@@ -92,6 +96,7 @@ class Inscripciones_2:
         for tupla in self.ids_Cursos:
             self.lista_Ids_Cursos.append(tupla[0])
         self.cmbx_Id_Curso['values'] = self.ids_Cursos
+        self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.change_Course)
         #Label Descripción del Curso
         self.lblDscCurso = ttk.Label(self.frm_1, name="lbldsccurso")
         self.lblDscCurso.configure(background="#f7f9fd",state="normal",text='Curso:')
@@ -115,11 +120,6 @@ class Inscripciones_2:
         self.cmbx_Dias['values'] = self.horarios_Dias
         self.horarios_Horas = ["7:00 - 9:00", "9:00 - 11:00", "11:00 - 13:00", "14:00 - 16:00", "16:00 - 18:00"]
         self.cmbx_Horario['values'] = self.horarios_Horas
-
-        # Adición automática de nombres y apellidos al seleccionar un ID
-        self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
-        self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.change_Course)
-        self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.create_Treeview("No_Inscripcion"))
 
         ''' Botones  de la Aplicación'''
         #Botón Consultar
@@ -211,19 +211,19 @@ class Inscripciones_2:
             return None
 
     def valida_Fecha(self, event=None):     
-            if event.char.isdigit() or event.char == '':
-                fecha_Ingresada = self.fecha.get()
-                if len(fecha_Ingresada) > 10:
-                    messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
-                    self.fecha.delete(10, "end")
-                num_char = 0
-                for i in fecha_Ingresada:
-                    num_char += 1
-                if num_char == 2: self.fecha.insert(2, "/")
-                if num_char  == 5: self.fecha.insert(6, "/")
-            else:
-                self.fecha.delete(len(self.fecha.get())-1, "end")
-                messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+        if event.char.isdigit() or event.char == '':
+            fecha_Ingresada = self.fecha.get()
+            if len(fecha_Ingresada) > 10:
+                messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
+                self.fecha.delete(10, "end")
+            num_char = 0
+            for i in fecha_Ingresada:
+                num_char += 1
+            if num_char == 2: self.fecha.insert(2, "/")
+            if num_char  == 5: self.fecha.insert(6, "/")
+        else:
+            self.fecha.delete(len(self.fecha.get())-1, "end")
+            messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
 
     def fecha_Valida(self):
         try: 
@@ -451,6 +451,7 @@ class Inscripciones_2:
 
                         except sqlite3.OperationalError:
                             None
+            
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
@@ -570,6 +571,9 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
             
             case "No_Inscripcion" :
+                """
+                Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is selected.
+                """
                 #Columnas del Treeview
                 self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
                 self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
@@ -588,7 +592,14 @@ class Inscripciones_2:
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
-                query = self.run_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {self.cmbx_No_Inscripcion.get()} ORDER BY Fecha_Inscripción DESC")
+                no_Inscripcion = self.cmbx_No_Inscripcion.get()
+                # Para volver a mostrar todos los inscritos
+                if no_Inscripcion == "Todos":
+                    query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
+                    self.cmbx_No_Inscripcion.delete(0, "end") # Borra el texto "Todos" del combobox
+                # Para mostrar solo un número de inscripción
+                else:
+                    query = self.run_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {no_Inscripcion} ORDER BY Fecha_Inscripción DESC")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
      
@@ -694,6 +705,15 @@ class Inscripciones_2:
     '''Funciones archivadas'''
     #def clean_String(string):
     #    return string.replace('{', '').replace('}', '')
+
+
+    #self.cmbx_No_Inscripcion.bind("<BackSpace>", lambda _:self.create_Treeview("Inscritos"))
+        #self.cmbx_No_Inscripcion.bind("<KeyRelease>", self.valida_No_Inscripcion)
+    
+    #def valida_No_Inscripcion(self, event=None):
+    #    if not event.char.isdigit():
+    #        self.cmbx_No_Inscripcion.delete(0, "end")
+    #        messagebox.showerror(message="Por favor seleccione un número de la lista u oprima la tecla BackSpace para mostrar todos los inscritos.", title="Error")
 
 # ================================================================================================================
 if __name__ == "__main__":
