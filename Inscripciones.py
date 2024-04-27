@@ -137,6 +137,8 @@ class Inscripciones_2:
         self.btnEditar.configure(text='Editar')
         self.btnEditar.place(anchor="nw", x=300, y=260)
         self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
+        self.id = -1 # Índice para saber si el programa está guardando (INSERT) o editando (UPDATE)
+        self.prev_Course = "" # Variable para guardar el curso original al oprimir el botón Editar
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
         self.btnEliminar.configure(text='Eliminar')
@@ -197,6 +199,7 @@ class Inscripciones_2:
         count = result[0][0]
         return count > 0
     
+    # To be checked... (NOT IN USE)
     def inscrito_Existente(self, id_Alumno):
         query = f"SELECT No_Inscripción FROM Inscritos WHERE Id_Alumno = '{id_Alumno}'"
         result = self.run_Query(query)
@@ -370,18 +373,48 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                if self.check_Entries():
-                    day, month, year = map(str, self.fecha.get().split('/'))
-                    self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso, Horario) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
-                    self.create_Treeview("Inscritos")
-                    ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                    self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-                    messagebox.showinfo(title="Bueno", message="Guardado con éxito")
-                else:
-                    if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
-                    elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
-                        messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                # Para guardar nueva entrada...
+                if self.id == -1:
+                    if self.check_Entries():
+                        day, month, year = map(str, self.fecha.get().split('/'))
+                        self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso, Horario) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
+                        self.create_Treeview("Inscritos")
+                        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                        self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                        messagebox.showinfo(title="Bueno", message="Guardado con éxito")
+                    else:
+                        if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
+                            messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                        elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
+                            messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                # Para editar...
+                else :
+                    # Para editar solo el horario...
+                    if str(self.prev_Course) == self.cmbx_Id_Curso.get():
+                        if not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
+                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id}")
+                            self.create_Treeview("Inscritos")
+                            messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
+                        else:
+                            messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                    # Para editar curso (y horario)...
+                    else:           
+                        if not(self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
+                            #day, month, year = map(str, self.fecha.get().split('/'))
+                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id}")
+                            self.create_Treeview("Inscritos")
+                            messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
+                        else:
+                            if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
+                                messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                            elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
+                                messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                    # Para volver a la normalidad...
+                    self.id = -1
+                    self.prev_Course = ""
+                    self.cmbx_Id_Alumno.configure(state='readonly')
+                    self.fecha.configure(state='normal')
+                    self.clear_Entrys("datos_Todo")
             
             case 'Ed':
                 selected = self.tView.focus()
@@ -394,6 +427,8 @@ class Inscripciones_2:
                         info = self.tView.item(selected)
                         self.clear_Entrys("datos_Curso")
                         self.insert_Course(info['text'],info['values'][2])
+                        self.id = clave
+                        self.prev_Course = info['values'][2]
                         self.cmbx_Id_Alumno.configure(state='disable')
                         self.fecha.configure(state='readonly')
 
