@@ -119,6 +119,7 @@ class Inscripciones_2:
         # Adición automática de nombres y apellidos al seleccionar un ID
         self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
         self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.change_Course)
+        self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.create_Treeview("No_Inscripcion"))
 
         ''' Botones  de la Aplicación'''
         #Botón Consultar
@@ -463,7 +464,9 @@ class Inscripciones_2:
         if type in ["Carreras", "Cursos", "Alumnos"]: # Elimina ventana emergente y treeView anterior
             self.ventana_btnconsultar.destroy()
             self.delete_Treeview()
-        
+        elif type == "No_Inscripcion":
+            self.delete_Treeview()
+
         # Crear Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
@@ -565,6 +568,29 @@ class Inscripciones_2:
                 query = self.run_Query("SELECT * FROM Alumnos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
+            
+            case "No_Inscripcion" :
+                #Columnas del Treeview
+                self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
+                self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
+                self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+                self.tView.column("tV_id_alumno",anchor="w",stretch=True,width=50,minwidth=50)
+                self.tView.column("tV_fecha_inscripcion",anchor="w",stretch=True,width=50,minwidth=10)
+                self.tView.column("tV_codigo",anchor="w",stretch=True,width=50,minwidth=10)
+                self.tView.column("tV_horario", anchor="w", stretch=True, width=50, minwidth=25)
+                #Cabeceras
+                self.tView.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
+                self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
+                self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+                self.tView.heading("tV_horario", anchor="w", text='Horario')
+                self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                #Configura los datos de la tabla
+                query = self.run_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {self.cmbx_No_Inscripcion.get()} ORDER BY Fecha_Inscripción DESC")
+                for i in query:
+                    self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
      
         #Scrollbars
         self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
