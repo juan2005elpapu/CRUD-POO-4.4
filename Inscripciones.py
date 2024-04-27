@@ -58,8 +58,11 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno", state="readonly")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=90, y=80)
-        ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
-        self.cmbx_Id_Alumno['values'] = ids_Alumnos
+        self.ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
+        self.lista_Ids_Alumnos = []
+        for tupla in self.ids_Alumnos:
+            self.lista_Ids_Alumnos.append(tupla[0])
+        self.cmbx_Id_Alumno['values'] = self.ids_Alumnos
         #self.cmbx_Id_Alumno.DropDownStyle=ComboBoxStyle.DropDownList
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
@@ -84,8 +87,11 @@ class Inscripciones_2:
         #Combobox Curso
         self.cmbx_Id_Curso = ttk.Combobox(self.frm_1, name="cmbx_id_curso", state="readonly")
         self.cmbx_Id_Curso.place(anchor="nw", width=100, x=90, y=185)
-        ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
-        self.cmbx_Id_Curso['values'] = ids_Cursos
+        self.ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
+        self.lista_Ids_Cursos = []
+        for tupla in self.ids_Cursos:
+            self.lista_Ids_Cursos.append(tupla[0])
+        self.cmbx_Id_Curso['values'] = self.ids_Cursos
         #Label Descripción del Curso
         self.lblDscCurso = ttk.Label(self.frm_1, name="lbldsccurso")
         self.lblDscCurso.configure(background="#f7f9fd",state="normal",text='Curso:')
@@ -105,10 +111,10 @@ class Inscripciones_2:
         self.cmbx_Horario = ttk.Combobox(self.frm_1, name="hora", state="readonly")
         self.cmbx_Horario.configure(justify="left", width=166)
         self.cmbx_Horario.place(anchor="nw", width=110, x=670, y=185)
-        horarios_Dias = ["lun. y miérc.", "mar. y juev."]
-        self.cmbx_Dias['values'] = horarios_Dias
-        horarios_Horas = ["7:00 - 9:00", "9:00 - 11:00", "11:00 - 13:00", "14:00 - 16:00", "16:00 - 18:00"]
-        self.cmbx_Horario['values'] = horarios_Horas
+        self.horarios_Dias = ["lun. y miérc.", "mar. y juev."]
+        self.cmbx_Dias['values'] = self.horarios_Dias
+        self.horarios_Horas = ["7:00 - 9:00", "9:00 - 11:00", "11:00 - 13:00", "14:00 - 16:00", "16:00 - 18:00"]
+        self.cmbx_Horario['values'] = self.horarios_Horas
 
         # Adición automática de nombres y apellidos al seleccionar un ID
         self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
@@ -130,7 +136,7 @@ class Inscripciones_2:
         self.btnEditar = ttk.Button(self.frm_1, name="btneditar")
         self.btnEditar.configure(text='Editar')
         self.btnEditar.place(anchor="nw", x=300, y=260)
-        #self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
+        self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
         self.btnEliminar.configure(text='Eliminar')
@@ -387,40 +393,39 @@ class Inscripciones_2:
                     elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
                         messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
             
-            case "C":
-                self.cmbx_Id_Alumno.set("")
-                self.cmbx_Id_Curso.set("")
-                self.nombres.configure(state = "normal")
-                self.apellidos.configure(state = "normal")
-                self.descripc_Curso.configure(state = "normal")
-                self.cmbx_Horario.configure(state = "normal")
-                self.nombres.delete(0, "end")
-                self.apellidos.delete(0, "end")
-                self.descripc_Curso.delete(0, "end")
-                self.cmbx_Horario.delete(0, "end")
-                self.nombres.configure(state = "readonly")
-                self.apellidos.configure(state = "readonly")
-                self.descripc_Curso.configure(state = "readonly")
-                self.cmbx_Horario.configure(state = "readonly")
-                self.cmbx_No_Inscripcion.set("")
-                self.fecha.delete(0, "end")
+            case 'Ed':
+                selected = self.tView.focus()
+                clave = self.tView.item(selected,'text')
+                if clave == '':
+                    messagebox.showwarning("Editar", 'Debes selecccionar un elemento.')
+                else:
+                    respuesta = messagebox.askyesno(title="Editar", message="Desea editar")
+                    if respuesta:
+                        self.clear_Entrys("datos_Curso")
+                        self.insert_Course(44,1000005)
 
-            case "El":
+            case 'El':
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
                 if clave == '':
                     messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
                 else:
-                    try:
-                        numero_Inscrito = self.seleccionar_Dato(event=None)
-                        self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
-                        self.create_Treeview("Inscritos")
-                        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                        self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-                        messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
+                    respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
+                    if respuesta:     
+                        try:
+                            numero_Inscrito = self.seleccionar_Dato(event=None)
+                            self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
+                            self.create_Treeview("Inscritos")
+                            ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                            self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                            messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
 
-                    except sqlite3.OperationalError:
-                        None
+                        except sqlite3.OperationalError:
+                            None
+            case 'C':
+                respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
+                if respuesta:
+                    self.clear_Entrys("datos_Todo")
 
     '''================================================================================================================'''      
     '''Funciones para manejar TreeViews'''
@@ -573,6 +578,59 @@ class Inscripciones_2:
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
 
+    '''Función para insertar campos curso'''
+    def insert_Course(self,num_Inscripcion, id_Curso):
+        query= f"SELECT * FROM Inscritos WHERE No_Inscripción = {num_Inscripcion} AND Código_Curso = '{id_Curso}'"
+        result=self.run_Query(query)
+        result=list(result[0])
+        fecha=result[2].split("-")
+        newfecha=str(fecha[2])+'/'+str(fecha[1])+'/'+str(fecha[0])
+        self.fecha.insert(0,newfecha)
+        result.pop(2)
+        horario=result[3].split(" ")
+        dia = " ".join(horario[:3])
+        hora = " ".join(horario[3:])
+        result[3]=dia
+        result.append(hora)
+        entries = [self.cmbx_Id_Alumno, self.cmbx_Id_Curso, self.cmbx_Dias, self.cmbx_Horario]
+        lists = [self.lista_Ids_Alumnos, self.lista_Ids_Cursos, self.horarios_Dias, self.horarios_Horas]
+        for i in range(len(entries)):
+            entries[i].current(lists[i].index(result[i+1]))
+
+    '''Función para limpiar campos'''
+    def clear_Entrys(self,vaciar):
+        match vaciar:
+            case "datos_Alumno":
+                self.cmbx_Id_Alumno.set("")
+                self.nombres.configure(state = "normal")
+                self.apellidos.configure(state = "normal")
+                self.nombres.delete(0, "end")
+                self.apellidos.delete(0, "end")
+                self.nombres.configure(state = "readonly")
+                self.apellidos.configure(state = "readonly")
+            case "datos_Curso":
+                self.cmbx_Id_Curso.set("")
+                self.descripc_Curso.configure(state = "normal")
+                self.descripc_Curso.delete(0, "end")
+                self.descripc_Curso.configure(state = "readonly")
+                self.cmbx_Horario.set("")
+                self.cmbx_Dias.set("")
+            case "datos_Todo":
+                self.cmbx_Id_Alumno.set("")
+                self.cmbx_Id_Curso.set("")
+                self.nombres.configure(state = "normal")
+                self.apellidos.configure(state = "normal")
+                self.descripc_Curso.configure(state = "normal")
+                self.nombres.delete(0, "end")
+                self.apellidos.delete(0, "end")
+                self.descripc_Curso.delete(0, "end")
+                self.nombres.configure(state = "readonly")
+                self.apellidos.configure(state = "readonly")
+                self.descripc_Curso.configure(state = "readonly")
+                self.cmbx_Horario.set("")
+                self.cmbx_Dias.set("")
+                self.cmbx_No_Inscripcion.set("")
+                self.fecha.delete(0, "end")
     '''================================================================================================================'''      
     '''Funciones archivadas'''
     #def clean_String(string):
