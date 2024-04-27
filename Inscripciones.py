@@ -197,18 +197,8 @@ class Inscripciones_2:
         count = result[0][0]
         return count > 0
     
-    def inscrito_Existente(self, tabla, campo_1, campo_2):
-        """
-        Checks if a given field value already exists in a specified table.
-
-        Args:
-            campo (str): The field value to check.
-            tabla (str): The table to search in.
-
-        Returns:
-            bool: True if the field value exists in the table, False otherwise.
-        """
-        query = f"SELECT No_Inscripción FROM {tabla} WHERE Id_Alumno = '{campo_1}'"
+    def inscrito_Existente(self, id_Alumno):
+        query = f"SELECT No_Inscripción FROM Inscritos WHERE Id_Alumno = '{id_Alumno}'"
         result = self.run_Query(query)
         if len(result) > 0:
             numero_inscripcion = result[0][0]
@@ -401,8 +391,11 @@ class Inscripciones_2:
                 else:
                     respuesta = messagebox.askyesno(title="Editar", message="Desea editar")
                     if respuesta:
+                        info = self.tView.item(selected)
                         self.clear_Entrys("datos_Curso")
-                        self.insert_Course(44,1000005)
+                        self.insert_Course(info['text'],info['values'][2])
+                        self.cmbx_Id_Alumno.configure(state='disable')
+                        self.fecha.configure(state='readonly')
 
             case 'El':
                 selected = self.tView.focus()
@@ -425,6 +418,8 @@ class Inscripciones_2:
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
+                    self.cmbx_Id_Alumno.configure(state='readonly')
+                    self.fecha.configure(state='normal')
                     self.clear_Entrys("datos_Todo")
 
     '''================================================================================================================'''      
