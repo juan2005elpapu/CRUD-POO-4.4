@@ -52,7 +52,7 @@ class Inscripciones_2:
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
         self.fecha.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
         self.fecha.bind("<KeyRelease>", self.valida_Fecha)
-        
+
         #Label Alumno
         self.lblIdAlumno = ttk.Label(self.frm_1, name="lblidalumno")
         self.lblIdAlumno.configure(background="#f7f9fd", text='Id Alumno:')
@@ -155,7 +155,7 @@ class Inscripciones_2:
         separator1.configure(orient="horizontal")
         separator1.place(anchor="nw", width=796, x=2, y=245)
 
-        ''' Treeview de la Aplicación'''
+        ''' Treeview inicial de la Aplicación'''
         self.create_Treeview("Inscritos")
 
         # Main widget
@@ -209,9 +209,9 @@ class Inscripciones_2:
             return numero_inscripcion
         else:
             return None
-
+    
     def valida_Fecha(self, event=None):     
-        if event.char.isdigit() or event.char == '':
+        if event.char.isdigit() or event.char == "" or event.keysym == "Return":
             fecha_Ingresada = self.fecha.get()
             if len(fecha_Ingresada) > 10:
                 messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
