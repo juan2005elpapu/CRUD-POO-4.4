@@ -195,7 +195,7 @@ class Inscripciones_2:
         Returns:
             bool: True if the student already has a course with the given schedule, False otherwise.
         """
-        query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{alumno}' AND Horario = '{dias + " " + horario}'"
+        query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{alumno}' AND Horario = '{dias} {horario}'"
         result = self.run_Query(query)
         count = result[0][0]
         return count > 0
@@ -381,6 +381,7 @@ class Inscripciones_2:
                         self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso, Horario) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.create_Treeview("Inscritos")
                         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                        ids_No_Inscripcion.insert(0, "Todos")
                         self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
                         messagebox.showinfo(title="Bueno", message="Guardado con éxito")
                     else:
@@ -446,6 +447,7 @@ class Inscripciones_2:
                             self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
                             self.create_Treeview("Inscritos")
                             ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                            ids_No_Inscripcion.insert(0, "Todos")
                             self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
                             messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
 
