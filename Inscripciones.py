@@ -38,9 +38,15 @@ class Inscripciones_2:
         #Combobox No. Inscripción
         self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbxnoincripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
-        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-        ids_No_Inscripcion.insert(0, "Todos")
-        self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+        self.ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+        self.lista_No_Inscripcion = []
+        for tupla in self.ids_No_Inscripcion:
+            self.lista_No_Inscripcion.append(tupla[0])
+        set_Ids_No_Inscripcion = set(self.ids_No_Inscripcion)
+        self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
+        self.lista_No_Inscripcion.sort()
+        self.lista_No_Inscripcion.insert(0, "Todos")
+        self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
         self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.create_Treeview("No_Inscripcion"))
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
@@ -67,7 +73,6 @@ class Inscripciones_2:
         self.cmbx_Id_Alumno['values'] = self.ids_Alumnos
         # Adición automática de nombres y apellidos al seleccionar un ID
         self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
-        #self.cmbx_Id_Alumno.DropDownStyle=ComboBoxStyle.DropDownList
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
@@ -378,12 +383,20 @@ class Inscripciones_2:
                 if self.id == -1:
                     if self.check_Entries():
                         day, month, year = map(str, self.fecha.get().split('/'))
-                        self.run_Query(f"INSERT INTO Inscritos (Id_Alumno, Fecha_Inscripción, Código_Curso, Horario) VALUES ('{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
+                        if self.inscrito_Existente(self.cmbx_Id_Alumno.get()) == None:
+                            num_Inscripcion = len(self.lista_No_Inscripcion)
+                            #self.lista_No_Inscripcion.append(num_Inscripcion)   
+                        else:
+                            num_Inscripcion = self.inscrito_Existente(self.cmbx_Id_Alumno.get())
+                        self.run_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.create_Treeview("Inscritos")
                         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                        ids_No_Inscripcion.insert(0, "Todos")
-                        self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-                        messagebox.showinfo(title="Bueno", message="Guardado con éxito")
+                        set_Ids_No_Inscripcion = set(ids_No_Inscripcion)
+                        self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
+                        self.lista_No_Inscripcion.sort()
+                        self.lista_No_Inscripcion.insert(0, "Todos")
+                        self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
+                        messagebox.showinfo(title="guardar", message="Guardado con éxito")
                     else:
                         if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                             messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
