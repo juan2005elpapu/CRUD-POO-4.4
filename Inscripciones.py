@@ -667,6 +667,8 @@ class Inscripciones_2:
         result=list(result[0])
         fecha=result[2].split("-")
         newfecha=str(fecha[2])+'/'+str(fecha[1])+'/'+str(fecha[0])
+        self.fecha.configure(state="normal")
+        self.fecha.delete(0, "end")
         self.fecha.insert(0,newfecha)
         result.pop(2)
         horario=result[3].split(" ")
