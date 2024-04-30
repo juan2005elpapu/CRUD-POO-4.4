@@ -442,7 +442,7 @@ class Inscripciones_2:
                     if respuesta:
                         info = self.tView.item(selected)
                         self.clear_Entrys("datos_Curso")
-                        self.insert_Course(info['text'],info['values'][2])
+                        self.insert_Data(info['text'],info['values'][2])
                         self.id = clave
                         self.prev_Course = info['values'][2]
                         self.cmbx_Id_Alumno.configure(state='disable')
@@ -471,6 +471,7 @@ class Inscripciones_2:
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
+                    self.create_Treeview("Inscritos")
                     self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
@@ -618,9 +619,12 @@ class Inscripciones_2:
                 if no_Inscripcion == "Todos":
                     query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
                     self.cmbx_No_Inscripcion.delete(0, "end") # Borra el texto "Todos" del combobox
+                    self.clear_Entrys("datos_Alumno")
                 # Para mostrar solo un número de inscripción
                 else:
                     query = self.run_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {no_Inscripcion} ORDER BY Fecha_Inscripción DESC")
+                    # Función para insertar información del alumno
+                    self.insert_Student(no_Inscripcion)
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
      
@@ -666,8 +670,8 @@ class Inscripciones_2:
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
 
-    '''Función para insertar campos curso'''
-    def insert_Course(self,num_Inscripcion, id_Curso):
+    '''Función para insertar información al editar'''
+    def insert_Data(self,num_Inscripcion, id_Curso):
         query= f"SELECT * FROM Inscritos WHERE No_Inscripción = {num_Inscripcion} AND Código_Curso = '{id_Curso}'"
         result=self.run_Query(query)
         result=list(result[0])
@@ -697,6 +701,13 @@ class Inscripciones_2:
         self.change_Full_Name()
         self.change_Course()
         
+    def insert_Student(self, no_Inscripcion):
+        query = f"SELECT Id_Alumno FROM Inscritos WHERE No_Inscripción = {no_Inscripcion}"
+        results = self.run_Query(query)
+        id_Alumno = results[0][0]
+        self.cmbx_Id_Alumno.current(self.lista_Ids_Alumnos.index(id_Alumno))
+        self.cmbx_Id_Alumno.configure(state="disable")
+        self.change_Full_Name()
 
     '''Función para limpiar campos'''
     def clear_Entrys(self,vaciar):
@@ -709,6 +720,7 @@ class Inscripciones_2:
                 self.apellidos.delete(0, "end")
                 self.nombres.configure(state = "readonly")
                 self.apellidos.configure(state = "readonly")
+                self.cmbx_Id_Alumno.configure(state="readonly")
             case "datos_Curso":
                 self.cmbx_Id_Curso.set("")
                 self.descripc_Curso.configure(state = "normal")
@@ -725,6 +737,7 @@ class Inscripciones_2:
                 self.nombres.delete(0, "end")
                 self.apellidos.delete(0, "end")
                 self.descripc_Curso.delete(0, "end")
+                self.cmbx_Id_Alumno.configure(state="readonly")
                 self.nombres.configure(state = "readonly")
                 self.apellidos.configure(state = "readonly")
                 self.descripc_Curso.configure(state = "readonly")
