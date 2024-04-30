@@ -132,7 +132,7 @@ class Inscripciones_2:
         self.img = PhotoImage(file=ruta_Lupa)
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
-        self.btnConsultar.bind("<1>", lambda _:self.action_btnconsultar())
+        self.btnConsultar.bind("<1>", self.action_btnconsultar)
         #Botón Guardar
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
@@ -301,7 +301,7 @@ class Inscripciones_2:
     
     '''================================================================================================================'''      
     '''Función para botón Consultar (<Lupa>)'''
-    def action_btnconsultar(self):
+    def action_btnconsultar(self, event):
         self.ventana_btnconsultar = tk.Tk()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
         alto=200
@@ -477,11 +477,15 @@ class Inscripciones_2:
     '''================================================================================================================'''      
     '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
-        if type in ["Carreras", "Cursos", "Alumnos"]: # Elimina ventana emergente y treeView anterior
+        # Elimina ventana emergente
+        if type in ["Carreras", "Cursos", "Alumnos"]:
             self.ventana_btnconsultar.destroy()
+        
+        # Elimina TreeView anterior (si existe)
+        try :
             self.delete_Treeview()
-        elif type == "No_Inscripcion":
-            self.delete_Treeview()
+        except :
+            pass
 
         # Crear Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
