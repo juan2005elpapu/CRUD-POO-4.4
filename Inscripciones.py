@@ -42,7 +42,7 @@ class Inscripciones_2:
         self.lista_No_Inscripcion = []
         for tupla in self.ids_No_Inscripcion:
             self.lista_No_Inscripcion.append(tupla[0])
-        set_Ids_No_Inscripcion = set(self.ids_No_Inscripcion)
+        set_Ids_No_Inscripcion = set(self.lista_No_Inscripcion)
         self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
         self.lista_No_Inscripcion.sort()
         self.lista_No_Inscripcion.insert(0, "Todos")
@@ -383,9 +383,9 @@ class Inscripciones_2:
                 if self.id == -1:
                     if self.check_Entries():
                         day, month, year = map(str, self.fecha.get().split('/'))
+                        # Verifica si debe crear un nuevo No. de Inscripción
                         if self.inscrito_Existente(self.cmbx_Id_Alumno.get()) == None:
                             num_Inscripcion = len(self.lista_No_Inscripcion)
-                            #self.lista_No_Inscripcion.append(num_Inscripcion)   
                         else:
                             num_Inscripcion = self.inscrito_Existente(self.cmbx_Id_Alumno.get())
                         self.run_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
@@ -427,6 +427,7 @@ class Inscripciones_2:
                     # Para volver a la normalidad...
                     self.id = -1
                     self.prev_Course = ""
+                    self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
                     self.clear_Entrys("datos_Todo")
@@ -470,6 +471,7 @@ class Inscripciones_2:
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
+                    self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
                     self.clear_Entrys("datos_Todo")
@@ -669,12 +671,20 @@ class Inscripciones_2:
         query= f"SELECT * FROM Inscritos WHERE No_Inscripción = {num_Inscripcion} AND Código_Curso = '{id_Curso}'"
         result=self.run_Query(query)
         result=list(result[0])
+
+        # Cambia valor en Fecha
         fecha=result[2].split("-")
         newfecha=str(fecha[2])+'/'+str(fecha[1])+'/'+str(fecha[0])
         self.fecha.configure(state="normal")
         self.fecha.delete(0, "end")
         self.fecha.insert(0,newfecha)
         result.pop(2)
+        
+        # Cambia valor en No. de Inscripción
+        self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(num_Inscripcion))
+        self.cmbx_No_Inscripcion.configure(state="disable")
+
+        # Cambia valor en las demás entradas
         horario=result[3].split(" ")
         dia = " ".join(horario[:3])
         hora = " ".join(horario[3:])
