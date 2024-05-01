@@ -301,14 +301,14 @@ class Inscripciones_2:
     
     '''================================================================================================================'''      
     '''Función para botón Consultar (<Lupa>)'''
-        # Ventana principal    
+        # Ventana consultar    
     def action_btnconsultar(self, event):
         self.ventana_btnconsultar = tk.Toplevel()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
         alto=200
         ancho=300
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto))
-        #Centrar Ventana
+        #Centrar Ventana consultar
         x = self.ventana_btnconsultar.winfo_screenwidth()
         y = self.ventana_btnconsultar.winfo_screenheight()
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
@@ -461,20 +461,38 @@ class Inscripciones_2:
                 if clave == '':
                     messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
                 else:
-                    respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
-                    if respuesta:     
-                        try:
-                            numero_Inscrito = self.seleccionar_Dato(event=None)
-                            self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
-                            self.create_Treeview("Inscritos")
-                            ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                            ids_No_Inscripcion.insert(0, "Todos")
-                            self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-                            messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
+                    # Ventana eliminar
+                    self.ventana_btneliminar = tk.Toplevel()
+                    self.ventana_btneliminar.configure(background="#f7f9fd", height=165, width=260)
+                    alto=165
+                    ancho=260
+                    self.ventana_btneliminar.geometry(str(ancho)+"x"+str(alto))
+                    #Centrar Ventana eliminar
+                    x = self.ventana_btneliminar.winfo_screenwidth()
+                    y = self.ventana_btneliminar.winfo_screenheight()
+                    self.ventana_btneliminar.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
+                    self.ventana_btneliminar.resizable(False, False)
+                    self.ventana_btneliminar.title('Eliminar')
+                    ruta_ventana_btneliminar = self.dir_pro + "\\img\\basura.ico"
+                    self.ventana_btneliminar.iconbitmap(bitmap=ruta_ventana_btneliminar)
 
-                        except sqlite3.OperationalError:
-                            None
-            
+                    # Botones de la ventana eliminar
+
+                    self.cuadro = tk.LabelFrame(self.ventana_btneliminar, background="#f7f9fd")
+                    self.opcion_seleccionada = tk.IntVar()
+                    self.opcion1 = tk.Radiobutton (self.cuadro, background="#f7f9fd", text= 'Borrar curso de este estudiante', width=220, anchor=tk.W, variable = self.opcion_seleccionada, value=1) 
+                    self.opcion1.pack()
+                    self.opcion2 = tk.Radiobutton (self.cuadro, background="#f7f9fd", text= 'Borrar estudiantes de este curso', width=220, anchor=tk.W, variable = self.opcion_seleccionada, value=2) 
+                    self.opcion2.pack()
+                    self.opcion3 = tk.Radiobutton (self.cuadro, background="#f7f9fd", text= 'Borrar cursos de este estudiante', width=220, anchor=tk.W, variable = self.opcion_seleccionada, value=3) 
+                    self.opcion3.pack()
+                    self.cuadro.pack(padx=20, pady=20)
+
+                    self.btneliminar_opcion = ttk.Button(self.ventana_btneliminar, name="btneliminar_opcion")
+                    self.btneliminar_opcion.configure(text='Eliminar')
+                    self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
+                    self.btneliminar_opcion.bind("<1>", lambda _:self.action_btneliminar())    
+
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
@@ -485,6 +503,29 @@ class Inscripciones_2:
                     self.clear_Entrys("datos_Todo")
 
     '''================================================================================================================'''      
+    
+    '''Funcion para ventana eliminar'''
+    def action_btneliminar(self):
+        opcion_borrar = self.opcion_seleccionada.get()
+        if opcion_borrar == 1:
+            respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
+            if respuesta:     
+                try:
+                    self.ventana_btneliminar.destroy()
+                    numero_Inscrito = self.seleccionar_Dato(event=None)
+                    self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
+                    self.create_Treeview("Inscritos")
+                    ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+                    ids_No_Inscripcion.insert(0, "Todos")
+                    self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+                    messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
+
+                except sqlite3.OperationalError:
+                    None
+        elif opcion_borrar == 2:
+            pass
+        elif opcion_borrar == 3:
+            pass
     '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
         # Elimina ventana emergente
