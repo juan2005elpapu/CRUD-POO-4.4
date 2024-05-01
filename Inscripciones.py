@@ -301,17 +301,20 @@ class Inscripciones_2:
     
     '''================================================================================================================'''      
     '''Función para botón Consultar (<Lupa>)'''
+        # Ventana principal    
     def action_btnconsultar(self, event):
-        self.ventana_btnconsultar = tk.Tk()
+        self.ventana_btnconsultar = tk.Toplevel()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
         alto=200
-        ancho=250
-        self.ventana_btnconsultar.eval('tk::PlaceWindow . center')
+        ancho=300
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto))
-        self.ventana_btnconsultar.resizable(False,False)
+        #Centrar Ventana
+        x = self.ventana_btnconsultar.winfo_screenwidth()
+        y = self.ventana_btnconsultar.winfo_screenheight()
+        self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
+        self.ventana_btnconsultar.resizable(False, False)
         self.ventana_btnconsultar.title('Consultar')
-        ruta_ventana_btnconsultar = path.dirname(__file__)
-        ruta_ventana_btnconsultar += "\\img\\lupa.ico"
+        ruta_ventana_btnconsultar = self.dir_pro + "\\img\\lupa.ico"
         self.ventana_btnconsultar.iconbitmap(bitmap=ruta_ventana_btnconsultar)
 
         #Botones de la ventana consultar
@@ -330,6 +333,10 @@ class Inscripciones_2:
         self.btnconsultar_cursos.configure(text='Listado de cursos')
         self.btnconsultar_cursos.place(anchor="nw", x=75, y=125)
         self.btnconsultar_cursos.bind("<1>", lambda _:self.create_Treeview("Cursos"))
+
+        def on_Close():
+            self.ventana_btnconsultar.destroy()
+        self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", on_Close)
 
     '''================================================================================================================'''      
     '''Funciones auxiliares al botón Guardar (G)'''
