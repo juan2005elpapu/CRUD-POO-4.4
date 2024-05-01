@@ -304,8 +304,8 @@ class Inscripciones_2:
         # Ventana consultar    
     def action_btnconsultar(self, event):
         self.ventana_btnconsultar = tk.Toplevel()
-        self.ventana_btnconsultar.configure(background="#f7f9fd", height=200, width=300)
-        alto=200
+        self.ventana_btnconsultar.configure(background="#f7f9fd", height=330, width=300)
+        alto=330
         ancho=300
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto))
         #Centrar Ventana consultar
@@ -317,26 +317,92 @@ class Inscripciones_2:
         ruta_ventana_btnconsultar = self.dir_pro + "\\img\\lupa.ico"
         self.ventana_btnconsultar.iconbitmap(bitmap=ruta_ventana_btnconsultar)
 
+        #Label listados
+        self.lblListados = ttk.Label(self.ventana_btnconsultar, name="lblListados")
+        self.lblListados.configure(background="#f7f9fd", text='Consultar listados')
+        self.lblListados.place(anchor="nw", x=20, y=20)
+
         #Botones de la ventana consultar
 
         self.btnconsultar_alumnos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_alumnos")
-        self.btnconsultar_alumnos.configure(text='Listado de alumnos')
-        self.btnconsultar_alumnos.place(anchor="nw", x=75, y=25)
+        self.btnconsultar_alumnos.configure(text='Alumnos')
+        self.btnconsultar_alumnos.place(anchor="nw", x=20, y=50)
         self.btnconsultar_alumnos.bind("<1>", lambda _:self.create_Treeview("Alumnos"))
 
         self.btnconsultar_carreras = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_carreras")
-        self.btnconsultar_carreras.configure(text='Listado de carreras')
-        self.btnconsultar_carreras.place(anchor="nw", x=75, y=75)
+        self.btnconsultar_carreras.configure(text='Carreras')
+        self.btnconsultar_carreras.place(anchor="nw", x=112, y=50)
         self.btnconsultar_carreras.bind("<1>", lambda _:self.create_Treeview("Carreras"))
 
         self.btnconsultar_cursos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_cursos")
-        self.btnconsultar_cursos.configure(text='Listado de cursos')
-        self.btnconsultar_cursos.place(anchor="nw", x=75, y=125)
+        self.btnconsultar_cursos.configure(text='Cursos')
+        self.btnconsultar_cursos.place(anchor="nw", x=205, y=50)
         self.btnconsultar_cursos.bind("<1>", lambda _:self.create_Treeview("Cursos"))
 
-        def on_Close():
-            self.ventana_btnconsultar.destroy()
-        self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", on_Close)
+        #Separador
+        separator1 = ttk.Separator(self.ventana_btnconsultar)
+        separator1.configure(orient="horizontal")
+        separator1.place(anchor="nw", width=260, x=20, y=90)
+
+        #Label filtros
+        self.lblFiltros = ttk.Label(self.ventana_btnconsultar, name="lblFiltros")
+        self.lblFiltros.configure(background="#f7f9fd", text='Filtrar')
+        self.lblFiltros.place(anchor="nw", x=20, y=110)
+
+        #Label filtro 1
+        self.lblFiltro1 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro1")
+        self.lblFiltro1.configure(background="#f7f9fd", text=' - Cursos de un alumno')
+        self.lblFiltro1.place(anchor="nw", x=20, y=140)
+
+        #Label seleccione alumno
+        self.lblSlcalumno = ttk.Label(self.ventana_btnconsultar, name="lblSlcalumno")
+        self.lblSlcalumno.configure(background="#f7f9fd", text='Seleccione un alumno:')
+        self.lblSlcalumno.place(anchor="nw", x=35, y=170)
+
+        #Combobox Alumno
+        self.cmbx_Id_Alumno = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
+        self.cmbx_Id_Alumno.place(anchor="nw", width=90, x=175, y=170)
+        self.ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
+        self.lista_Ids_Alumnos = []
+        for tupla in self.ids_Alumnos:
+            self.lista_Ids_Alumnos.append(tupla[0])
+        self.cmbx_Id_Alumno['values'] = self.ids_Alumnos
+
+        #Label filtro 2
+        self.lblFiltro2 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro2")
+        self.lblFiltro2.configure(background="#f7f9fd", text=' - Alumnos en un curso')
+        self.lblFiltro2.place(anchor="nw", x=20, y=200)
+
+        #Label seleccione curso
+        self.lblSlccurso = ttk.Label(self.ventana_btnconsultar, name="lblSlccurso")
+        self.lblSlccurso.configure(background="#f7f9fd", text='Seleccione un curso:')
+        self.lblSlccurso.place(anchor="nw", x=35, y=230)
+
+        #Combobox Curso
+        self.cmbx_Id_Curso = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
+        self.cmbx_Id_Curso.place(anchor="nw", width=90, x=175, y=230)
+        self.ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
+        self.lista_Ids_Cursos = []
+        for tupla in self.ids_Cursos:
+            self.lista_Ids_Cursos.append(tupla[0])
+        self.cmbx_Id_Curso['values'] = self.ids_Cursos
+
+        #Label filtros 3
+        self.lblFiltro3 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro3")
+        self.lblFiltro3.configure(background="#f7f9fd", text=' - Inscripciones por fecha')
+        self.lblFiltro3.place(anchor="nw", x=20, y=260)
+
+        #Label ingrese una fecha
+        self.lblIgfecha = ttk.Label(self.ventana_btnconsultar, name="lblIgfecha")
+        self.lblIgfecha.configure(background="#f7f9fd", text='Ingrese una fecha:')
+        self.lblIgfecha.place(anchor="nw", x=35, y=290)
+
+        #Entry Fecha
+        self.fecha = ttk.Entry(self.ventana_btnconsultar, name="fecha")
+        self.fecha.configure(justify="center")
+        self.fecha.place(anchor="nw", width=90, x=175, y=290)
+        self.fecha.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
+        self.fecha.bind("<KeyRelease>", self.valida_Fecha)
 
     '''================================================================================================================'''      
     '''Funciones auxiliares al botón Guardar (G)'''
@@ -461,12 +527,14 @@ class Inscripciones_2:
                 if clave == '':
                     messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
                 else:
+
                     # Ventana eliminar
                     self.ventana_btneliminar = tk.Toplevel()
                     self.ventana_btneliminar.configure(background="#f7f9fd", height=165, width=260)
                     alto=165
                     ancho=260
                     self.ventana_btneliminar.geometry(str(ancho)+"x"+str(alto))
+
                     #Centrar Ventana eliminar
                     x = self.ventana_btneliminar.winfo_screenwidth()
                     y = self.ventana_btneliminar.winfo_screenheight()
@@ -476,8 +544,7 @@ class Inscripciones_2:
                     ruta_ventana_btneliminar = self.dir_pro + "\\img\\basura.ico"
                     self.ventana_btneliminar.iconbitmap(bitmap=ruta_ventana_btneliminar)
 
-                    # Botones de la ventana eliminar
-
+                    # Radiobuttons
                     self.cuadro = tk.LabelFrame(self.ventana_btneliminar, background="#f7f9fd")
                     self.opcion_seleccionada = tk.IntVar()
                     self.opcion1 = tk.Radiobutton (self.cuadro, background="#f7f9fd", text= 'Borrar curso de este estudiante', width=220, anchor=tk.W, variable = self.opcion_seleccionada, value=1) 
@@ -487,7 +554,8 @@ class Inscripciones_2:
                     self.opcion3 = tk.Radiobutton (self.cuadro, background="#f7f9fd", text= 'Borrar cursos de este estudiante', width=220, anchor=tk.W, variable = self.opcion_seleccionada, value=3) 
                     self.opcion3.pack()
                     self.cuadro.pack(padx=20, pady=20)
-
+                    
+                    # Botón eliminar
                     self.btneliminar_opcion = ttk.Button(self.ventana_btneliminar, name="btneliminar_opcion")
                     self.btneliminar_opcion.configure(text='Eliminar')
                     self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
