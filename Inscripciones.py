@@ -359,14 +359,14 @@ class Inscripciones_2:
         self.lblSlcalumno.configure(background="#f7f9fd", text='Seleccione un alumno:')
         self.lblSlcalumno.place(anchor="nw", x=35, y=170)
 
-        #Combobox Alumno
-        self.cmbx_Id_Alumno = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
-        self.cmbx_Id_Alumno.place(anchor="nw", width=90, x=175, y=170)
+        #Combobox Alumno de ventana consulta
+        self.cmbx_Id_Alumno_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
+        self.cmbx_Id_Alumno_Consulta.place(anchor="nw", width=90, x=175, y=170)
         self.ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
         self.lista_Ids_Alumnos = []
         for tupla in self.ids_Alumnos:
             self.lista_Ids_Alumnos.append(tupla[0])
-        self.cmbx_Id_Alumno['values'] = self.ids_Alumnos
+        self.cmbx_Id_Alumno_Consulta['values'] = self.ids_Alumnos
 
         #Label filtro 2
         self.lblFiltro2 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro2")
@@ -378,14 +378,14 @@ class Inscripciones_2:
         self.lblSlccurso.configure(background="#f7f9fd", text='Seleccione un curso:')
         self.lblSlccurso.place(anchor="nw", x=35, y=230)
 
-        #Combobox Curso
-        self.cmbx_Id_Curso = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
-        self.cmbx_Id_Curso.place(anchor="nw", width=90, x=175, y=230)
+        #Combobox Curso  de ventana consulta
+        self.cmbx_Id_Curso_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
+        self.cmbx_Id_Curso_Consulta.place(anchor="nw", width=90, x=175, y=230)
         self.ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
         self.lista_Ids_Cursos = []
         for tupla in self.ids_Cursos:
             self.lista_Ids_Cursos.append(tupla[0])
-        self.cmbx_Id_Curso['values'] = self.ids_Cursos
+        self.cmbx_Id_Curso_Consulta['values'] = self.ids_Cursos
 
         #Label filtros 3
         self.lblFiltro3 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro3")
@@ -397,12 +397,12 @@ class Inscripciones_2:
         self.lblIgfecha.configure(background="#f7f9fd", text='Ingrese una fecha:')
         self.lblIgfecha.place(anchor="nw", x=35, y=290)
 
-        #Entry Fecha
-        self.fecha = ttk.Entry(self.ventana_btnconsultar, name="fecha")
-        self.fecha.configure(justify="center")
-        self.fecha.place(anchor="nw", width=90, x=175, y=290)
-        self.fecha.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
-        self.fecha.bind("<KeyRelease>", self.valida_Fecha)
+        #Entry Fecha de ventana consulta
+        self.Fecha_Consulta = ttk.Entry(self.ventana_btnconsultar, name="fecha")
+        self.Fecha_Consulta.configure(justify="center")
+        self.Fecha_Consulta.place(anchor="nw", width=90, x=175, y=290)
+        self.Fecha_Consulta.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
+        self.Fecha_Consulta.bind("<KeyRelease>", self.valida_Fecha)
 
     '''================================================================================================================'''      
     '''Funciones auxiliares al botón Guardar (G)'''
