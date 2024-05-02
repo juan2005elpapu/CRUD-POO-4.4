@@ -480,31 +480,43 @@ class Inscripciones_2:
                     # Para editar solo el horario...
                     if str(self.prev_Course) == self.cmbx_Id_Curso.get():
                         if not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id}")
+                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
                             self.create_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
+                            # Para volver a la normalidad...
+                            self.cmbx_No_Inscripcion.configure(state="readonly")
+                            self.cmbx_Id_Alumno.configure(state='readonly')
+                            self.fecha.configure(state='normal')
+                            self.clear_Entrys("datos_Todo")
+                            # Restaura banderas     
+                            self.id = -1
+                            self.prev_Course = ""
                         else:
                             messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
                     # Para editar curso (y horario)...
                     else:           
                         if not(self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
                             #day, month, year = map(str, self.fecha.get().split('/'))
-                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id}")
+                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
                             self.create_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
+                            # Para volver a la normalidad...
+                            self.cmbx_No_Inscripcion.configure(state="readonly")
+                            self.cmbx_Id_Alumno.configure(state='readonly')
+                            self.fecha.configure(state='normal')
+                            self.clear_Entrys("datos_Todo")
+                            # Restaura banderas 
+                            self.id = -1
+                            self.prev_Course = ""
                         else:
                             if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                                 messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
                             elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
                                 messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
-                    # Para volver a la normalidad...
-                    self.id = -1
-                    self.prev_Course = ""
-                    self.cmbx_No_Inscripcion.configure(state="readonly")
-                    self.cmbx_Id_Alumno.configure(state='readonly')
-                    self.fecha.configure(state='normal')
-                    self.clear_Entrys("datos_Todo")
+                
+                # Restaura estilo del botón
                 self.btnGuardar.after(100, lambda: self.btnGuardar.state(["!pressed"]))
+
             case 'Ed':
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
