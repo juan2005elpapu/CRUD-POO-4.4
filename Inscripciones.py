@@ -504,7 +504,7 @@ class Inscripciones_2:
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
                     self.clear_Entrys("datos_Todo")
-            
+                self.btnGuardar.after(100, lambda: self.btnGuardar.state(["!pressed"]))
             case 'Ed':
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
@@ -520,7 +520,7 @@ class Inscripciones_2:
                         self.prev_Course = info['values'][2]
                         self.cmbx_Id_Alumno.configure(state='disable')
                         self.fecha.configure(state='readonly')
-
+                self.btnEditar.after(100, lambda: self.btnEditar.state(["!pressed"]))
             case 'El':
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
@@ -557,10 +557,10 @@ class Inscripciones_2:
                     
                     # Botón eliminar
                     self.btneliminar_opcion = ttk.Button(self.ventana_btneliminar, name="btneliminar_opcion")
-                    self.btneliminar_opcion.configure(text='Eliminar')
+                    self.btneliminar_opcion.configure(text='Confirmar')
                     self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
                     self.btneliminar_opcion.bind("<1>", lambda _:self.action_btneliminar())    
-
+                self.btnEliminar.after(100, lambda: self.btnEliminar.state(["!pressed"]))
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
@@ -569,31 +569,49 @@ class Inscripciones_2:
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
                     self.clear_Entrys("datos_Todo")
+                self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
     '''================================================================================================================'''      
     
     '''Funcion para ventana eliminar'''
     def action_btneliminar(self):
         opcion_borrar = self.opcion_seleccionada.get()
+        numero_Inscrito = self.seleccionar_Dato(event=None)
+        informacion_Inscrito = self.seleccionar_Dato(event=None, todos=True)
+        alumno_Inscrito = informacion_Inscrito[0]
+        fecha_Inscripcion = informacion_Inscrito[1]
+        codigo_Curso = informacion_Inscrito[2]
         if opcion_borrar == 1:
-            respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
-            if respuesta:     
-                try:
-                    self.ventana_btneliminar.destroy()
-                    numero_Inscrito = self.seleccionar_Dato(event=None)
-                    self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
-                    self.create_Treeview("Inscritos")
-                    ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                    ids_No_Inscripcion.insert(0, "Todos")
-                    self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-                    messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
-
-                except sqlite3.OperationalError:
-                    None
+            count=self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
+            if count[0][0] > 1:
+                pass
+            else: 
+                day, month, year = map(str, fecha_Inscripcion.split('-'))
+                query=f"INSERT INTO Inscritos (No_Inscripción, Id_Alumno, Fecha_Inscripción) VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}')"
+                self.run_Query(query)
+            query=f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito} AND Código_Curso = '{codigo_Curso}'"
+            self.run_Query(query)
         elif opcion_borrar == 2:
-            pass
+            query=f"DELETE FROM Inscritos WHERE Código_Curso = '{codigo_Curso}'"
+            self.run_Query(query)
         elif opcion_borrar == 3:
-            pass
+            respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
+            if respuesta:
+                self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")     
+                day, month, year = map(str, fecha_Inscripcion.split('-'))
+                query=f"INSERT INTO Inscritos (No_Inscripción, Id_Alumno, Fecha_Inscripción) VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}')"
+                self.run_Query(query)
+        try:
+            self.ventana_btneliminar.destroy()
+            self.create_Treeview("Inscritos")
+            ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+            ids_No_Inscripcion.insert(0, "Todos")
+            self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
+            messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
+
+        except sqlite3.OperationalError:
+            None
+        
     '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
         # Elimina ventana emergente
@@ -769,7 +787,7 @@ class Inscripciones_2:
         self.tView.delete(*self.tView.get_children())
         self.tView.destroy()
 
-    def seleccionar_Dato(self, event):
+    def seleccionar_Dato(self, event, todos=None):
         """
         Select a data from the TViewInscritos
         
@@ -782,9 +800,18 @@ class Inscripciones_2:
         try:
             item_Seleccionado = self.tView.item(self.tView.focus()) 
             numero_inscripcion = item_Seleccionado["text"]
-            return numero_inscripcion
+            if todos == True:
+                alumno=item_Seleccionado["values"][0]
+                fecha=item_Seleccionado["values"][1]
+                codigo_curso=item_Seleccionado["values"][2]
+                return [alumno, fecha, codigo_curso]
+            else:
+                return numero_inscripcion
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
+        
+    #def seleccionar_Dato_2():
+
 
     '''Función para insertar información al editar'''
     def insert_Data(self,num_Inscripcion, id_Curso):
