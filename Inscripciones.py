@@ -452,6 +452,7 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
+                self.btnEliminar.configure(state='disable')
                 # Para guardar nueva entrada...
                 if self.id == -1:
                     if self.check_Entries():
@@ -471,7 +472,6 @@ class Inscripciones_2:
                         self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
                         self.lista_No_Inscripcion.sort()
                         self.lista_No_Inscripcion.insert(0, "Todos")
-                        print(self.lista_No_Inscripcion)
                         self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
                         messagebox.showinfo(title="guardar", message="Guardado con éxito")
                         self.clear_Entrys("datos_Todo")
@@ -521,8 +521,13 @@ class Inscripciones_2:
                 
                 # Restaura estilo del botón
                 self.btnGuardar.after(100, lambda: self.btnGuardar.state(["!pressed"]))
+                # Restaura el botón Eliminar
+                self.btnEliminar.configure(state='normal')
+                self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
 
             case 'Ed':
+                self.btnEliminar.configure(state='disabled')
+                self.btnEliminar.unbind('<1>')
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
                 if clave == '':
@@ -538,6 +543,7 @@ class Inscripciones_2:
                         self.cmbx_Id_Alumno.configure(state='disable')
                         self.fecha.configure(state='readonly')
                 self.btnEditar.after(100, lambda: self.btnEditar.state(["!pressed"]))
+
             case 'El':
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
@@ -585,6 +591,9 @@ class Inscripciones_2:
                     self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
+                     # Restaura el botón Eliminar
+                    self.btnEliminar.configure(state='normal')
+                    self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
                     self.clear_Entrys("datos_Todo")
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
