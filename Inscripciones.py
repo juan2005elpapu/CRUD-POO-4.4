@@ -464,12 +464,17 @@ class Inscripciones_2:
                         self.run_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.create_Treeview("Inscritos")
                         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-                        set_Ids_No_Inscripcion = set(ids_No_Inscripcion)
+                        self.lista_No_Inscripcion = []
+                        for tupla in ids_No_Inscripcion:
+                            self.lista_No_Inscripcion.append(tupla[0])
+                        set_Ids_No_Inscripcion = set(self.lista_No_Inscripcion)
                         self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
                         self.lista_No_Inscripcion.sort()
                         self.lista_No_Inscripcion.insert(0, "Todos")
+                        print(self.lista_No_Inscripcion)
                         self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
                         messagebox.showinfo(title="guardar", message="Guardado con éxito")
+                        self.clear_Entrys("datos_Todo")
                     else:
                         if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                             messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
