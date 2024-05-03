@@ -6,7 +6,7 @@ from tkinter import messagebox
 from tkinter import PhotoImage
 from os import path
 import sqlite3
-from datetime import datetime
+from datetime import datetime, date
 
 class Inscripciones_2:   
     def __init__(self, master=None):
@@ -606,14 +606,13 @@ class Inscripciones_2:
         numero_Inscrito = self.seleccionar_Dato(event=None)
         informacion_Inscrito = self.seleccionar_Dato(event=None, todos=True)
         alumno_Inscrito = informacion_Inscrito[0]
-        fecha_Inscripcion = informacion_Inscrito[1]
-        codigo_Curso = informacion_Inscrito[2]
+        codigo_Curso = informacion_Inscrito[1]
         # Borrar este curso del estudiante
         if opcion_borrar == 1:
             count=self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
             self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito} AND Código_Curso = '{codigo_Curso}'")
             if count[0][0] == 1:
-                day, month, year = map(str, fecha_Inscripcion.split('-'))
+                year, month, day = map(str, str(date.today()).split('-'))
                 self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '', '')") 
         # Borrar todos los estudiantes de un curso
         elif opcion_borrar == 2:
@@ -623,14 +622,14 @@ class Inscripciones_2:
                 count = self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {estudiante[0]}")
                 # Por si alguno solo tenía ese curso inscrito...
                 if count[0][0] == 0:
-                    day, month, year = map(str, estudiante[2].split('-'))
+                    year, month, day = map(str, date.today().split('-'))
                     self.run_Query(f"INSERT INTO Inscritos VALUES ({estudiante[0]}, {estudiante[1]}, '{year}-{month}-{day}', '', '')")
         # Borrar todos los cursos de un estudiante
         elif opcion_borrar == 3:
             respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
             if respuesta:
                 self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")     
-                day, month, year = map(str, fecha_Inscripcion.split('-'))
+                year, month, day = map(str, date.today().split('-'))
                 self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '', '')")
         try:
             self.ventana_btneliminar.destroy()
@@ -833,9 +832,8 @@ class Inscripciones_2:
             numero_inscripcion = item_Seleccionado["text"]
             if todos == True:
                 alumno=item_Seleccionado["values"][0]
-                fecha=item_Seleccionado["values"][1]
                 codigo_curso=item_Seleccionado["values"][2]
-                return [alumno, fecha, codigo_curso]
+                return [alumno, codigo_curso]
             else:
                 return numero_inscripcion
         except IndexError:
