@@ -624,40 +624,49 @@ class Inscripciones_2:
         codigo_Curso = informacion_Inscrito[1]
         # Borrar este curso del estudiante
         if opcion_borrar == 1:
-            count=self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
-            self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito} AND Código_Curso = '{codigo_Curso}'")
-            if count[0][0] == 1:
-                year, month, day = map(str, str(date.today()).split('-'))
-                self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '[Sin cursos]', '')") 
+            respuesta = messagebox.askyesno(title="Eliminar", message=f"¿Desea eliminar el curso con código {codigo_Curso} del estudiante con Id No. {alumno_Inscrito}?")
+            if respuesta:
+                count=self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
+                self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito} AND Código_Curso = '{codigo_Curso}'")
+                if count[0][0] == 1:
+                    year, month, day = map(str, str(date.today()).split('-'))
+                    self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '[Sin cursos]', '')")
+                self.eliminacion_Exitosa()
+            else:
+                self.ventana_btneliminar.destroy()
         # Borrar todos los estudiantes de un curso
         elif opcion_borrar == 2:
-            estudiantes = self.run_Query(f"SELECT * FROM Inscritos WHERE Código_Curso = {codigo_Curso}")
-            self.run_Query(f"DELETE FROM Inscritos WHERE Código_Curso = '{codigo_Curso}'")
-            for estudiante in estudiantes:
-                count = self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {estudiante[0]}")
-                # Por si alguno solo tenía ese curso inscrito...
-                if count[0][0] == 0:
-                    year, month, day = map(str, str(date.today()).split('-'))
-                    self.run_Query(f"INSERT INTO Inscritos VALUES ({estudiante[0]}, {estudiante[1]}, '{year}-{month}-{day}', '[Sin cursos]', '')")
+            respuesta = messagebox.askyesno(title="Eliminar", message=f"¿Desea eliminar todos los estudiantes del curso con código {codigo_Curso}?")
+            if respuesta:
+                estudiantes = self.run_Query(f"SELECT * FROM Inscritos WHERE Código_Curso = {codigo_Curso}")
+                self.run_Query(f"DELETE FROM Inscritos WHERE Código_Curso = '{codigo_Curso}'")
+                for estudiante in estudiantes:
+                    count = self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {estudiante[0]}")
+                    # Por si alguno solo tenía ese curso inscrito...
+                    if count[0][0] == 0:
+                        year, month, day = map(str, str(date.today()).split('-'))
+                        self.run_Query(f"INSERT INTO Inscritos VALUES ({estudiante[0]}, {estudiante[1]}, '{year}-{month}-{day}', '[Sin cursos]', '')")
+                self.eliminacion_Exitosa()
+            else:
+                self.ventana_btneliminar.destroy()
         # Borrar todos los cursos de un estudiante
         elif opcion_borrar == 3:
-            respuesta = messagebox.askyesno(title="Eliminar", message="Desea eliminar")
+            respuesta = messagebox.askyesno(title="Eliminar", message=f"¿Desea eliminar todos los cursos del estudiante con Id No. {alumno_Inscrito}?")
             if respuesta:
                 self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")     
                 year, month, day = map(str, str(date.today()).split('-'))
                 self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '[Sin cursos]', '')")
-        try:
-            self.ventana_btneliminar.destroy()
-            self.create_Treeview("Inscritos")
-            ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
-            ids_No_Inscripcion.insert(0, "Todos")
-            self.cmbx_No_Inscripcion['values'] = ids_No_Inscripcion
-            messagebox.showinfo(title="Bueno", message="Eliminado con éxito")
+                self.eliminacion_Exitosa()
+            else:
+                self.ventana_btneliminar.destroy()
 
-        except sqlite3.OperationalError:
-            None
+    def eliminacion_Exitosa(self):
+        self.ventana_btneliminar.destroy()
+        self.create_Treeview("Inscritos")
         self.actualizacion_Numeros_Inscripcion()
-        
+        messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
+
+    '''================================================================================================================''' 
     '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
         # Elimina ventana emergente
