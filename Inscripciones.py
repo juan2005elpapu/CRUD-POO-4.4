@@ -468,7 +468,9 @@ class Inscripciones_2:
                         day, month, year = map(str, self.fecha.get().split('/'))
                         # Verifica si debe crear un nuevo No. de Inscripción
                         if self.inscrito_Existente(self.cmbx_Id_Alumno.get()) == None:
-                            num_Inscripcion = len(self.lista_No_Inscripcion)
+                            self.lista_No_Inscripcion.pop(0)
+                            num_Inscripcion = max(self.lista_No_Inscripcion) + 1
+                            self.lista_No_Inscripcion.insert(0, "Todos")
                         else:
                             num_Inscripcion = self.inscrito_Existente(self.cmbx_Id_Alumno.get())
                         self.run_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
