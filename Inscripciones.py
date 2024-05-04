@@ -471,8 +471,12 @@ class Inscripciones_2:
                             self.lista_No_Inscripcion.pop(0)
                             num_Inscripcion = max(self.lista_No_Inscripcion) + 1
                             self.lista_No_Inscripcion.insert(0, "Todos")
+                        # Si ya existe el No. de Inscripción...
                         else:
                             num_Inscripcion = self.inscrito_Existente(self.cmbx_Id_Alumno.get())
+                            # Verifica si al estudiante se le habían eliminado los cursos para borrar ese registro
+                            if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), "[Sin cursos]"):
+                                self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {num_Inscripcion}")
                         self.run_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.create_Treeview("Inscritos")
                         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
