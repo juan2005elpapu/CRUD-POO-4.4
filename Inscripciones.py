@@ -313,9 +313,9 @@ class Inscripciones_2:
         # Ventana consultar    
     def action_btnconsultar(self, event):
         self.ventana_btnconsultar = tk.Toplevel()
-        self.ventana_btnconsultar.configure(background="#f7f9fd", height=330, width=300)
-        alto=330
-        ancho=300
+        self.ventana_btnconsultar.configure(background="#f7f9fd", height=335, width=325)
+        alto=335
+        ancho=325
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto))
         #Centrar Ventana consultar
         x = self.ventana_btnconsultar.winfo_screenwidth()
@@ -340,18 +340,18 @@ class Inscripciones_2:
 
         self.btnconsultar_carreras = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_carreras")
         self.btnconsultar_carreras.configure(text='Carreras')
-        self.btnconsultar_carreras.place(anchor="nw", x=112, y=50)
+        self.btnconsultar_carreras.place(anchor="nw", x=125, y=50)
         self.btnconsultar_carreras.bind("<1>", lambda _:self.create_Treeview("Carreras"))
 
         self.btnconsultar_cursos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_cursos")
         self.btnconsultar_cursos.configure(text='Cursos')
-        self.btnconsultar_cursos.place(anchor="nw", x=205, y=50)
+        self.btnconsultar_cursos.place(anchor="nw", x=230, y=50)
         self.btnconsultar_cursos.bind("<1>", lambda _:self.create_Treeview("Cursos"))
 
         #Separador
         separator1 = ttk.Separator(self.ventana_btnconsultar)
         separator1.configure(orient="horizontal")
-        separator1.place(anchor="nw", width=260, x=20, y=90)
+        separator1.place(anchor="nw", width=285, x=20, y=90)
 
         #Label filtros
         self.lblFiltros = ttk.Label(self.ventana_btnconsultar, name="lblFiltros")
@@ -360,58 +360,77 @@ class Inscripciones_2:
 
         #Label filtro 1
         self.lblFiltro1 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro1")
-        self.lblFiltro1.configure(background="#f7f9fd", text=' - Cursos de un alumno')
+        self.lblFiltro1.configure(background="#f7f9fd", text=' ●   Cursos de un alumno')
         self.lblFiltro1.place(anchor="nw", x=20, y=140)
 
         #Label seleccione alumno
         self.lblSlcalumno = ttk.Label(self.ventana_btnconsultar, name="lblSlcalumno")
-        self.lblSlcalumno.configure(background="#f7f9fd", text='Seleccione un alumno:')
-        self.lblSlcalumno.place(anchor="nw", x=35, y=170)
+        self.lblSlcalumno.configure(background="#f7f9fd", text='Seleccione alumno:')
+        self.lblSlcalumno.place(anchor="nw", x=40, y=170)
 
         #Combobox Alumno de ventana consulta
         self.cmbx_Id_Alumno_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
-        self.cmbx_Id_Alumno_Consulta.place(anchor="nw", width=90, x=175, y=170)
+        self.cmbx_Id_Alumno_Consulta.place(anchor="nw", width=85, x=160, y=170)
         self.ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
         self.lista_Ids_Alumnos = []
         for tupla in self.ids_Alumnos:
             self.lista_Ids_Alumnos.append(tupla[0])
         self.cmbx_Id_Alumno_Consulta['values'] = self.ids_Alumnos
 
+        #Definir path de la lupa 2 para los botones de los filtros
+        ruta_Lupa2  = self.dir_pro + "\\img\\lupa2.png"
+        self.img2 = PhotoImage(file=ruta_Lupa2)
+
+        #Botón confirmar consulta alumno
+        self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
+        self.btnFiltrar_alumno.place(anchor="nw", x=260, y=168)
+        self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))
+
         #Label filtro 2
         self.lblFiltro2 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro2")
-        self.lblFiltro2.configure(background="#f7f9fd", text=' - Alumnos en un curso')
+        self.lblFiltro2.configure(background="#f7f9fd", text=' ●   Alumnos en un curso')
         self.lblFiltro2.place(anchor="nw", x=20, y=200)
 
         #Label seleccione curso
         self.lblSlccurso = ttk.Label(self.ventana_btnconsultar, name="lblSlccurso")
-        self.lblSlccurso.configure(background="#f7f9fd", text='Seleccione un curso:')
-        self.lblSlccurso.place(anchor="nw", x=35, y=230)
+        self.lblSlccurso.configure(background="#f7f9fd", text='Seleccione curso:')
+        self.lblSlccurso.place(anchor="nw", x=40, y=230)
 
         #Combobox Curso  de ventana consulta
         self.cmbx_Id_Curso_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
-        self.cmbx_Id_Curso_Consulta.place(anchor="nw", width=90, x=175, y=230)
+        self.cmbx_Id_Curso_Consulta.place(anchor="nw", width=85, x=160, y=230)
         self.ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
         self.lista_Ids_Cursos = []
         for tupla in self.ids_Cursos:
             self.lista_Ids_Cursos.append(tupla[0])
         self.cmbx_Id_Curso_Consulta['values'] = self.ids_Cursos
 
+        #Botón confirmar consulta curso
+        self.btnFiltrar_curso = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_curso", image=self.img2)
+        self.btnFiltrar_curso.place(anchor="nw", x=260, y=228)
+        self.btnFiltrar_curso.bind("<1>", lambda _:self.action_btnfiltrar('Curso'))
+
         #Label filtros 3
         self.lblFiltro3 = ttk.Label(self.ventana_btnconsultar, name="lblFiltro3")
-        self.lblFiltro3.configure(background="#f7f9fd", text=' - Inscripciones por fecha')
+        self.lblFiltro3.configure(background="#f7f9fd", text=' ●   Inscripciones por fecha')
         self.lblFiltro3.place(anchor="nw", x=20, y=260)
 
         #Label ingrese una fecha
         self.lblIgfecha = ttk.Label(self.ventana_btnconsultar, name="lblIgfecha")
-        self.lblIgfecha.configure(background="#f7f9fd", text='Ingrese una fecha:')
-        self.lblIgfecha.place(anchor="nw", x=35, y=290)
+        self.lblIgfecha.configure(background="#f7f9fd", text='Ingrese fecha:')
+        self.lblIgfecha.place(anchor="nw", x=40, y=290)
 
         #Entry Fecha de ventana consulta
         self.Fecha_Consulta = ttk.Entry(self.ventana_btnconsultar, name="fecha")
         self.Fecha_Consulta.configure(justify="center")
-        self.Fecha_Consulta.place(anchor="nw", width=90, x=175, y=290)
+        self.Fecha_Consulta.place(anchor="nw", width=85, x=160, y=290)
         self.Fecha_Consulta.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
         self.Fecha_Consulta.bind("<KeyRelease>", self.valida_Fecha)
+
+        #Botón confirmar consulta fecha
+        self.btnFiltrar_fecha = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_Fecha", image=self.img2)
+        self.btnFiltrar_fecha.place(anchor="nw", x=260, y=288)
+        self.btnFiltrar_fecha.bind("<1>", lambda _:self.action_btnfiltrar('Fecha'))
 
     '''================================================================================================================'''      
     '''Funciones auxiliares al botón Guardar (G)'''
@@ -666,6 +685,60 @@ class Inscripciones_2:
         self.actualizacion_Numeros_Inscripcion()
         messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
 
+    '''Funcion para botones filtrar'''
+    def action_btnfiltrar(self, filtro) :
+        match  filtro:
+            case 'Alumno':
+                #Crear ventana filtrar alumnos
+                self.ventana_btnfiltrar_alumno = tk.Toplevel()
+                self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=640)
+                alto=295
+                ancho=640
+                self.ventana_btnfiltrar_alumno.geometry(str(ancho)+"x"+str(alto))
+                #Centrar Ventana consultar
+                x = self.ventana_btnfiltrar_alumno.winfo_screenwidth()
+                y = self.ventana_btnfiltrar_alumno.winfo_screenheight()
+                self.ventana_btnfiltrar_alumno.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
+                self.ventana_btnfiltrar_alumno.resizable(False, False)
+                self.ventana_btnfiltrar_alumno.title('Filtrar cursos de un alumno')
+                ruta_ventana_btnfiltrar_alumno = self.dir_pro + "\\img\\lupa.ico"
+                self.ventana_btnfiltrar_alumno.iconbitmap(bitmap=ruta_ventana_btnfiltrar_alumno)
+                #Frame filtro
+                self.frm_2 = tk.Frame(self.ventana_btnfiltrar_alumno, name="frm_2")
+                self.frm_2.configure(background="#f7f9fd", height=500, width=700)
+                #Label filtar alumno
+                self.lblFilalumno = ttk.Label(self.frm_2, name="lblFilalumno")
+                self.lblFilalumno.configure(background="#f7f9fd", text='Estos son los cursos que tiene inscrito el alumno con el Id: '+ self.cmbx_Id_Alumno_Consulta.get())
+                self.lblFilalumno.place(anchor="nw", x=20, y=20)
+                #Treeview filtrar alumno
+                self.create_Filter_Treeview(1)
+            case 'Curso':
+                #Crear ventana filtrar alumnos
+                self.ventana_btnfiltrar_curso = tk.Toplevel()
+                self.ventana_btnfiltrar_curso.configure(background="#f7f9fd", height=295, width=640)
+                alto=295
+                ancho=640
+                self.ventana_btnfiltrar_curso.geometry(str(ancho)+"x"+str(alto))
+                #Centrar Ventana consultar
+                x = self.ventana_btnfiltrar_curso.winfo_screenwidth()
+                y = self.ventana_btnfiltrar_curso.winfo_screenheight()
+                self.ventana_btnfiltrar_curso.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
+                self.ventana_btnfiltrar_curso.resizable(False, False)
+                self.ventana_btnfiltrar_curso.title('Filtrar alumnos en un curso')
+                ruta_ventana_btnfiltrar_curso = self.dir_pro + "\\img\\lupa.ico"
+                self.ventana_btnfiltrar_curso.iconbitmap(bitmap=ruta_ventana_btnfiltrar_curso)
+                #Frame filtro
+                self.frm_2 = tk.Frame(self.ventana_btnfiltrar_curso, name="frm_2")
+                self.frm_2.configure(background="#f7f9fd", height=500, width=700)
+                #Label filtar alumno
+                self.lblFilcurso = ttk.Label(self.frm_2, name="lblFilcurso")
+                self.lblFilcurso.configure(background="#f7f9fd", text='Estos son los cursos que tiene inscrito el alumno con el Id: '+ self.cmbx_Id_Curso_Consulta.get())
+                self.lblFilcurso.place(anchor="nw", x=20, y=20)
+                #Treeview filtrar alumno
+                self.create_Filter_Treeview(2)
+            case 'Fecha':
+                pass
+
     '''================================================================================================================''' 
     '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
@@ -868,6 +941,7 @@ class Inscripciones_2:
         # Crear TreeView
         self.filterView = ttk.Treeview(self.frm_2, name="filter_tview")
         self.filterView.configure(selectmode="extended")
+        self.filterView.place(anchor="nw", x=20, y=50, height=225, width=600)
 
         match num:
             case 1:
@@ -885,7 +959,7 @@ class Inscripciones_2:
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
                 self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
                 self.filterView.heading("ftV_horario", anchor="w", text='Horario')
-                self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
@@ -909,7 +983,7 @@ class Inscripciones_2:
                 self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
                 self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
                 self.filterView.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
-                self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Fecha_Inscripción FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Alumnos.Nombres ASC;")
@@ -935,7 +1009,7 @@ class Inscripciones_2:
                 self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
                 self.filterView.heading("ftV_codigo", anchor="w", text='Nombre Curso')
-                self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{year}-{month}-{day}' ORDER BY Inscritos.No_Inscripción ASC;")
@@ -943,13 +1017,13 @@ class Inscripciones_2:
                     self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
 
         #Scrollbars
-        self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filer_scroll_h", command=self.filterView.xview)
-        self.scroll_H.configure(orient="horizontal")
-        self.filter_scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
+        self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filter_scroll_h", command=self.filterView.xview)
+        self.filter_scroll_H.configure(orient="horizontal")
+        self.filter_scroll_H.place(anchor="s", height=10, width=600, x=320, y=289)
         self.filterView['xscrollcommand'] = self.filter_scroll_H.set
         self.filter_scroll_Y = ttk.Scrollbar(self.frm_2, name="filter_scroll_y", command=self.filterView.yview)
         self.filter_scroll_Y.configure(orient="vertical")
-        self.filter_scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.filter_scroll_Y.place(anchor="s", height=225, width=12, x=629, y=275)
         self.filterView['yscrollcommand'] = self.filter_scroll_Y.set
         self.frm_2.pack(side="top")
         self.frm_2.pack_propagate(0)
