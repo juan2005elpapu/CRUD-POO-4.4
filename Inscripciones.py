@@ -650,6 +650,7 @@ class Inscripciones_2:
 
         except sqlite3.OperationalError:
             None
+        self.actualizacion_Numeros_Inscripcion()
         
     '''Funciones para manejar TreeViews'''
     def create_Treeview(self, type):
@@ -926,6 +927,18 @@ class Inscripciones_2:
                 self.cmbx_Dias.set("")
                 self.cmbx_No_Inscripcion.set("")
                 self.fecha.delete(0, "end")
+    '''Función actualización numeros de inscripción'''
+    def actualizacion_Numeros_Inscripcion(self):
+        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+        self.lista_No_Inscripcion = []
+        for tupla in ids_No_Inscripcion:
+            self.lista_No_Inscripcion.append(tupla[0])
+        set_Ids_No_Inscripcion = set(self.lista_No_Inscripcion)
+        self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
+        self.lista_No_Inscripcion.sort()
+        self.lista_No_Inscripcion.insert(0, "Todos")
+        self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
+
     '''================================================================================================================'''      
     '''Funciones archivadas'''
     #def clean_String(string):
