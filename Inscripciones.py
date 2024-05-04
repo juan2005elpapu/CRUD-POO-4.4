@@ -864,8 +864,95 @@ class Inscripciones_2:
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
         
-    #def seleccionar_Dato_2():
+    def create_Filter_Treeview(self, num):
+        # Crear TreeView
+        self.filterView = ttk.Treeview(self.frm_2, name="filter_tview")
+        self.filterView.configure(selectmode="extended")
 
+        match num:
+            case 1:
+                id_Alumno = self.cmbx_Id_Alumno_Consulta.get()
+                #Columnas del Treeview
+                self.tView_cols = ['ftV_codigo', 'ftV_nombre_curso', 'ftV_horario']
+                self.tView_dcols = ['ftV_codigo', 'ftV_nombre_curso', 'ftV_horario']
+                self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.filterView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+                self.filterView.column("ftV_codigo",anchor="w",stretch=True,width=50,minwidth=50)
+                self.filterView.column("ftV_nombre_curso",anchor="w",stretch=True,width=50,minwidth=10)
+                self.filterView.column("ftV_horario", anchor="w", stretch=True, width=50, minwidth=25)
+                #Cabeceras
+                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
+                self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
+                self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
+                self.filterView.heading("ftV_horario", anchor="w", text='Horario')
+                self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                #Configura los datos de la tabla
+                query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
+                for i in query:
+                    self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
+        
+            case 2:
+                codigo_Curso = self.cmbx_Id_Curso_Consulta.get()
+                #Columnas del Treeview
+                self.tView_cols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_fecha']
+                self.tView_dcols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_fecha']
+                self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.filterView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+                self.filterView.column("ftV_id_alumno",anchor="w",stretch=True,width=50,minwidth=50)
+                self.filterView.column("ftV_nombre",anchor="w",stretch=True,width=50,minwidth=10)
+                self.filterView.column("ftV_apellidos", anchor="w", stretch=True, width=50, minwidth=25)
+                self.filterView.column("ftV_fecha", anchor="w", stretch=True, width=50, minwidth=25)
+                #Cabeceras
+                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
+                self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
+                self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
+                self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
+                self.filterView.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
+                self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                #Configura los datos de la tabla
+                query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Fecha_Inscripción FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Alumnos.Nombres ASC;")
+                for i in query:
+                    self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
+            
+            case 3:
+                day, month, year = map(int, self.Fecha_Consulta.get().split('/'))
+                #Columnas del Treeview
+                self.tView_cols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_codigo', 'ftV_nombre_curso']
+                self.tView_dcols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_codigo', 'ftV_nombre_curso']
+                self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.filterView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
+                self.filterView.column("ftV_id_alumno",anchor="w",stretch=True,width=50,minwidth=50)
+                self.filterView.column("ftV_nombre",anchor="w",stretch=True,width=50,minwidth=10)
+                self.filterView.column("ftV_apellidos", anchor="w", stretch=True, width=50, minwidth=25)
+                self.filterView.column("ftV_codigo", anchor="w", stretch=True, width=50, minwidth=25)
+                self.filterView.column("ftV_nombre_curso", anchor="w", stretch=True, width=50, minwidth=25)
+                #Cabeceras
+                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
+                self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
+                self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
+                self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
+                self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
+                self.filterView.heading("ftV_codigo", anchor="w", text='Nombre Curso')
+                self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
+                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                #Configura los datos de la tabla
+                query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{year}-{month}-{day}' ORDER BY Inscritos.No_Inscripción ASC;")
+                for i in query:
+                    self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
+
+        #Scrollbars
+        self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filer_scroll_h", command=self.filterView.xview)
+        self.scroll_H.configure(orient="horizontal")
+        self.filter_scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
+        self.filterView['xscrollcommand'] = self.filter_scroll_H.set
+        self.filter_scroll_Y = ttk.Scrollbar(self.frm_2, name="filter_scroll_y", command=self.filterView.yview)
+        self.filter_scroll_Y.configure(orient="vertical")
+        self.filter_scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.filterView['yscrollcommand'] = self.filter_scroll_Y.set
+        self.frm_2.pack(side="top")
+        self.frm_2.pack_propagate(0)
 
     '''Función para insertar información al editar'''
     def insert_Data(self,num_Inscripcion, id_Curso):
