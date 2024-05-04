@@ -541,15 +541,15 @@ class Inscripciones_2:
                 self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
 
             case 'Ed':
-                self.btnEliminar.configure(state='disabled')
-                self.btnEliminar.unbind('<1>')
                 selected = self.tView.focus()
                 clave = self.tView.item(selected,'text')
                 if clave == '':
                     messagebox.showwarning("Editar", 'Debes selecccionar un elemento.')
                 else:
-                    respuesta = messagebox.askyesno(title="Editar", message="Desea editar")
+                    respuesta = messagebox.askyesno(title="Editar", message="¿Desea editar el elemento seleccionado?")
                     if respuesta:
+                        self.btnEliminar.configure(state='disabled')
+                        self.btnEliminar.unbind('<1>')
                         info = self.tView.item(selected)
                         self.clear_Entrys("datos_Curso")
                         self.insert_Data(info['text'],info['values'][2])
