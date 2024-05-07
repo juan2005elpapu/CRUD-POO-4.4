@@ -643,8 +643,14 @@ class Inscripciones_2:
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
                      # Restaura el botón Eliminar
+                     # Restaura el botón Guardar
+                     # Restaura el botón Editar
                     self.btnEliminar.configure(state='normal')
                     self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+                    self.btnGuardar.configure(state='normal')
+                    self.btnGuardar.bind("<1>", lambda _:self.action_Button('G'))
+                    self.btnEditar.configure(state='normal')
+                    self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
                     self.clear_Entrys("datos_Todo")
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
@@ -785,34 +791,30 @@ class Inscripciones_2:
     def create_Treeview(self, type):
         # Elimina ventana emergente
         if type in ["Carreras", "Cursos", "Alumnos"]:
-            self.ventana_btnconsultar.destroy()
-        
+            self.ventana_btnconsultar.destroy()      
         # Elimina TreeView anterior (si existe)
         try :
             self.delete_Treeview()
         except :
             pass
-
         # Crear Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
-        
+        self.tView.bind("<B1-Motion>", "break")
         # Verifica el tipo de tabla para crear el TreeView correspondiente
         match type:
             case "Inscritos":
                 """
                 Creates the correponding TreeView for the table Inscritos.
                 """
-                #Columnas del Treeview
                 self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
                 self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
                 self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
                 self.tView.column("tV_id_alumno",anchor="w",stretch=True,width=50,minwidth=50)
-                self.tView.column("tV_fecha_inscripcion",anchor="w",stretch=True,width=50,minwidth=10)
-                self.tView.column("tV_codigo",anchor="w",stretch=True,width=50,minwidth=10)
-                self.tView.column("tV_horario", anchor="w", stretch=True, width=50, minwidth=25)
-                #Cabeceras
+                self.tView.column("tV_fecha_inscripcion",anchor="w",stretch=True,width=50,minwidth=50)
+                self.tView.column("tV_codigo",anchor="w",stretch=True,width=50,minwidth=50)
+                self.tView.column("tV_horario", anchor="w", stretch=True, width=50, minwidth=50)
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
                 self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
@@ -820,22 +822,26 @@ class Inscripciones_2:
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
                 self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
-                #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
-            
             case "Carreras":
                 """
                 Creates the correponding TreeView for the table Carreras.
                 """
                 #Columnas del Treeview
+                self.btnEliminar.unbind('<1>')
+                self.btnEliminar.configure(state="disable")
+                self.btnGuardar.unbind('<1>')
+                self.btnGuardar.configure(state="disable")
+                self.btnEditar.unbind('<1>')
+                self.btnEditar.configure(state="disable")
                 self.tView_cols = ['tV_Descripcion', 'tV_semestres']
                 self.tView_dcols = ['tV_Descripcion', 'tV_semestres']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
                 self.tView.column("#0",anchor="w",stretch=True,width=10,minwidth=10)
-                self.tView.column("tV_Descripcion",anchor="w",stretch=True,width=100,minwidth=50)
-                self.tView.column("tV_semestres",anchor="w",stretch=True,width=200,minwidth=50)
+                self.tView.column("tV_Descripcion",anchor="w",stretch=True,width=200,minwidth=200)
+                self.tView.column("tV_semestres",anchor="w",stretch=True,width=100,minwidth=100)
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='Codigo de Carrera')
                 self.tView.heading("tV_Descripcion", anchor="w", text='Descripcion')
@@ -850,6 +856,12 @@ class Inscripciones_2:
                 """
                 Creates the correponding TreeView for the table Cursos.
                 """
+                self.btnEliminar.unbind('<1>')
+                self.btnEliminar.configure(state="disable")
+                self.btnGuardar.unbind('<1>')
+                self.btnGuardar.configure(state="disable")
+                self.btnEditar.unbind('<1>')
+                self.btnEditar.configure(state="disable")
                 #Columnas del Treeview
                 self.tView_cols = ['tV_descripción', 'tV_horas']
                 self.tView_dcols = ['tV_descripción', 'tV_horas']
@@ -871,14 +883,20 @@ class Inscripciones_2:
                 """
                 Creates the correponding TreeView for the table Alumnos.
                 """
+                self.btnEliminar.unbind('<1>')
+                self.btnEliminar.configure(state="disable")
+                self.btnGuardar.unbind('<1>')
+                self.btnGuardar.configure(state="disable")
+                self.btnEditar.unbind('<1>')
+                self.btnEditar.configure(state="disable")
                 #Columnas del Treeview
                 self.tView_cols = ['tV_id_carrera', 'tV_nombres', 'tV_apellidos', 'tV_fecha_inscripcion', 'tV_dirección', 'tV_telef_celu', 'tV_telef_fijo', 'tV_ciudad', 'tV_departamento']
                 self.tView_dcols = ['tV_id_carrera', 'tV_nombres', 'tV_apellidos', 'tV_fecha_inscripcion', 'tV_dirección', 'tV_telef_celu', 'tV_telef_fijo', 'tV_ciudad', 'tV_departamento']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.tView.column("#0",anchor="w",stretch=True,width=100,minwidth=10)
-                self.tView.column("tV_id_carrera",anchor="w",stretch=True,width=100,minwidth=50)
-                self.tView.column("tV_nombres",anchor="w",stretch=True,width=150,minwidth=50)
-                self.tView.column("tV_apellidos", anchor="w", stretch=True, width=150, minwidth=50)
+                self.tView.column("#0",anchor="w",stretch=True,width=100,minwidth=100)
+                self.tView.column("tV_id_carrera",anchor="w",stretch=True,width=100,minwidth=100)
+                self.tView.column("tV_nombres",anchor="w",stretch=True,width=150,minwidth=150)
+                self.tView.column("tV_apellidos", anchor="w", stretch=True, width=150, minwidth=150)
                 #Cabeceras
                 self.tView.heading("#0", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_id_carrera", anchor="w", text='Id Carrera')
@@ -888,8 +906,13 @@ class Inscripciones_2:
                 # Columna 3 en adelante...
                 self.headers = ['Fecha de Inscripción', 'Dirección', 'Tel. Celular', 'Tel. Fijo', 'Ciudad', 'Departamento']
                 for i in range(0, len(self.headers)) :
-                    self.tView.column(self.tView_cols[i+3], anchor="w", stretch=True, width=125, minwidth=20)
-                    self.tView.heading(self.tView_dcols[i+3], anchor="w", text=self.headers[i])
+                    if self.headers[i] == 'Dirección':
+                        self.tView.column(self.tView_cols[i+3], anchor="w", stretch=True, width=200, minwidth=200)
+                        self.tView.heading(self.tView_dcols[i+3], anchor="w", text=self.headers[i])  
+                    else:    
+                        self.tView.column(self.tView_cols[i+3], anchor="w", stretch=True, width=125, minwidth=125)
+                        self.tView.heading(self.tView_dcols[i+3], anchor="w", text=self.headers[i])
+                        
                 #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Alumnos")
                 for i in query:
@@ -983,7 +1006,7 @@ class Inscripciones_2:
         self.filterView = ttk.Treeview(self.frm_2, name="filter_tview")
         self.filterView.configure(selectmode="extended")
         self.filterView.place(anchor="nw", x=20, y=50, height=225, width=600)
-
+        self.filterView.bind("<B1-Motion>", "break")
         match num:
             case 1:
                 id_Alumno = self.cmbx_Id_Alumno_Consulta.get()
