@@ -7,6 +7,7 @@ from tkinter import PhotoImage
 from os import path
 import sqlite3
 from datetime import datetime, date
+import calendar
 
 class Inscripciones_2:   
     def __init__(self, master=None):
@@ -32,9 +33,7 @@ class Inscripciones_2:
         #Label No. Inscripción
         self.lblNoInscripcion = ttk.Label(self.frm_1, name="lblnoinscripcion")
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
-        self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}",
-                                        justify="center",state="normal",
-                                        takefocus=False,text='No. Inscripción')
+        self.lblNoInscripcion.configure(background="#f7f9fd",font="{Arial} 11 {bold}", justify="center",state="normal", takefocus=False,text='No. Inscripción')
         #Combobox No. Inscripción
         self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbxnoincripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
@@ -596,11 +595,12 @@ class Inscripciones_2:
 
             case 'El':
                 selected = self.tView.focus()
-                clave = self.tView.item(selected,'text')
-                if clave == '':
+                info = self.tView.item(selected)
+                if info['text'] == '':
                     messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
+                elif info['values'][2] == '[Sin cursos]':
+                    messagebox.showwarning("Error", 'Ya fueron eliminados los cursos de este estudiante.')
                 else:
-
                     # Ventana eliminar
                     self.ventana_btneliminar = tk.Toplevel()
                     self.ventana_btneliminar.configure(background="#f7f9fd", height=165, width=260)
@@ -731,8 +731,8 @@ class Inscripciones_2:
                 #Label filtar alumno
                 datos=self.run_Query(f"SELECT Nombres, Apellidos FROM Alumnos WHERE Id_Alumno='{self.cmbx_Id_Alumno_Consulta.get()}'")
                 self.lblFilalumno = ttk.Label(self.frm_2, name="lblFilalumno")
-                self.lblFilalumno.configure(background="#f7f9fd", text='Cursos que tiene inscrito el alumno '+ datos[0][0] + ' ' + datos[0][1] +' (' + self.cmbx_Id_Alumno_Consulta.get() + ')')
-                self.lblFilalumno.place(anchor="nw", x=20, y=20)
+                self.lblFilalumno.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text='Cursos que tiene inscrito el alumno '+ datos[0][0] + ' ' + datos[0][1] +' (' + self.cmbx_Id_Alumno_Consulta.get() + ')')
+                self.lblFilalumno.place(anchor="nw", x=40, y=20)
                 #Treeview filtrar alumno
                 self.create_Filter_Treeview(1)
             case 'Curso':
@@ -756,8 +756,8 @@ class Inscripciones_2:
                 #Label filtar curso
                 datos=self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso='{self.cmbx_Id_Curso_Consulta.get()}'")
                 self.lblFilcurso = ttk.Label(self.frm_2, name="lblFilcurso")
-                self.lblFilcurso.configure(background="#f7f9fd", text=f"Alumnos del curso {datos[0][0]} ({self.cmbx_Id_Curso_Consulta.get()})")
-                self.lblFilcurso.place(anchor="nw", x=20, y=20)
+                self.lblFilcurso.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos del curso {datos[0][0]} ({self.cmbx_Id_Curso_Consulta.get()})")
+                self.lblFilcurso.place(anchor="nw", x=185, y=20)
                 #Treeview filtrar curso
                 self.create_Filter_Treeview(2)
             case 'Fecha':
@@ -781,8 +781,8 @@ class Inscripciones_2:
                     self.frm_2.configure(background="#f7f9fd", height=500, width=700)
                     #Label filtar fecha
                     self.lblFilfecha = ttk.Label(self.frm_2, name="lblFilfecha")
-                    self.lblFilfecha.configure(background="#f7f9fd", text=f"Alumnos inscritos el {self.Fecha_Consulta.get()}")
-                    self.lblFilfecha.place(anchor="nw", x=20, y=20)
+                    self.lblFilfecha.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos inscritos el {self.Fecha_Consulta.get()}")
+                    self.lblFilfecha.place(anchor="nw", x=185, y=20)
                     #Treeview filtrar fecha
                     self.create_Filter_Treeview(3)
 
@@ -1118,10 +1118,13 @@ class Inscripciones_2:
         result.append(hora)
         entries = [self.cmbx_Id_Alumno, self.cmbx_Id_Curso, self.cmbx_Dias, self.cmbx_Horario]
         lists = [self.lista_Ids_Alumnos, self.lista_Ids_Cursos, self.horarios_Dias, self.horarios_Horas]
-        for i in range(len(entries)):
-            entries[i].current(lists[i].index(result[i+1]))
+        try:
+            for i in range(len(entries)):
+                entries[i].current(lists[i].index(result[i+1]))
+            self.change_Course()
+        except:
+            pass
         self.change_Full_Name()
-        self.change_Course()
         
     def insert_Student(self, no_Inscripcion):
         query = f"SELECT Id_Alumno FROM Inscritos WHERE No_Inscripción = {no_Inscripcion}"
