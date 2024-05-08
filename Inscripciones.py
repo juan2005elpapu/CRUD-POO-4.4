@@ -7,7 +7,6 @@ from tkinter import PhotoImage
 from os import path
 import sqlite3
 from datetime import datetime, date
-import calendar
 
 class Inscripciones_2:   
     def __init__(self, master=None):
@@ -24,12 +23,14 @@ class Inscripciones_2:
         y = self.win.winfo_screenheight()
         self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
         self.win.resizable(False, False)
-        self.win.title("Inscripciones de Materias y Cursos")
+        self.win.title("Inscripción de Cursos")
         ruta_Icon = self.dir_pro + "\\img\\icon.ico"
         self.win.iconbitmap(bitmap=ruta_Icon)
         # Crea los frames
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
+        self.estilo_labels = ttk.Style()
+        self.estilo_labels.configure("Labels", font="Arial Narrow 11")
         #Label No. Inscripción
         self.lblNoInscripcion = ttk.Label(self.frm_1, name="lblnoinscripcion")
         self.lblNoInscripcion.place(anchor="nw", x=680, y=20)
@@ -164,7 +165,6 @@ class Inscripciones_2:
 
         # Main widget
         self.mainwindow = self.win
-
     '''A partir de este punto se deben incluir las funciones para el manejo de la base de datos...'''
     def run(self):
         self.mainwindow.mainloop()    
