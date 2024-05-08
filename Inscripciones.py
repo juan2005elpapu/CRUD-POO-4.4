@@ -432,6 +432,19 @@ class Inscripciones_2:
         self.Fecha_Consulta.place(anchor="nw", width=85, x=160, y=290)
         self.Fecha_Consulta.bind("<BackSpace>", lambda _:self.Fecha_Consulta.delete(0,"end"))
         self.Fecha_Consulta.bind("<KeyRelease>", self.valida_Fecha_Consulta)
+        self.btnConsultar.config(state='disable')  # Deshabilitamos el botón
+        self.btnConsultar.unbind('<1>')
+        try:
+            def on_close(): 
+                '''
+                Función que se llama cuando se pulsa el botón de cierre
+                del gestor de ventanas 
+                '''        
+                self.ventana_btnconsultar.destroy()  # Destruimos la ventana secundaria
+                self.btnConsultar.config(state='normal')  # habilitamos el botón
+                self.btnConsultar.bind("<1>", self.action_btnconsultar)
+            self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+        except: pass
 
 
     '''Funcion abilitar botones de los filtros'''
@@ -632,8 +645,21 @@ class Inscripciones_2:
                     self.btneliminar_opcion = ttk.Button(self.ventana_btneliminar, name="btneliminar_opcion")
                     self.btneliminar_opcion.configure(text='Confirmar')
                     self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
-                    self.btneliminar_opcion.bind("<1>", lambda _:self.action_btneliminar())    
+                    self.btneliminar_opcion.bind("<1>", lambda _:self.action_btneliminar())  
+                    self.btnEliminar.config(state='disable')  # Deshabilitamos el botón
+                    self.btnEliminar.unbind('<1>')
                 self.btnEliminar.after(100, lambda: self.btnEliminar.state(["!pressed"]))
+                try:
+                    def on_close(): 
+                        '''
+                        Función que se llama cuando se pulsa el botón de cierre
+                        del gestor de ventanas 
+                        '''        
+                        self.ventana_btneliminar.destroy()  # Destruimos la ventana secundaria
+                        self.btnEliminar.config(state='normal')  # habilitamos el botón
+                        self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+                    self.ventana_btneliminar.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                except: pass
             
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
@@ -735,6 +761,19 @@ class Inscripciones_2:
                 self.lblFilalumno.place(anchor="nw", x=40, y=20)
                 #Treeview filtrar alumno
                 self.create_Filter_Treeview(1)
+                self.btnFiltrar_alumno.config(state='disable')  # Deshabilitamos el botón
+                self.btnFiltrar_alumno.unbind('<1>')
+                try:
+                    def on_close(): 
+                        '''
+                        Función que se llama cuando se pulsa el botón de cierre
+                        del gestor de ventanas 
+                        '''        
+                        self.ventana_btnfiltrar_alumno.destroy()  # Destruimos la ventana secundaria
+                        self.btnFiltrar_alumno.config(state='normal')  # habilitamos el botón
+                        self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))
+                    self.ventana_btnfiltrar_alumno.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                except: pass
             case 'Curso':
                 #Crear ventana filtrar curso
                 self.ventana_btnfiltrar_curso = tk.Toplevel()
@@ -760,8 +799,25 @@ class Inscripciones_2:
                 self.lblFilcurso.place(anchor="nw", x=185, y=20)
                 #Treeview filtrar curso
                 self.create_Filter_Treeview(2)
+                self.btnFiltrar_curso.config(state='disable')  # Deshabilitamos el botón
+                self.btnFiltrar_curso.unbind('<1>')
+                try:
+                    def on_close(): 
+                        '''
+                        Función que se llama cuando se pulsa el botón de cierre
+                        del gestor de ventanas 
+                        '''        
+                        self.ventana_btnfiltrar_curso.destroy()  # Destruimos la ventana secundaria
+                        self.btnFiltrar_curso.config(state='normal')  # habilitamos el botón
+                        self.btnFiltrar_curso.bind("<1>", lambda _:self.action_btnfiltrar('Curso'))
+                    self.ventana_btnfiltrar_curso.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                except: pass
             case 'Fecha':
                 if self.fecha_Valida(self.Fecha_Consulta.get()):
+                    try:
+                        self.ventana_btnfiltrar_alumno.destroy()
+                        self.ventana_btnfiltrar_curso.destroy()
+                    except: pass
                     #Crear ventana filtrar fecha
                     self.ventana_btnfiltrar_fecha = tk.Toplevel()
                     self.ventana_btnfiltrar_fecha.configure(background="#f7f9fd", height=295, width=700)
@@ -785,6 +841,19 @@ class Inscripciones_2:
                     self.lblFilfecha.place(anchor="nw", x=185, y=20)
                     #Treeview filtrar fecha
                     self.create_Filter_Treeview(3)
+                    self.btnFiltrar_fecha.config(state='disable')  # Deshabilitamos el botón
+                    self.btnFiltrar_fecha.unbind('<1>')
+                    try:
+                        def on_close(): 
+                            '''
+                            Función que se llama cuando se pulsa el botón de cierre
+                            del gestor de ventanas 
+                            '''        
+                            self.ventana_btnfiltrar_fecha.destroy()  # Destruimos la ventana secundaria
+                            self.btnFiltrar_fecha.config(state='normal')  # habilitamos el botón
+                            self.btnFiltrar_fecha.bind("<1>", lambda _:self.action_btnfiltrar('Fecha'))
+                        self.ventana_btnfiltrar_fecha.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                    except: pass                    
 
     '''================================================================================================================''' 
     '''Funciones para manejar TreeViews'''
