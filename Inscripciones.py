@@ -508,7 +508,7 @@ class Inscripciones_2:
     def action_Button(self, option) :
         match  option:
             case 'G':
-                self.btnEliminar.configure(state='disable')
+                self.btnEliminar.configure(state='disabled')
                 # Para guardar nueva entrada...
                 if self.id == -1:
                     if self.check_Entries():
@@ -602,7 +602,7 @@ class Inscripciones_2:
                         self.insert_Data(info['text'],info['values'][2])
                         self.id = clave
                         self.prev_Course = info['values'][2]
-                        self.cmbx_Id_Alumno.configure(state='disable')
+                        self.cmbx_Id_Alumno.configure(state='disabled')
                         self.fecha.configure(state='readonly')
                 self.btnEditar.after(100, lambda: self.btnEditar.state(["!pressed"]))
 
@@ -646,7 +646,7 @@ class Inscripciones_2:
                     self.btneliminar_opcion.configure(text='Confirmar')
                     self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
                     self.btneliminar_opcion.bind("<1>", lambda _:self.action_btneliminar())  
-                    self.btnEliminar.config(state='disable')  # Deshabilitamos el botón
+                    self.btnEliminar.config(state='disabled')  # Deshabilitamos el botón
                     self.btnEliminar.unbind('<1>')
                 self.btnEliminar.after(100, lambda: self.btnEliminar.state(["!pressed"]))
                 try:
@@ -761,8 +761,9 @@ class Inscripciones_2:
                 self.lblFilalumno.place(anchor="nw", x=40, y=20)
                 #Treeview filtrar alumno
                 self.create_Filter_Treeview(1)
-                self.btnFiltrar_alumno.config(state='disable')  # Deshabilitamos el botón
+                self.btnFiltrar_alumno.config(state='disabled')  # Deshabilitamos el botón
                 self.btnFiltrar_alumno.unbind('<1>')
+                self.cmbx_Id_Alumno_Consulta.configure(state='disabled')
                 try:
                     def on_close(): 
                         '''
@@ -772,6 +773,8 @@ class Inscripciones_2:
                         self.ventana_btnfiltrar_alumno.destroy()  # Destruimos la ventana secundaria
                         self.btnFiltrar_alumno.config(state='normal')  # habilitamos el botón
                         self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))
+                        self.cmbx_Id_Alumno_Consulta.configure(state='readonly')
+
                     self.ventana_btnfiltrar_alumno.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
             case 'Curso':
@@ -801,6 +804,7 @@ class Inscripciones_2:
                 self.create_Filter_Treeview(2)
                 self.btnFiltrar_curso.config(state='disable')  # Deshabilitamos el botón
                 self.btnFiltrar_curso.unbind('<1>')
+                self.cmbx_Id_Curso_Consulta.configure(state='disabled')
                 try:
                     def on_close(): 
                         '''
@@ -810,6 +814,7 @@ class Inscripciones_2:
                         self.ventana_btnfiltrar_curso.destroy()  # Destruimos la ventana secundaria
                         self.btnFiltrar_curso.config(state='normal')  # habilitamos el botón
                         self.btnFiltrar_curso.bind("<1>", lambda _:self.action_btnfiltrar('Curso'))
+                        self.cmbx_Id_Curso_Consulta.configure(state="readonly")
                     self.ventana_btnfiltrar_curso.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
             case 'Fecha':
@@ -841,8 +846,9 @@ class Inscripciones_2:
                     self.lblFilfecha.place(anchor="nw", x=185, y=20)
                     #Treeview filtrar fecha
                     self.create_Filter_Treeview(3)
-                    self.btnFiltrar_fecha.config(state='disable')  # Deshabilitamos el botón
+                    self.btnFiltrar_fecha.config(state='disabled')  # Deshabilitamos el botón
                     self.btnFiltrar_fecha.unbind('<1>')
+                    self.Fecha_Consulta.configure(state='disabled')
                     try:
                         def on_close(): 
                             '''
@@ -852,6 +858,7 @@ class Inscripciones_2:
                             self.ventana_btnfiltrar_fecha.destroy()  # Destruimos la ventana secundaria
                             self.btnFiltrar_fecha.config(state='normal')  # habilitamos el botón
                             self.btnFiltrar_fecha.bind("<1>", lambda _:self.action_btnfiltrar('Fecha'))
+                            self.Fecha_Consulta.configure(state='normal')
                         self.ventana_btnfiltrar_fecha.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
                     except: pass                    
 
