@@ -432,7 +432,7 @@ class Inscripciones_2:
         self.Fecha_Consulta.place(anchor="nw", width=85, x=160, y=290)
         self.Fecha_Consulta.bind("<BackSpace>", lambda _:self.Fecha_Consulta.delete(0,"end"))
         self.Fecha_Consulta.bind("<KeyRelease>", self.valida_Fecha_Consulta)
-        self.btnConsultar.config(state='disable')  # Deshabilitamos el botón
+        self.btnConsultar.configure(state='disabled')  # Deshabilitamos el botón
         self.btnConsultar.unbind('<1>')
         try:
             def on_close(): 
@@ -757,8 +757,8 @@ class Inscripciones_2:
                 #Label filtar alumno
                 datos=self.run_Query(f"SELECT Nombres, Apellidos FROM Alumnos WHERE Id_Alumno='{self.cmbx_Id_Alumno_Consulta.get()}'")
                 self.lblFilalumno = ttk.Label(self.frm_2, name="lblFilalumno")
-                self.lblFilalumno.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text='Cursos que tiene inscrito el alumno '+ datos[0][0] + ' ' + datos[0][1] +' (' + self.cmbx_Id_Alumno_Consulta.get() + ')')
-                self.lblFilalumno.place(anchor="nw", x=20, y=20)
+                self.lblFilalumno.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text='Cursos del alumno '+ datos[0][0] + ' ' + datos[0][1] +' (' + self.cmbx_Id_Alumno_Consulta.get() + ')')
+                self.lblFilalumno.place(anchor="c", relx=0.5, y=25)
                 #Treeview filtrar alumno
                 self.create_Filter_Treeview(1)
                 self.btnFiltrar_alumno.config(state='disabled')  # Deshabilitamos el botón
@@ -799,7 +799,7 @@ class Inscripciones_2:
                 datos=self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso='{self.cmbx_Id_Curso_Consulta.get()}'")
                 self.lblFilcurso = ttk.Label(self.frm_2, name="lblFilcurso")
                 self.lblFilcurso.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos del curso {datos[0][0]} ({self.cmbx_Id_Curso_Consulta.get()})")
-                self.lblFilcurso.place(anchor="nw", x=20, y=20)
+                self.lblFilcurso.place(anchor="c", relx=0.5, y=25)
                 #Treeview filtrar curso
                 self.create_Filter_Treeview(2)
                 self.btnFiltrar_curso.config(state='disable')  # Deshabilitamos el botón
@@ -843,7 +843,7 @@ class Inscripciones_2:
                     #Label filtar fecha
                     self.lblFilfecha = ttk.Label(self.frm_2, name="lblFilfecha")
                     self.lblFilfecha.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos inscritos el {self.Fecha_Consulta.get()}")
-                    self.lblFilfecha.place(anchor="nw", x=20, y=20)
+                    self.lblFilfecha.place(anchor="c", relx=0.5, y=25)
                     #Treeview filtrar fecha
                     self.create_Filter_Treeview(3)
                     self.btnFiltrar_fecha.config(state='disabled')  # Deshabilitamos el botón
@@ -871,12 +871,14 @@ class Inscripciones_2:
         # Elimina TreeView anterior (si existe)
         try :
             self.delete_Treeview()
+            self.scroll_H.destroy()
         except :
             pass
         # Crear Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
         self.tView.bind("<B1-Motion>", "break")
+        self.tView.place(anchor="nw", height=280, width=760, x=20, y=300)
         # Verifica el tipo de tabla para crear el TreeView correspondiente
         match type:
             case "Inscritos":
@@ -896,12 +898,13 @@ class Inscripciones_2:
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
                 self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
-                self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
             case "Carreras":
+                self.btnConsultar.configure(state="normal")
+                self.btnConsultar.bind("<1>", self.action_btnconsultar)
                 """
                 Creates the correponding TreeView for the table Carreras.
                 """
@@ -922,13 +925,14 @@ class Inscripciones_2:
                 self.tView.heading("#0", anchor="w", text='Codigo de Carrera')
                 self.tView.heading("tV_Descripcion", anchor="w", text='Descripcion')
                 self.tView.heading("tV_semestres", anchor="w", text='No de semestres')
-                self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Carreras")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2],))
             
             case "Cursos":
+                self.btnConsultar.configure(state="normal")
+                self.btnConsultar.bind("<1>", self.action_btnconsultar)
                 """
                 Creates the correponding TreeView for the table Cursos.
                 """
@@ -949,13 +953,14 @@ class Inscripciones_2:
                 self.tView.heading("#0", anchor="w", text='Curso')
                 self.tView.heading("tV_descripción", anchor="w", text='Descripción')
                 self.tView.heading("tV_horas", anchor="w", text='Horas')
-                self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 #Configura los datos de la tabla
                 query = self.run_Query("SELECT * FROM Cursos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
             
             case "Alumnos":
+                self.btnConsultar.configure(state="normal")
+                self.btnConsultar.bind("<1>", self.action_btnconsultar)
                 """
                 Creates the correponding TreeView for the table Alumnos.
                 """
@@ -978,7 +983,6 @@ class Inscripciones_2:
                 self.tView.heading("tV_id_carrera", anchor="w", text='Id Carrera')
                 self.tView.heading("tV_nombres", anchor="w", text='Nombres')
                 self.tView.heading("tV_apellidos", anchor="w", text='Apellidos')
-                self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 # Columna 3 en adelante...
                 self.headers = ['Fecha de Inscripción', 'Dirección', 'Tel. Celular', 'Tel. Fijo', 'Ciudad', 'Departamento']
                 for i in range(0, len(self.headers)) :
@@ -993,7 +997,10 @@ class Inscripciones_2:
                 query = self.run_Query("SELECT * FROM Alumnos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
-            
+                self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
+                self.scroll_H.configure(orient="horizontal")
+                self.scroll_H.place(anchor="s", height=12, width=760, x=400, y=595)
+                self.tView['xscrollcommand'] = self.scroll_H.set
             case "No_Inscripcion" :
                 """
                 Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is selected.
@@ -1013,7 +1020,6 @@ class Inscripciones_2:
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
                 self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
-                self.tView.place(anchor="nw", height=300, width=790, x=4, y=300)
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 no_Inscripcion = self.cmbx_No_Inscripcion.get()
@@ -1031,13 +1037,9 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
      
         #Scrollbars
-        self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
-        self.scroll_H.configure(orient="horizontal")
-        self.scroll_H.place(anchor="s", height=12, width=780, x=400, y=595)
-        self.tView['xscrollcommand'] = self.scroll_H.set
         self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
         self.scroll_Y.configure(orient="vertical")
-        self.scroll_Y.place(anchor="s", height=275, width=12, x=790, y=582)
+        self.scroll_Y.place(anchor="s", height=280, width=12, x=789, y=580)
         self.tView['yscrollcommand'] = self.scroll_Y.set
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
@@ -1155,12 +1157,11 @@ class Inscripciones_2:
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{year}-{month}-{day}' ORDER BY Inscritos.No_Inscripción DESC;")
                 for i in query:
                     self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
-
+                self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filter_scroll_h", command=self.filterView.xview)
+                self.filter_scroll_H.configure(orient="horizontal")
+                self.filter_scroll_H.place(anchor="s", height=10, width=600, x=320, y=289)
+                self.filterView['xscrollcommand'] = self.filter_scroll_H.set
         #Scrollbars
-        self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filter_scroll_h", command=self.filterView.xview)
-        self.filter_scroll_H.configure(orient="horizontal")
-        self.filter_scroll_H.place(anchor="s", height=10, width=600, x=320, y=289)
-        self.filterView['xscrollcommand'] = self.filter_scroll_H.set
         self.filter_scroll_Y = ttk.Scrollbar(self.frm_2, name="filter_scroll_y", command=self.filterView.yview)
         self.filter_scroll_Y.configure(orient="vertical")
         self.filter_scroll_Y.place(anchor="s", height=225, width=12, x=629, y=275)
@@ -1272,7 +1273,9 @@ class Inscripciones_2:
             if num_char  == 5: self.Fecha_Consulta.insert(6, "/")
         else:
             self.Fecha_Consulta.delete(len(self.Fecha_Consulta.get())-1, "end")
-            messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+            respuesta_mensaje=messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+            if respuesta_mensaje:
+                self.ventana_btnconsultar.deiconify()
 
     '''================================================================================================================'''      
     '''Funciones archivadas'''
