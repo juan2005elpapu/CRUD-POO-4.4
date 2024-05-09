@@ -7,17 +7,22 @@ from tkinter import PhotoImage
 from os import path
 import sqlite3
 from datetime import datetime, date
+from tkinter import font 
 
 class Inscripciones_2:   
     def __init__(self, master=None):
         self.dir_pro = path.dirname(__file__)
         self.db_name = 'Inscripciones.db'
+
         # Ventana principal    
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
         alto=600
         ancho=800
         self.win.geometry(str(ancho)+"x"+str(alto))
+        default_font = font.nametofont("TkDefaultFont")
+        default_font.configure(family="@Adobe Heiti Std R", size=9)
+        self.win.option_add("*Font", default_font)
         #Centrar Ventana
         x = self.win.winfo_screenwidth()
         y = self.win.winfo_screenheight()
