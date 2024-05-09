@@ -739,9 +739,9 @@ class Inscripciones_2:
             case 'Alumno':
                 #Crear ventana filtrar alumno
                 self.ventana_btnfiltrar_alumno = tk.Toplevel()
-                self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=700)
+                self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=640)
                 alto=295
-                ancho=700
+                ancho=640
                 self.ventana_btnfiltrar_alumno.geometry(str(ancho)+"x"+str(alto))
                 #Centrar Ventana filtrar alumno
                 x = self.ventana_btnfiltrar_alumno.winfo_screenwidth()
@@ -758,7 +758,7 @@ class Inscripciones_2:
                 datos=self.run_Query(f"SELECT Nombres, Apellidos FROM Alumnos WHERE Id_Alumno='{self.cmbx_Id_Alumno_Consulta.get()}'")
                 self.lblFilalumno = ttk.Label(self.frm_2, name="lblFilalumno")
                 self.lblFilalumno.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text='Cursos que tiene inscrito el alumno '+ datos[0][0] + ' ' + datos[0][1] +' (' + self.cmbx_Id_Alumno_Consulta.get() + ')')
-                self.lblFilalumno.place(anchor="nw", x=40, y=20)
+                self.lblFilalumno.place(anchor="nw", x=20, y=20)
                 #Treeview filtrar alumno
                 self.create_Filter_Treeview(1)
                 self.btnFiltrar_alumno.config(state='disabled')  # Deshabilitamos el botón
@@ -799,7 +799,7 @@ class Inscripciones_2:
                 datos=self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso='{self.cmbx_Id_Curso_Consulta.get()}'")
                 self.lblFilcurso = ttk.Label(self.frm_2, name="lblFilcurso")
                 self.lblFilcurso.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos del curso {datos[0][0]} ({self.cmbx_Id_Curso_Consulta.get()})")
-                self.lblFilcurso.place(anchor="nw", x=185, y=20)
+                self.lblFilcurso.place(anchor="nw", x=20, y=20)
                 #Treeview filtrar curso
                 self.create_Filter_Treeview(2)
                 self.btnFiltrar_curso.config(state='disable')  # Deshabilitamos el botón
@@ -825,10 +825,10 @@ class Inscripciones_2:
                     except: pass
                     #Crear ventana filtrar fecha
                     self.ventana_btnfiltrar_fecha = tk.Toplevel()
-                    self.ventana_btnfiltrar_fecha.configure(background="#f7f9fd", height=295, width=700)
+                    self.ventana_btnfiltrar_fecha.configure(background="#f7f9fd", height=295, width=640)
                     alto=295
-                    ancho=700
-                    #self.ventana_btnfiltrar_fecha.geometry(str(ancho)+"x"+str(alto))
+                    ancho=640
+                    self.ventana_btnfiltrar_fecha.geometry(str(ancho)+"x"+str(alto))
                     #Centrar Ventana filtrar fecha
                     x = self.ventana_btnfiltrar_fecha.winfo_screenwidth()
                     y = self.ventana_btnfiltrar_fecha.winfo_screenheight()
@@ -843,7 +843,7 @@ class Inscripciones_2:
                     #Label filtar fecha
                     self.lblFilfecha = ttk.Label(self.frm_2, name="lblFilfecha")
                     self.lblFilfecha.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos inscritos el {self.Fecha_Consulta.get()}")
-                    self.lblFilfecha.place(anchor="nw", x=185, y=20)
+                    self.lblFilfecha.place(anchor="nw", x=20, y=20)
                     #Treeview filtrar fecha
                     self.create_Filter_Treeview(3)
                     self.btnFiltrar_fecha.config(state='disabled')  # Deshabilitamos el botón
@@ -1081,7 +1081,7 @@ class Inscripciones_2:
         # Crear TreeView
         self.filterView = ttk.Treeview(self.frm_2, name="filter_tview")
         self.filterView.configure(selectmode="extended")
-        self.filterView.place(anchor="nw", x=20, y=50, height=225, width=660)
+        self.filterView.place(anchor="nw", x=20, y=50, height=225, width=600)
         self.filterView.bind("<B1-Motion>", "break")
         match num:
             case 1:
@@ -1090,10 +1090,10 @@ class Inscripciones_2:
                 self.tView_cols = ['ftV_codigo', 'ftV_nombre_curso', 'ftV_horario']
                 self.tView_dcols = ['ftV_codigo', 'ftV_nombre_curso', 'ftV_horario']
                 self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.filterView.column("#0",anchor="w",width=10,minwidth=10,stretch=True)
-                self.filterView.column("ftV_codigo",anchor="w",width=50,minwidth=50,stretch=True)
-                self.filterView.column("ftV_nombre_curso",anchor="w",width=50,minwidth=10,stretch=True)
-                self.filterView.column("ftV_horario", anchor="w", width=50, minwidth=25, stretch=True)
+                self.filterView.column("#0",anchor="w",width=100,minwidth=100, stretch=False)
+                self.filterView.column("ftV_codigo",anchor="w",width=100,minwidth=100, stretch=False)
+                self.filterView.column("ftV_nombre_curso",anchor="w",width=230,minwidth=230, stretch=False)
+                self.filterView.column("ftV_horario", anchor="w", width=168, minwidth=168, stretch=False)
                 #Cabeceras
                 self.filterView.heading("#0", anchor="w", text='No. Inscripción')
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
@@ -1112,11 +1112,11 @@ class Inscripciones_2:
                 self.tView_cols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_fecha']
                 self.tView_dcols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_fecha']
                 self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.filterView.column("#0",anchor="w",stretch=False,width=90,minwidth=90)
-                self.filterView.column("ftV_id_alumno",anchor="w",stretch=False,width=80,minwidth=80)
-                self.filterView.column("ftV_nombre",anchor="w",stretch=False,width=110,minwidth=110)
-                self.filterView.column("ftV_apellidos", anchor="w", stretch=False, width=110, minwidth=110)
-                self.filterView.column("ftV_fecha", anchor="w", stretch=False, width=150, minwidth=150)
+                self.filterView.column("#0",anchor="w",stretch=False,width=100,minwidth=100)
+                self.filterView.column("ftV_id_alumno",anchor="w",stretch=False,width=100,minwidth=100)
+                self.filterView.column("ftV_nombre",anchor="w",stretch=False,width=115,minwidth=115)
+                self.filterView.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
+                self.filterView.column("ftV_fecha", anchor="w", stretch=False, width=168, minwidth=168)
                 #Cabeceras
                 self.filterView.heading("#0", anchor="w", text='No. Inscripción')
                 self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
@@ -1136,12 +1136,12 @@ class Inscripciones_2:
                 self.tView_cols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_codigo', 'ftV_nombre_curso']
                 self.tView_dcols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_codigo', 'ftV_nombre_curso']
                 self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.filterView.column("#0",anchor="w",stretch=False,width=93,minwidth=93)
-                self.filterView.column("ftV_id_alumno",anchor="w",stretch=False,width=80,minwidth=80)
-                self.filterView.column("ftV_nombre",anchor="w",stretch=False,width=93,minwidth=93)
-                self.filterView.column("ftV_apellidos", anchor="w", stretch=False, width=100, minwidth=100)
-                self.filterView.column("ftV_codigo", anchor="w", stretch=False, width=85, minwidth=85)
-                self.filterView.column("ftV_nombre_curso", anchor="w", stretch=False, width=140, minwidth=140)
+                self.filterView.column("#0",anchor="w",stretch=False,width=100,minwidth=100)
+                self.filterView.column("ftV_id_alumno",anchor="w",stretch=False,width=100,minwidth=100)
+                self.filterView.column("ftV_nombre",anchor="w",stretch=False,width=115,minwidth=115)
+                self.filterView.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
+                self.filterView.column("ftV_codigo", anchor="w", stretch=False, width=100, minwidth=100)
+                self.filterView.column("ftV_nombre_curso", anchor="w", stretch=False, width=230, minwidth=230)
                 #Cabeceras
                 self.filterView.heading("#0", anchor="w", text='No. Inscripción')
                 self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
