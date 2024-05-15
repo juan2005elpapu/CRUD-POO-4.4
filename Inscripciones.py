@@ -1281,12 +1281,6 @@ class Inscripciones_2:
         self.frm_2.pack(side="top")
         self.frm_2.pack_propagate(0)
 
-    
-        self.ventana_btneliminar.destroy()
-        self.create_Treeview("Inscritos")
-        self.actualizacion_Numeros_Inscripcion()
-        messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
-
 '''================================================================================================================'''
 if __name__ == "__main__":
     app = Inscripciones_2()
