@@ -9,14 +9,25 @@ import sqlite3
 from datetime import datetime, date
 from tkinter import font 
 
-# ==================================================
+'''==============================================================
+CRUD Programación Orientada a Objetos
+Universidad Nacional de Colombia - 2024-1S
+Repo: https://github.com/juan2005elpapu/CRUD-POO-4.4
+
+Integrantes:
+  - Juan David Peña                     (jupenalo@unal.edu.co)
+  - Juan Sebastián Ramirez Villalobos   (juaramirezv@unal.edu.co)
+  - Jesús David Sánchez Cobos           (jesanchezco@unal.edu.co)
+  - Juan Camilo Vergara Tao             (juvergarat@unal.edu.co)
+    =============================================================='''
+
 class Inscripciones_2:
-    # Constructor
     def __init__(self, master=None):
+        #Dirección programa
         self.dir_pro = path.dirname(__file__)
         self.db_name = 'Inscripciones.db'
-
-        # Ventana principal    
+        
+        '''Ventana principal'''
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
         alto=600
@@ -33,7 +44,7 @@ class Inscripciones_2:
         self.win.title("Inscripción de Cursos")
         ruta_Icon = self.dir_pro + "\\img\\icon.ico"
         self.win.iconbitmap(bitmap=ruta_Icon)
-        # Crea los frames
+        #Crea el frame
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
         self.estilo_labels = ttk.Style()
@@ -45,15 +56,7 @@ class Inscripciones_2:
         #Combobox No. Inscripción
         self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbxnoincripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
-        self.ids_No_Inscripcion = self.correr_Query("SELECT No_Inscripción FROM Inscritos DESC")
-        self.lista_No_Inscripcion = []
-        for tupla in self.ids_No_Inscripcion:
-            self.lista_No_Inscripcion.append(tupla[0])
-        set_Ids_No_Inscripcion = set(self.lista_No_Inscripcion)
-        self.lista_No_Inscripcion = list(set_Ids_No_Inscripcion)
-        self.lista_No_Inscripcion.sort()
-        self.lista_No_Inscripcion.insert(0, "Todos")
-        self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
+        self.actualizacion_Numeros_Inscripcion()
         self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.crear_Treeview("No_Inscripcion"))
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
@@ -132,20 +135,17 @@ class Inscripciones_2:
         self.horarios_Horas = ["7:00 - 9:00", "9:00 - 11:00", "11:00 - 13:00", "14:00 - 16:00", "16:00 - 18:00"]
         self.cmbx_Horario['values'] = self.horarios_Horas
         
-        #Botones  de la Aplicación
-
+        '''Botones  de la interfaz'''
         #Estilo botones
         self.estilo_botones = ttk.Style()
         self.estilo_botones.configure("TButton")
         self.estilo_botones.map("TButton", foreground=[("active", "#ff0000")], background=[("active", "#ff0000")])
-
         #Botón Consultar
         ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
         self.img = PhotoImage(file=ruta_Lupa)
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
         self.btnConsultar.bind("<1>", self.accion_Consultar)
-
         #Botón Guardar
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
@@ -156,7 +156,7 @@ class Inscripciones_2:
         self.btnEditar.configure(text='Editar')
         self.btnEditar.place(anchor="nw", x=300, y=260)
         self.btnEditar.bind("<1>", lambda _:self.accion_Boton('Ed'))
-        self.id = -1 # Índice para saber si el programa está guardando (INSERT) o editando (UPDATE)
+        self.id = -1 # Bandera para saber si el programa está guardando (INSERT) o editando (UPDATE)
         self.curso_Anterior = "" # Variable para guardar el curso original al oprimir el botón Editar
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
@@ -173,17 +173,16 @@ class Inscripciones_2:
         separador1.configure(orient="horizontal")
         separador1.place(anchor="nw", width=796, x=2, y=245)
 
-        # Treeview inicial de la Aplicación
+        '''Treeview inicial de la Aplicación'''
         self.crear_Treeview("Inscritos")
 
-        # Main widget
+        '''Main widget'''
         self.mainwindow = self.win
     
     def run(self):
         self.mainwindow.mainloop()    
 
-    ''' ==================================================================================================== '''      
-    '''Funciones para validar información'''
+    '''========== Funciones para validar información =========='''
     def campo_Existente(self, tabla, campo_1, campo_2):
         """
         Checks if a given field value already exists in a specified table.
@@ -300,8 +299,7 @@ class Inscripciones_2:
         mensaje = "Faltan campos por llenar: " + ", ".join(entradas_Vacias)
         messagebox.askretrycancel(title="Error al guardar", message=mensaje)
 
-    ''' ==================================================================================================== '''      
-    '''Funciones relacionadas al manejo de base de datos y la información mostrada en la interfaz del programa'''
+    '''========== Funciones para el manejo de la base de datos =========='''
     def correr_Query(self, query, parameters=()):
         """
         Executes the given SQL query with optional parameters and returns the resultado.
@@ -408,7 +406,6 @@ class Inscripciones_2:
         self.cmbx_Id_Alumno.configure(state="disable")
         self.cambiar_Nombre_Completo()
 
-    '''Función para limpiar campos'''
     def limpiar_Entradas(self,vaciar):
         match vaciar:
             case "datos_Alumno":
@@ -453,7 +450,6 @@ class Inscripciones_2:
                 self.btnEditar.configure(state='normal')
                 self.btnEditar.bind("<1>", lambda _:self.accion_Boton('Ed'))
 
-    '''Función actualización numeros de inscripción'''
     def actualizacion_Numeros_Inscripcion(self):
         ids_No_Inscripcion = self.correr_Query("SELECT No_Inscripción FROM Inscritos DESC")
         self.lista_No_Inscripcion = []
@@ -465,8 +461,7 @@ class Inscripciones_2:
         self.lista_No_Inscripcion.insert(0, "Todos")
         self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
     
-    '''================================================================================================================''' 
-    '''Funciones para manejar TreeViews'''
+    '''========== Funciones para manejar TreeViews =========='''
     def crear_Treeview(self, tipo):
         # Elimina ventana emergente
         if tipo in ["Carreras", "Cursos", "Alumnos"]:
@@ -681,8 +676,7 @@ class Inscripciones_2:
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
     
-    '''================================================================================================================'''      
-    '''Función para manejar botones Guardar (G), Cancelar (C), Eliminar (El) y Editar (Ed)'''
+    '''========== Funciones para el uso de los botones =========='''      
     def accion_Boton(self, opcion) :
         match  opcion:
             case 'G':
@@ -894,9 +888,7 @@ class Inscripciones_2:
         self.btnEliminar.configure(state='normal')
         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))        
     
-    '''================================================================================================================'''
-    '''Funciones para botón Consultar (<Lupa>)'''
-    ''' Ventana consultar '''    
+    '''========== Funciones para el botón Consultar (<Lupa>) =========='''
     def accion_Consultar(self, event):
         self.ventana_btnconsultar = tk.Toplevel()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=335, width=325)
@@ -1032,7 +1024,6 @@ class Inscripciones_2:
             self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
         except: pass
 
-    '''Funcion abilitar botones de los filtros'''
     def habilitar_Filtros(self,lupa):
         match lupa:
             case 1:
@@ -1063,7 +1054,6 @@ class Inscripciones_2:
             if respuesta_mensaje:
                 self.ventana_btnconsultar.deiconify()
 
-    '''Funcion para botones filtrar'''
     def accion_Filtrar(self, filtro) :
         match  filtro:
             case 'Alumno':
@@ -1278,7 +1268,6 @@ class Inscripciones_2:
         self.frm_2.pack(side="top")
         self.frm_2.pack_propagate(0)
 
-'''================================================================================================================'''
 if __name__ == "__main__":
     app = Inscripciones_2()
     app.run()
