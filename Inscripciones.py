@@ -186,16 +186,21 @@ class Inscripciones_2:
         self.mainwindow.mainloop()    
 
     '''========== Funciones para validar información =========='''
-    def registro_Existente(self, id_Alumno, codigo_Curso):
+    def registro_Existente(self, id_Alumno : str, codigo_Curso : str) -> bool:
         """
-        Checks if a given field value already exists in a specified table.
+        Verifica si el registro de un estudiante en un curso ya existe.
 
-        Args:
-            campo (str): The field value to check.
-            tabla (str): The table to search in.
+        Parámetros
+        ----------
+        id_Alumno : str
+            El ID del Alumno
+        codigo_Curso : str
+            El código del curso
 
-        Returns:
-            bool: True if the field value exists in the table, False otherwise.
+        Retornos
+        --------
+        bool
+            True si el registro ya existe en la tabla Inscritos. False de lo contrartio.
         """
         query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{id_Alumno}' AND Código_Curso = '{codigo_Curso}'"
         resultado = self.correr_Query(query)
@@ -730,7 +735,7 @@ class Inscripciones_2:
                     # Para editar curso (y horario)...
                     else:           
                         if not(self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
                             self.create_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
                             # Para volver a la normalidad...
