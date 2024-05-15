@@ -137,7 +137,11 @@ class Inscripciones_2:
         #Estilo botones
         self.estilo_botones = ttk.Style()
         self.estilo_botones.configure("TButton")
-        self.estilo_botones.map("TButton", foreground=[("active", "#ff0000")], background=[("active", "#ff0000")])
+        self.estilo_botones.map("TButton", foreground=[("active", "purple")], background=[("active", "purple")]) 
+
+        self.estilo_boton_can_el = ttk.Style()
+        self.estilo_boton_can_el.configure("Can_El.TButton")
+        self.estilo_boton_can_el.map("Can_El.TButton", foreground=[("active", "red")], background=[("active", "red")])      
 
         #Botón Consultar
         ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
@@ -160,12 +164,12 @@ class Inscripciones_2:
         self.prev_Course = "" # Variable para guardar el curso original al oprimir el botón Editar
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
-        self.btnEliminar.configure(text='Eliminar')
+        self.btnEliminar.configure(text='Eliminar', style="Can_El.TButton")
         self.btnEliminar.place(anchor="nw", x=400, y=260)
         self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
         #Botón Cancelar
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
-        self.btnCancelar.configure(text='Cancelar')
+        self.btnCancelar.configure(text='Cancelar', style="Can_El.TButton")
         self.btnCancelar.place(anchor="nw", x=500, y=260)
         self.btnCancelar.bind("<1>", lambda _:self.action_Button('C'))
         #Separador
@@ -502,7 +506,7 @@ class Inscripciones_2:
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
                 self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
-                self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+                self.tView.heading("tV_codigo", anchor="w", text='Código de Curso')
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
