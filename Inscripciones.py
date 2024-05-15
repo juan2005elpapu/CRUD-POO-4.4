@@ -342,6 +342,14 @@ class Inscripciones_2:
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
 
+        numero_Inscripcion = self.inscrito_Existente(id_Alumno)
+        if numero_Inscripcion == None :
+            self.cmbx_No_Inscripcion.configure(state="readonly")
+            self.cmbx_No_Inscripcion.set("")
+        else :
+            self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
+            self.cmbx_No_Inscripcion.configure(state="disabled")
+    
     def change_Course(self, event=None):
         """
         Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
@@ -625,8 +633,8 @@ class Inscripciones_2:
                 # Para volver a mostrar todos los inscritos
                 if no_Inscripcion == "Todos":
                     query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
-                    self.cmbx_No_Inscripcion.delete(0, "end") # Borra el texto "Todos" del combobox
                     self.clear_Entrys("datos_Alumno")
+                    self.cmbx_No_Inscripcion.set("") # Borra el texto "Todos" del combobox
                 # Para mostrar solo un número de inscripción
                 else:
                     query = self.run_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {no_Inscripcion} ORDER BY Fecha_Inscripción DESC")
