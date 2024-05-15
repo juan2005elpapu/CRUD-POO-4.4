@@ -139,7 +139,10 @@ class Inscripciones_2:
         #Estilo botones
         self.estilo_botones = ttk.Style()
         self.estilo_botones.configure("TButton")
-        self.estilo_botones.map("TButton", foreground=[("active", "#ff0000")], background=[("active", "#ff0000")])
+        self.estilo_botones.map("TButton", foreground=[("active", "purple")], background=[("active", "purple")])
+        self.estilo_boton_can_el = ttk.Style()
+        self.estilo_boton_can_el.configure("Can_El.TButton")
+        self.estilo_boton_can_el.map("Can_El.TButton", foreground=[("active", "red")], background=[("active", "red")])  
         #Botón Consultar
         ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
         self.img = PhotoImage(file=ruta_Lupa)
@@ -160,12 +163,12 @@ class Inscripciones_2:
         self.curso_Anterior = "" # Variable para guardar el curso original al oprimir el botón Editar
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
-        self.btnEliminar.configure(text='Eliminar')
+        self.btnEliminar.configure(text='Eliminar', style="Can_El.TButton")
         self.btnEliminar.place(anchor="nw", x=400, y=260)
         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
         #Botón Cancelar
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
-        self.btnCancelar.configure(text='Cancelar')
+        self.btnCancelar.configure(text='Cancelar', style="Can_El.TButton")
         self.btnCancelar.place(anchor="nw", x=500, y=260)
         self.btnCancelar.bind("<1>", lambda _:self.accion_Boton('C'))
         #Separador
@@ -727,14 +730,8 @@ class Inscripciones_2:
                     # Para editar curso (y horario)...
                     else:           
                         if not(self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-<<<<<<< HEAD
                             self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
                             self.create_Treeview("Inscritos")
-=======
-                            #dia, mes, anio = map(str, self.fecha.get().split('/'))
-                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
-                            self.crear_Treeview("Inscritos")
->>>>>>> 5da20ceb19d31af4fd544517514e28dd09950928
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
                             # Para volver a la normalidad...
                             self.cmbx_No_Inscripcion.configure(state="readonly")
@@ -958,11 +955,7 @@ class Inscripciones_2:
         #Botón confirmar consulta alumno
         self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
         self.btnFiltrar_alumno.place(anchor="nw", x=260, y=168)
-<<<<<<< HEAD
         self.btnFiltrar_alumno.configure(state='disabled')      
-=======
-        self.btnFiltrar_alumno.configure(state='disabled')    
->>>>>>> 5da20ceb19d31af4fd544517514e28dd09950928
 
         #Combobox Alumno de ventana consulta
         self.cmbx_Id_Alumno_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
@@ -1211,17 +1204,10 @@ class Inscripciones_2:
                 self.tView_Filtro.column("ftV_nombre_curso",anchor="w",width=230,minwidth=230, stretch=False)
                 self.tView_Filtro.column("ftV_horario", anchor="w", width=168, minwidth=168, stretch=False)
                 #Cabeceras
-<<<<<<< HEAD
                 self.filterView.heading("#0", anchor="w", text='No. Inscripción')
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
                 self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
                 self.filterView.heading("ftV_horario", anchor="w", text='Horario')
-=======
-                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
-                self.tView_Filtro.heading("ftV_codigo", anchor="w", text='Código Curso')
-                self.tView_Filtro.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
-                self.tView_Filtro.heading("ftV_horario", anchor="w", text='Horario')
->>>>>>> 5da20ceb19d31af4fd544517514e28dd09950928
                 #Configura los datos de la tabla
                 query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
                 for i in query:
@@ -1239,19 +1225,11 @@ class Inscripciones_2:
                 self.tView_Filtro.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
                 self.tView_Filtro.column("ftV_fecha", anchor="w", stretch=False, width=168, minwidth=168)
                 #Cabeceras
-<<<<<<< HEAD
                 self.filterView.heading("#0", anchor="w", text='No. Inscripción')
                 self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
                 self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
                 self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
                 self.filterView.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
-=======
-                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
-                self.tView_Filtro.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
-                self.tView_Filtro.heading("ftV_nombre", anchor="w", text='Nombres')
-                self.tView_Filtro.heading("ftV_apellidos", anchor="w", text='Apellidos')
-                self.tView_Filtro.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
->>>>>>> 5da20ceb19d31af4fd544517514e28dd09950928
                 #Configura los datos de la tabla
                 query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos. Horario FROM Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Inscritos.No_Inscripción DESC")
                 for i in query:
@@ -1270,21 +1248,12 @@ class Inscripciones_2:
                 self.tView_Filtro.column("ftV_codigo", anchor="w", stretch=False, width=100, minwidth=100)
                 self.tView_Filtro.column("ftV_nombre_curso", anchor="w", stretch=False, width=230, minwidth=230)
                 #Cabeceras
-<<<<<<< HEAD
                 self.filterView.heading("#0", anchor="w", text='No. Inscripción')
                 self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
                 self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
                 self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
                 self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
-=======
-                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
-                self.tView_Filtro.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
-                self.tView_Filtro.heading("ftV_nombre", anchor="w", text='Nombres')
-                self.tView_Filtro.heading("ftV_apellidos", anchor="w", text='Apellidos')
-                self.tView_Filtro.heading("ftV_codigo", anchor="w", text='Código Curso')
-                self.tView_Filtro.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
->>>>>>> 5da20ceb19d31af4fd544517514e28dd09950928
                 #Configura los datos de la tabla
                 query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{anio}-{mes}-{dia}' ORDER BY Inscritos.No_Inscripción DESC;")
                 for i in query:
