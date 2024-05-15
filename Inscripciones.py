@@ -954,12 +954,12 @@ class Inscripciones_2:
 
         #Botón confirmar consulta alumno
         self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
-        self.btnFiltrar_alumno.place(anchor="nw", x=260, y=168)
+        self.btnFiltrar_alumno.place(anchor="nw", x=270, y=168)
         self.btnFiltrar_alumno.configure(state='disabled')      
 
         #Combobox Alumno de ventana consulta
         self.cmbx_Id_Alumno_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
-        self.cmbx_Id_Alumno_Consulta.place(anchor="nw", width=85, x=160, y=170)
+        self.cmbx_Id_Alumno_Consulta.place(anchor="nw", width=95, x=160, y=170)
         self.ids_Alumnos = self.correr_Query("SELECT Id_Alumno FROM Alumnos")
         self.lista_Ids_Alumnos = []
         for tupla in self.ids_Alumnos:
@@ -978,12 +978,12 @@ class Inscripciones_2:
 
         #Botón confirmar consulta curso
         self.btnFiltrar_curso = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_curso", image=self.img2)
-        self.btnFiltrar_curso.place(anchor="nw", x=260, y=228)
+        self.btnFiltrar_curso.place(anchor="nw", x=270, y=228)
         self.btnFiltrar_curso.configure(state='disabled')
 
         #Combobox Curso  de ventana consulta
         self.cmbx_Id_Curso_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
-        self.cmbx_Id_Curso_Consulta.place(anchor="nw", width=85, x=160, y=230)
+        self.cmbx_Id_Curso_Consulta.place(anchor="nw", width=95, x=160, y=230)
         self.ids_Cursos = self.correr_Query("SELECT Código_Curso FROM Cursos")
         self.lista_Ids_Cursos = []
         for tupla in self.ids_Cursos:
@@ -1003,13 +1003,13 @@ class Inscripciones_2:
 
         #Botón confirmar consulta fecha
         self.btnFiltrar_fecha = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_Fecha", image=self.img2)
-        self.btnFiltrar_fecha.place(anchor="nw", x=260, y=288)
+        self.btnFiltrar_fecha.place(anchor="nw", x=270, y=288)
         self.btnFiltrar_fecha.configure(state='disabled')
 
         #Entry Fecha de ventana consulta
         self.Fecha_Consulta = ttk.Entry(self.ventana_btnconsultar, name="fechaconsulta")
         self.Fecha_Consulta.configure(justify="center")
-        self.Fecha_Consulta.place(anchor="nw", width=85, x=160, y=290)
+        self.Fecha_Consulta.place(anchor="nw", width=95, x=160, y=290)
         self.Fecha_Consulta.bind("<BackSpace>", lambda _:self.Fecha_Consulta.delete(0,"end"))
         self.Fecha_Consulta.bind("<KeyRelease>", self.valida_Fecha_Consulta)
         self.btnConsultar.configure(state='disabled')  # Deshabilitamos el botón
