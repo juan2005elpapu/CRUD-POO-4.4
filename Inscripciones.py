@@ -499,7 +499,7 @@ class Inscripciones_2:
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
                 self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
-                self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+                self.tView.heading("tV_codigo", anchor="w", text='Código de Curso')
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 query = self.correr_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
@@ -524,7 +524,7 @@ class Inscripciones_2:
                 self.tView.column("tV_Descripcion",anchor="w",stretch=True,width=200,minwidth=200)
                 self.tView.column("tV_semestres",anchor="w",stretch=True,width=100,minwidth=100)
                 #Cabeceras
-                self.tView.heading("#0", anchor="w", text='Codigo de Carrera')
+                self.tView.heading("#0", anchor="w", text='Código de Carrera')
                 self.tView.heading("tV_Descripcion", anchor="w", text='Descripcion')
                 self.tView.heading("tV_semestres", anchor="w", text='No de semestres')
                 #Configura los datos de la tabla
@@ -618,7 +618,7 @@ class Inscripciones_2:
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
                 self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
-                self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
+                self.tView.heading("tV_codigo", anchor="w", text='Código de Curso')
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
@@ -1204,10 +1204,10 @@ class Inscripciones_2:
                 self.tView_Filtro.column("ftV_nombre_curso",anchor="w",width=230,minwidth=230, stretch=False)
                 self.tView_Filtro.column("ftV_horario", anchor="w", width=168, minwidth=168, stretch=False)
                 #Cabeceras
-                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
-                self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
-                self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
-                self.filterView.heading("ftV_horario", anchor="w", text='Horario')
+                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView_Filtro.heading("ftV_codigo", anchor="w", text='Código Curso')
+                self.tView_Filtro.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
+                self.tView_Filtro.heading("ftV_horario", anchor="w", text='Horario')
                 #Configura los datos de la tabla
                 query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
                 for i in query:
@@ -1225,11 +1225,11 @@ class Inscripciones_2:
                 self.tView_Filtro.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
                 self.tView_Filtro.column("ftV_fecha", anchor="w", stretch=False, width=168, minwidth=168)
                 #Cabeceras
-                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
-                self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
-                self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
-                self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
-                self.filterView.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
+                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView_Filtro.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
+                self.tView_Filtro.heading("ftV_nombre", anchor="w", text='Nombres')
+                self.tView_Filtro.heading("ftV_apellidos", anchor="w", text='Apellidos')
+                self.tView_Filtro.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
                 #Configura los datos de la tabla
                 query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos. Horario FROM Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Inscritos.No_Inscripción DESC")
                 for i in query:
@@ -1248,12 +1248,12 @@ class Inscripciones_2:
                 self.tView_Filtro.column("ftV_codigo", anchor="w", stretch=False, width=100, minwidth=100)
                 self.tView_Filtro.column("ftV_nombre_curso", anchor="w", stretch=False, width=230, minwidth=230)
                 #Cabeceras
-                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
-                self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
-                self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
-                self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
-                self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
-                self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
+                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView_Filtro.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
+                self.tView_Filtro.heading("ftV_nombre", anchor="w", text='Nombres')
+                self.tView_Filtro.heading("ftV_apellidos", anchor="w", text='Apellidos')
+                self.tView_Filtro.heading("ftV_codigo", anchor="w", text='Código Curso')
+                self.tView_Filtro.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
                 #Configura los datos de la tabla
                 query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{anio}-{mes}-{dia}' ORDER BY Inscritos.No_Inscripción DESC;")
                 for i in query:
