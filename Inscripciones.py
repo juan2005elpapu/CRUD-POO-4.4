@@ -133,12 +133,19 @@ class Inscripciones_2:
         self.cmbx_Horario['values'] = self.horarios_Horas
         
         #Botones  de la Aplicación
+
+        #Estilo botones
+        self.estilo_botones = ttk.Style()
+        self.estilo_botones.configure("TButton")
+        self.estilo_botones.map("TButton", foreground=[("active", "#ff0000")], background=[("active", "#ff0000")])
+
         #Botón Consultar
         ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
         self.img = PhotoImage(file=ruta_Lupa)
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
         self.btnConsultar.bind("<1>", self.action_btnconsultar)
+
         #Botón Guardar
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
@@ -430,7 +437,17 @@ class Inscripciones_2:
                 self.cmbx_Dias.set("")
                 self.cmbx_No_Inscripcion.set("")
                 self.fecha.delete(0, "end")
-    
+            case "restaurar_botones":
+                # Restaura el botón Eliminar
+                # Restaura el botón Guardar
+                # Restaura el botón Editar
+                self.btnEliminar.configure(state='normal')
+                self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+                self.btnGuardar.configure(state='normal')
+                self.btnGuardar.bind("<1>", lambda _:self.action_Button('G'))
+                self.btnEditar.configure(state='normal')
+                self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
+
     '''Función actualización numeros de inscripción'''
     def actualizacion_Numeros_Inscripcion(self):
         ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
@@ -583,6 +600,7 @@ class Inscripciones_2:
                 self.scroll_H.place(anchor="s", height=12, width=760, x=400, y=595)
                 self.tView['xscrollcommand'] = self.scroll_H.set
             case "No_Inscripcion" :
+                self.clear_Entrys("restaurar_botones")
                 """
                 Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is selected.
                 """
@@ -817,15 +835,7 @@ class Inscripciones_2:
                     self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
-                     # Restaura el botón Eliminar
-                     # Restaura el botón Guardar
-                     # Restaura el botón Editar
-                    self.btnEliminar.configure(state='normal')
-                    self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
-                    self.btnGuardar.configure(state='normal')
-                    self.btnGuardar.bind("<1>", lambda _:self.action_Button('G'))
-                    self.btnEditar.configure(state='normal')
-                    self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
+                    self.clear_Entrys("restaurar_botones")
                     self.clear_Entrys("datos_Todo")
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
@@ -878,6 +888,9 @@ class Inscripciones_2:
         self.create_Treeview("Inscritos")
         self.actualizacion_Numeros_Inscripcion()
         messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
+        self.btnEliminar.configure(state='normal')
+        self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+        
     
     '''================================================================================================================'''
     '''Funciones para botón Consultar (<Lupa>)'''
