@@ -45,7 +45,7 @@ class Inscripciones_2:
         #Combobox No. Inscripción
         self.cmbx_No_Inscripcion = ttk.Combobox(self.frm_1, name="cmbxnoincripcion", state="readonly")
         self.cmbx_No_Inscripcion.place(anchor="nw", width=100, x=682, y=42)
-        self.ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+        self.ids_No_Inscripcion = self.correr_Query("SELECT No_Inscripción FROM Inscritos DESC")
         self.lista_No_Inscripcion = []
         for tupla in self.ids_No_Inscripcion:
             self.lista_No_Inscripcion.append(tupla[0])
@@ -54,7 +54,7 @@ class Inscripciones_2:
         self.lista_No_Inscripcion.sort()
         self.lista_No_Inscripcion.insert(0, "Todos")
         self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
-        self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.create_Treeview("No_Inscripcion"))
+        self.cmbx_No_Inscripcion.bind("<<ComboboxSelected>>", lambda _:self.crear_Treeview("No_Inscripcion"))
         #Label Fecha
         self.lblFecha = ttk.Label(self.frm_1, name="lblfecha")
         self.lblFecha.configure(background="#f7f9fd", text='Fecha:')
@@ -72,13 +72,13 @@ class Inscripciones_2:
         #Combobox Alumno
         self.cmbx_Id_Alumno = ttk.Combobox(self.frm_1, name="cmbx_id_alumno", state="readonly")
         self.cmbx_Id_Alumno.place(anchor="nw", width=112, x=90, y=80)
-        self.ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
+        self.ids_Alumnos = self.correr_Query("SELECT Id_Alumno FROM Alumnos")
         self.lista_Ids_Alumnos = []
         for tupla in self.ids_Alumnos:
             self.lista_Ids_Alumnos.append(tupla[0])
         self.cmbx_Id_Alumno['values'] = self.ids_Alumnos
         # Adición automática de nombres y apellidos al seleccionar un ID
-        self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.change_Full_Name)
+        self.cmbx_Id_Alumno.bind("<<ComboboxSelected>>", self.cambiar_Nombre_Completo)
         #Label Nombres
         self.lblNombres = ttk.Label(self.frm_1, name="lblnombres")
         self.lblNombres.configure(text='Nombre(s):')
@@ -102,12 +102,12 @@ class Inscripciones_2:
         #Combobox Curso
         self.cmbx_Id_Curso = ttk.Combobox(self.frm_1, name="cmbx_id_curso", state="readonly")
         self.cmbx_Id_Curso.place(anchor="nw", width=100, x=90, y=185)
-        self.ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
+        self.ids_Cursos = self.correr_Query("SELECT Código_Curso FROM Cursos")
         self.lista_Ids_Cursos = []
         for tupla in self.ids_Cursos:
             self.lista_Ids_Cursos.append(tupla[0])
         self.cmbx_Id_Curso['values'] = self.ids_Cursos
-        self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.change_Course)
+        self.cmbx_Id_Curso.bind("<<ComboboxSelected>>", self.cambiar_Curso)
         #Label Descripción del Curso
         self.lblDscCurso = ttk.Label(self.frm_1, name="lbldsccurso")
         self.lblDscCurso.configure(background="#f7f9fd",state="normal",text='Curso:')
@@ -137,48 +137,44 @@ class Inscripciones_2:
         #Estilo botones
         self.estilo_botones = ttk.Style()
         self.estilo_botones.configure("TButton")
-        self.estilo_botones.map("TButton", foreground=[("active", "purple")], background=[("active", "purple")]) 
-
-        self.estilo_boton_can_el = ttk.Style()
-        self.estilo_boton_can_el.configure("Can_El.TButton")
-        self.estilo_boton_can_el.map("Can_El.TButton", foreground=[("active", "red")], background=[("active", "red")])      
+        self.estilo_botones.map("TButton", foreground=[("active", "#ff0000")], background=[("active", "#ff0000")])
 
         #Botón Consultar
         ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
         self.img = PhotoImage(file=ruta_Lupa)
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
-        self.btnConsultar.bind("<1>", self.action_btnconsultar)
+        self.btnConsultar.bind("<1>", self.accion_Consultar)
 
         #Botón Guardar
         self.btnGuardar = ttk.Button(self.frm_1, name="btnguardar")
         self.btnGuardar.configure(text='Guardar')
         self.btnGuardar.place(anchor="nw", x=200, y=260)
-        self.btnGuardar.bind("<1>", lambda _:self.action_Button('G'))
+        self.btnGuardar.bind("<1>", lambda _:self.accion_Boton('G'))
         #Botón Editar
         self.btnEditar = ttk.Button(self.frm_1, name="btneditar")
         self.btnEditar.configure(text='Editar')
         self.btnEditar.place(anchor="nw", x=300, y=260)
-        self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
+        self.btnEditar.bind("<1>", lambda _:self.accion_Boton('Ed'))
         self.id = -1 # Índice para saber si el programa está guardando (INSERT) o editando (UPDATE)
-        self.prev_Course = "" # Variable para guardar el curso original al oprimir el botón Editar
+        self.curso_Anterior = "" # Variable para guardar el curso original al oprimir el botón Editar
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
-        self.btnEliminar.configure(text='Eliminar', style="Can_El.TButton")
+        self.btnEliminar.configure(text='Eliminar')
         self.btnEliminar.place(anchor="nw", x=400, y=260)
-        self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+        self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
         #Botón Cancelar
         self.btnCancelar = ttk.Button(self.frm_1, name="btncancelar")
-        self.btnCancelar.configure(text='Cancelar', style="Can_El.TButton")
+        self.btnCancelar.configure(text='Cancelar')
         self.btnCancelar.place(anchor="nw", x=500, y=260)
-        self.btnCancelar.bind("<1>", lambda _:self.action_Button('C'))
+        self.btnCancelar.bind("<1>", lambda _:self.accion_Boton('C'))
         #Separador
-        separator1 = ttk.Separator(self.frm_1)
-        separator1.configure(orient="horizontal")
-        separator1.place(anchor="nw", width=796, x=2, y=245)
+        separador1 = ttk.Separator(self.frm_1)
+        separador1.configure(orient="horizontal")
+        separador1.place(anchor="nw", width=796, x=2, y=245)
 
         # Treeview inicial de la Aplicación
-        self.create_Treeview("Inscritos")
+        self.crear_Treeview("Inscritos")
 
         # Main widget
         self.mainwindow = self.win
@@ -200,9 +196,9 @@ class Inscripciones_2:
             bool: True if the field value exists in the table, False otherwise.
         """
         query = f"SELECT COUNT(*) FROM {tabla} WHERE Id_Alumno = '{campo_1}' AND Código_Curso = '{campo_2}'"
-        result = self.run_Query(query)
-        count = result[0][0]
-        return count > 0
+        resultado = self.correr_Query(query)
+        contador = resultado[0][0]
+        return contador > 0
     
     def horario_Existente(self, alumno, dias, horario):
         """
@@ -217,9 +213,9 @@ class Inscripciones_2:
             bool: True if the student already has a course with the given schedule, False otherwise.
         """
         query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{alumno}' AND Horario = '{dias} {horario}'"
-        result = self.run_Query(query)
-        count = result[0][0]
-        return count > 0
+        resultado = self.correr_Query(query)
+        contador = resultado[0][0]
+        return contador > 0
     
     def inscrito_Existente(self, id_Alumno):
         """
@@ -232,9 +228,9 @@ class Inscripciones_2:
             numero_inscripcion (int) if there are any. Otherwise None.
         """
         query = f"SELECT No_Inscripción FROM Inscritos WHERE Id_Alumno = '{id_Alumno}'"
-        result = self.run_Query(query)
-        if len(result) > 0:
-            numero_inscripcion = result[0][0]
+        resultado = self.correr_Query(query)
+        if len(resultado) > 0:
+            numero_inscripcion = resultado[0][0]
             return numero_inscripcion
         else:
             return None
@@ -256,39 +252,39 @@ class Inscripciones_2:
 
     def fecha_Valida(self, fecha):
         try: 
-            day, month, year = map(int, fecha.split('/'))
-            datetime(year, month, day)
+            dia, mes, anio = map(int, fecha.split('/'))
+            datetime(anio, mes, dia)
             return True
         except ValueError: 
             messagebox.showerror('Error!!','.. ¡Fecha equivocada! por favor corrijala ..')
             return False   
 
-    def check_Entries(self):
+    def verificar_Entradas(self):
         """
-        Checks if the needed entries to sign up a student are filled. Furthermore, it checks is the date is valid, if the student hasn't
+        Checks if the needed entradas to sign up a student are filled. Furthermore, it checks is the date is valid, if the student hasn't
         already been signed up in a course and if the student doesn't have any other course at the same schedule (days + hours).
 
         Args:
             None
         
         Returns:
-            bool: False if any of the needed entries is empty or the previous mentioned conditions aren't met; True if everything is
+            bool: False if any of the needed entradas is empty or the previous mentioned conditions aren't met; True if everything is
             alright in order to sign up the student.
         """
         # Verifica que todos los campos estén llenos
-        entries_To_Check = [self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get(), self.fecha.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()]
-        for entry in entries_To_Check:
-            if entry == "":
-                self.show_Error_Empty_Entries()
+        entradas_A_Revisar = [self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get(), self.fecha.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()]
+        for entrada in entradas_A_Revisar:
+            if entrada == "":
+                self.mostrar_Error_Entradas_Vacias()
                 return False
         # Verifica que la fecha sea válida, que el estudiante no haya sido inscrito en ese curso anteriormente y que no haya sido inscrito en otro curso con el mismo horario
         if not self.fecha_Valida(self.fecha.get()) or self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()) or self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
             return False
         return True
 
-    def show_Error_Empty_Entries(self):
+    def mostrar_Error_Entradas_Vacias(self):
         """
-        Shows an error message indicating the empty entries that need to be filled in order to save correctly.
+        Shows an error message indicating the empty entradas that need to be filled in order to save correctly.
 
         Args:
             None
@@ -296,37 +292,37 @@ class Inscripciones_2:
         Returns:
             None
         """
-        entries = {"Id Alumno":self.cmbx_Id_Alumno.get(), "Id Curso":self.cmbx_Id_Curso.get(), "Fecha":self.fecha.get(), "Horario (Días)":self.cmbx_Dias.get(), "Horario (Hora)":self.cmbx_Horario.get()}
-        missing_entries = []
-        for i in range(len(entries)):
-            if list(entries.values())[i] == "":
-                missing_entries.append(list(entries.keys())[i])
-        mensaje = "Faltan campos por llenar: " + ", ".join(missing_entries)
+        entradas = {"Id Alumno":self.cmbx_Id_Alumno.get(), "Id Curso":self.cmbx_Id_Curso.get(), "Fecha":self.fecha.get(), "Horario (Días)":self.cmbx_Dias.get(), "Horario (Hora)":self.cmbx_Horario.get()}
+        entradas_Vacias = []
+        for i in range(len(entradas)):
+            if list(entradas.values())[i] == "":
+                entradas_Vacias.append(list(entradas.keys())[i])
+        mensaje = "Faltan campos por llenar: " + ", ".join(entradas_Vacias)
         messagebox.askretrycancel(title="Error al guardar", message=mensaje)
 
     ''' ==================================================================================================== '''      
     '''Funciones relacionadas al manejo de base de datos y la información mostrada en la interfaz del programa'''
-    def run_Query(self, query, parameters=()):
+    def correr_Query(self, query, parameters=()):
         """
-        Executes the given SQL query with optional parameters and returns the result.
+        Executes the given SQL query with optional parameters and returns the resultado.
 
         Args:
             query (str): The SQL query to execute.
             parameters (tuple): Optional parameters to be used in the query.
 
         Returns:
-            result: The result of the query execution.
+            resultado: The resultado of the query execution.
         """
         ruta_db = self.dir_pro + "\\db\\Inscripciones.db"
         with sqlite3.connect(ruta_db) as conn:
             cursor = conn.cursor()
-            result = cursor.execute(query, parameters)
+            resultado = cursor.execute(query, parameters)
             conn.commit()
-        return result.fetchall()
+        return resultado.fetchall()
 
-    def change_Full_Name(self, event=None):
+    def cambiar_Nombre_Completo(self, event=None):
         """
-        Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
+        Retrieves the full name of a student based on their ID and updates the corresponding entrada fields.
 
         Args:
             event: The event object triggered by the user action.
@@ -335,8 +331,8 @@ class Inscripciones_2:
             None
         """
         id_Alumno = self.cmbx_Id_Alumno.get()
-        nombres_Alumno = self.run_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
-        apellidos_Alumno = self.run_Query(f"SELECT Apellidos FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        nombres_Alumno = self.correr_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
+        apellidos_Alumno = self.correr_Query(f"SELECT Apellidos FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
         self.nombres.configure(state = "normal")
         self.apellidos.configure(state = "normal")
         self.nombres.delete(0, 'end')
@@ -353,10 +349,10 @@ class Inscripciones_2:
         else :
             self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
             self.cmbx_No_Inscripcion.configure(state="disabled")
-    
-    def change_Course(self, event=None):
+
+    def cambiar_Curso(self, event=None):
         """
-        Retrieves the full name of a student based on their ID and updates the corresponding entry fields.
+        Retrieves the full name of a student based on their ID and updates the corresponding entrada fields.
 
         Args:
             event: The event object triggered by the user action.
@@ -365,56 +361,55 @@ class Inscripciones_2:
             None
         """
         id_Curso = self.cmbx_Id_Curso.get()
-        descripcion = self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso = '{id_Curso}'")
-        hora = self.run_Query(f"SELECT Num_Horas FROM Cursos WHERE Código_Curso = '{id_Curso}'")
+        descripcion = self.correr_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso = '{id_Curso}'")
         self.descripc_Curso.configure(state = "normal")
         self.descripc_Curso.delete(0, 'end')
         self.descripc_Curso.insert(0, descripcion[0][0])
         self.descripc_Curso.configure(state = "readonly")
 
-    def insert_Data(self,num_Inscripcion, id_Curso):
+    def insertar_Informacion(self,num_Inscripcion, id_Curso):
         query= f"SELECT * FROM Inscritos WHERE No_Inscripción = {num_Inscripcion} AND Código_Curso = '{id_Curso}'"
-        result=self.run_Query(query)
-        result=list(result[0])
+        resultado = self.correr_Query(query)
+        resultado = list(resultado[0])
 
         # Cambia valor en Fecha
-        fecha=result[2].split("-")
-        newfecha=str(fecha[2])+'/'+str(fecha[1])+'/'+str(fecha[0])
+        fecha = resultado[2].split("-")
+        fecha_Nueva = str(fecha[2])+'/'+str(fecha[1])+'/'+str(fecha[0])
         self.fecha.configure(state="normal")
         self.fecha.delete(0, "end")
-        self.fecha.insert(0,newfecha)
-        result.pop(2)
+        self.fecha.insert(0,fecha_Nueva)
+        resultado.pop(2)
         
         # Cambia valor en No. de Inscripción
         self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(num_Inscripcion))
         self.cmbx_No_Inscripcion.configure(state="disable")
 
         # Cambia valor en las demás entradas
-        horario=result[3].split(" ")
+        horario=resultado[3].split(" ")
         dia = " ".join(horario[:3])
         hora = " ".join(horario[3:])
-        result[3]=dia
-        result.append(hora)
-        entries = [self.cmbx_Id_Alumno, self.cmbx_Id_Curso, self.cmbx_Dias, self.cmbx_Horario]
-        lists = [self.lista_Ids_Alumnos, self.lista_Ids_Cursos, self.horarios_Dias, self.horarios_Horas]
+        resultado[3]=dia
+        resultado.append(hora)
+        entradas = [self.cmbx_Id_Alumno, self.cmbx_Id_Curso, self.cmbx_Dias, self.cmbx_Horario]
+        listas = [self.lista_Ids_Alumnos, self.lista_Ids_Cursos, self.horarios_Dias, self.horarios_Horas]
         try:
-            for i in range(len(entries)):
-                entries[i].current(lists[i].index(result[i+1]))
-            self.change_Course()
+            for i in range(len(entradas)):
+                entradas[i].current(listas[i].index(resultado[i+1]))
+            self.cambiar_Curso()
         except:
             pass
-        self.change_Full_Name()
+        self.cambiar_Nombre_Completo()
         
-    def insert_Student(self, no_Inscripcion):
+    def insertar_Estudiante(self, no_Inscripcion):
         query = f"SELECT Id_Alumno FROM Inscritos WHERE No_Inscripción = {no_Inscripcion}"
-        results = self.run_Query(query)
-        id_Alumno = results[0][0]
+        resultado = self.correr_Query(query)
+        id_Alumno = resultado[0][0]
         self.cmbx_Id_Alumno.current(self.lista_Ids_Alumnos.index(id_Alumno))
         self.cmbx_Id_Alumno.configure(state="disable")
-        self.change_Full_Name()
+        self.cambiar_Nombre_Completo()
 
     '''Función para limpiar campos'''
-    def clear_Entrys(self,vaciar):
+    def limpiar_Entradas(self,vaciar):
         match vaciar:
             case "datos_Alumno":
                 self.cmbx_Id_Alumno.set("")
@@ -450,19 +445,17 @@ class Inscripciones_2:
                 self.cmbx_No_Inscripcion.set("")
                 self.fecha.delete(0, "end")
             case "restaurar_botones":
-                # Restaura el botón Eliminar
-                # Restaura el botón Guardar
-                # Restaura el botón Editar
+                # Restaura los botones Eliminar, Guardar y Editar
                 self.btnEliminar.configure(state='normal')
-                self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+                self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
                 self.btnGuardar.configure(state='normal')
-                self.btnGuardar.bind("<1>", lambda _:self.action_Button('G'))
+                self.btnGuardar.bind("<1>", lambda _:self.accion_Boton('G'))
                 self.btnEditar.configure(state='normal')
-                self.btnEditar.bind("<1>", lambda _:self.action_Button('Ed'))
+                self.btnEditar.bind("<1>", lambda _:self.accion_Boton('Ed'))
 
     '''Función actualización numeros de inscripción'''
     def actualizacion_Numeros_Inscripcion(self):
-        ids_No_Inscripcion = self.run_Query("SELECT No_Inscripción FROM Inscritos DESC")
+        ids_No_Inscripcion = self.correr_Query("SELECT No_Inscripción FROM Inscritos DESC")
         self.lista_No_Inscripcion = []
         for tupla in ids_No_Inscripcion:
             self.lista_No_Inscripcion.append(tupla[0])
@@ -474,13 +467,15 @@ class Inscripciones_2:
     
     '''================================================================================================================''' 
     '''Funciones para manejar TreeViews'''
-    def create_Treeview(self, type):
+    def crear_Treeview(self, tipo):
         # Elimina ventana emergente
-        if type in ["Carreras", "Cursos", "Alumnos"]:
-            self.ventana_btnconsultar.destroy()      
+        if tipo in ["Carreras", "Cursos", "Alumnos"]:
+            self.ventana_btnconsultar.destroy()
+            self.btnConsultar.configure(state="normal")
+            self.btnConsultar.bind("<1>", self.accion_Consultar)
         # Elimina TreeView anterior (si existe)
         try :
-            self.delete_Treeview()
+            self.borrar_Treeview()
             self.scroll_H.destroy()
         except :
             pass
@@ -490,7 +485,7 @@ class Inscripciones_2:
         self.tView.bind("<B1-Motion>", "break")
         self.tView.place(anchor="nw", height=280, width=760, x=20, y=300)
         # Verifica el tipo de tabla para crear el TreeView correspondiente
-        match type:
+        match tipo:
             case "Inscritos":
                 """
                 Creates the correponding TreeView for the table Inscritos.
@@ -506,15 +501,14 @@ class Inscripciones_2:
                 self.tView.heading("#0", anchor="w", text='No. Inscripción')
                 self.tView.heading("tV_id_alumno", anchor="w", text='Id Alumno')
                 self.tView.heading("tV_fecha_inscripcion", anchor="w", text='Fecha de Inscripción')
-                self.tView.heading("tV_codigo", anchor="w", text='Código de Curso')
+                self.tView.heading("tV_codigo", anchor="w", text='Codigo de Curso')
                 self.tView.heading("tV_horario", anchor="w", text='Horario')
                 self.tView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
-                query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
+                query = self.correr_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
+            
             case "Carreras":
-                self.btnConsultar.configure(state="normal")
-                self.btnConsultar.bind("<1>", self.action_btnconsultar)
                 """
                 Creates the correponding TreeView for the table Carreras.
                 """
@@ -536,13 +530,11 @@ class Inscripciones_2:
                 self.tView.heading("tV_Descripcion", anchor="w", text='Descripcion')
                 self.tView.heading("tV_semestres", anchor="w", text='No de semestres')
                 #Configura los datos de la tabla
-                query = self.run_Query("SELECT * FROM Carreras")
+                query = self.correr_Query("SELECT * FROM Carreras")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2],))
             
             case "Cursos":
-                self.btnConsultar.configure(state="normal")
-                self.btnConsultar.bind("<1>", self.action_btnconsultar)
                 """
                 Creates the correponding TreeView for the table Cursos.
                 """
@@ -564,13 +556,11 @@ class Inscripciones_2:
                 self.tView.heading("tV_descripción", anchor="w", text='Descripción')
                 self.tView.heading("tV_horas", anchor="w", text='Horas')
                 #Configura los datos de la tabla
-                query = self.run_Query("SELECT * FROM Cursos")
+                query = self.correr_Query("SELECT * FROM Cursos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
             
             case "Alumnos":
-                self.btnConsultar.configure(state="normal")
-                self.btnConsultar.bind("<1>", self.action_btnconsultar)
                 """
                 Creates the correponding TreeView for the table Alumnos.
                 """
@@ -604,17 +594,18 @@ class Inscripciones_2:
                         self.tView.heading(self.tView_dcols[i+3], anchor="w", text=self.headers[i])
                         
                 #Configura los datos de la tabla
-                query = self.run_Query("SELECT * FROM Alumnos")
+                query = self.correr_Query("SELECT * FROM Alumnos")
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5], i[6], i[7], i[8], i[9]))
                 self.scroll_H = ttk.Scrollbar(self.frm_1, name="scroll_h", command=self.tView.xview)
                 self.scroll_H.configure(orient="horizontal")
                 self.scroll_H.place(anchor="s", height=12, width=760, x=400, y=595)
                 self.tView['xscrollcommand'] = self.scroll_H.set
+            
             case "No_Inscripcion" :
-                self.clear_Entrys("restaurar_botones")
+                self.limpiar_Entradas("restaurar_botones")
                 """
-                Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is selected.
+                Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is entrada_Seleccionada.
                 """
                 #Columnas del Treeview
                 self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
@@ -636,17 +627,17 @@ class Inscripciones_2:
                 no_Inscripcion = self.cmbx_No_Inscripcion.get()
                 # Para volver a mostrar todos los inscritos
                 if no_Inscripcion == "Todos":
-                    query = self.run_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
-                    self.clear_Entrys("datos_Alumno")
+                    query = self.correr_Query("SELECT * FROM Inscritos ORDER BY No_Inscripción DESC")
+                    self.limpiar_Entradas("datos_Alumno")
                     self.cmbx_No_Inscripcion.set("") # Borra el texto "Todos" del combobox
                 # Para mostrar solo un número de inscripción
                 else:
-                    query = self.run_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {no_Inscripcion} ORDER BY Fecha_Inscripción DESC")
+                    query = self.correr_Query(f"SELECT * FROM Inscritos WHERE No_Inscripción = {no_Inscripcion} ORDER BY Fecha_Inscripción DESC")
                     # Función para insertar información del alumno
-                    self.insert_Student(no_Inscripcion)
+                    self.insertar_Estudiante(no_Inscripcion)
                 for i in query:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
-     
+
         #Scrollbars
         self.scroll_Y = ttk.Scrollbar(self.frm_1, name="scroll_y", command=self.tView.yview)
         self.scroll_Y.configure(orient="vertical")
@@ -655,7 +646,7 @@ class Inscripciones_2:
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
 
-    def delete_Treeview(self):
+    def borrar_Treeview(self):
         """
         Deletes the current TreeView shown in the frame.
 
@@ -692,14 +683,14 @@ class Inscripciones_2:
     
     '''================================================================================================================'''      
     '''Función para manejar botones Guardar (G), Cancelar (C), Eliminar (El) y Editar (Ed)'''
-    def action_Button(self, option) :
-        match  option:
+    def accion_Boton(self, opcion) :
+        match  opcion:
             case 'G':
                 self.btnEliminar.configure(state='disabled')
                 # Para guardar nueva entrada...
                 if self.id == -1:
-                    if self.check_Entries():
-                        day, month, year = map(str, self.fecha.get().split('/'))
+                    if self.verificar_Entradas():
+                        dia, mes, anio = map(str, self.fecha.get().split('/'))
                         # Verifica si debe crear un nuevo No. de Inscripción
                         if self.inscrito_Existente(self.cmbx_Id_Alumno.get()) == None:
                             self.lista_No_Inscripcion.pop(0)
@@ -710,12 +701,12 @@ class Inscripciones_2:
                             num_Inscripcion = self.inscrito_Existente(self.cmbx_Id_Alumno.get())
                             # Verifica si al estudiante se le habían eliminado los cursos para borrar ese registro
                             if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), "[Sin cursos]"):
-                                self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {num_Inscripcion}")
-                        self.run_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{year}-{month}-{day}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
-                        self.create_Treeview("Inscritos")
+                                self.correr_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {num_Inscripcion}")
+                        self.correr_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{anio}-{mes}-{dia}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
+                        self.crear_Treeview("Inscritos")
                         self.actualizacion_Numeros_Inscripcion()
                         messagebox.showinfo(title="guardar", message="Guardado con éxito")
-                        self.clear_Entrys("datos_Todo")
+                        self.limpiar_Entradas("datos_Todo")
                     else:
                         if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                             messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
@@ -724,36 +715,36 @@ class Inscripciones_2:
                 # Para editar...
                 else :
                     # Para editar solo el horario...
-                    if str(self.prev_Course) == self.cmbx_Id_Curso.get():
+                    if str(self.curso_Anterior) == self.cmbx_Id_Curso.get():
                         if not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
-                            self.create_Treeview("Inscritos")
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
+                            self.crear_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
                             # Para volver a la normalidad...
                             self.cmbx_No_Inscripcion.configure(state="readonly")
                             self.cmbx_Id_Alumno.configure(state='readonly')
                             self.fecha.configure(state='normal')
-                            self.clear_Entrys("datos_Todo")
+                            self.limpiar_Entradas("datos_Todo")
                             # Restaura banderas     
                             self.id = -1
-                            self.prev_Course = ""
+                            self.curso_Anterior = ""
                         else:
                             messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
                     # Para editar curso (y horario)...
                     else:           
                         if not(self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            #day, month, year = map(str, self.fecha.get().split('/'))
-                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
-                            self.create_Treeview("Inscritos")
+                            #dia, mes, anio = map(str, self.fecha.get().split('/'))
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
+                            self.crear_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
                             # Para volver a la normalidad...
                             self.cmbx_No_Inscripcion.configure(state="readonly")
                             self.cmbx_Id_Alumno.configure(state='readonly')
                             self.fecha.configure(state='normal')
-                            self.clear_Entrys("datos_Todo")
+                            self.limpiar_Entradas("datos_Todo")
                             # Restaura banderas 
                             self.id = -1
-                            self.prev_Course = ""
+                            self.curso_Anterior = ""
                         else:
                             if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                                 messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
@@ -764,11 +755,11 @@ class Inscripciones_2:
                 self.btnGuardar.after(100, lambda: self.btnGuardar.state(["!pressed"]))
                 # Restaura el botón Eliminar
                 self.btnEliminar.configure(state='normal')
-                self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
+                self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
 
             case 'Ed':
-                selected = self.tView.focus()
-                clave = self.tView.item(selected,'text')
+                entrada_Seleccionada = self.tView.focus()
+                clave = self.tView.item(entrada_Seleccionada,'text')
                 if clave == '':
                     messagebox.showwarning("Editar", 'Debes selecccionar un elemento.')
                 else:
@@ -776,18 +767,18 @@ class Inscripciones_2:
                     if respuesta:
                         self.btnEliminar.configure(state='disabled')
                         self.btnEliminar.unbind('<1>')
-                        info = self.tView.item(selected)
-                        self.clear_Entrys("datos_Curso")
-                        self.insert_Data(info['text'],info['values'][2])
+                        info = self.tView.item(entrada_Seleccionada)
+                        self.limpiar_Entradas("datos_Curso")
+                        self.insertar_Informacion(info['text'],info['values'][2])
                         self.id = clave
-                        self.prev_Course = info['values'][2]
+                        self.curso_Anterior = info['values'][2]
                         self.cmbx_Id_Alumno.configure(state='disabled')
                         self.fecha.configure(state='readonly')
                 self.btnEditar.after(100, lambda: self.btnEditar.state(["!pressed"]))
 
             case 'El':
-                selected = self.tView.focus()
-                info = self.tView.item(selected)
+                entrada_Seleccionada = self.tView.focus()
+                info = self.tView.item(entrada_Seleccionada)
                 if info['text'] == '':
                     messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
                 elif info['values'][2] == '[Sin cursos]':
@@ -824,34 +815,34 @@ class Inscripciones_2:
                     self.btneliminar_opcion = ttk.Button(self.ventana_btneliminar, name="btneliminar_opcion")
                     self.btneliminar_opcion.configure(text='Confirmar')
                     self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
-                    self.btneliminar_opcion.bind("<1>", lambda _:self.action_btneliminar())  
+                    self.btneliminar_opcion.bind("<1>", lambda _:self.accion_Eliminar())  
                     self.btnEliminar.config(state='disabled')  # Deshabilitamos el botón
                     self.btnEliminar.unbind('<1>')
                 self.btnEliminar.after(100, lambda: self.btnEliminar.state(["!pressed"]))
                 try:
-                    def on_close(): 
+                    def despues_Cerrar(): 
                         '''
                         Función que se llama cuando se pulsa el botón de cierre
                         del gestor de ventanas 
                         '''        
                         self.ventana_btneliminar.destroy()  # Destruimos la ventana secundaria
                         self.btnEliminar.config(state='normal')  # habilitamos el botón
-                        self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
-                    self.ventana_btneliminar.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                        self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
+                    self.ventana_btneliminar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
             
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
-                    self.create_Treeview("Inscritos")
+                    self.crear_Treeview("Inscritos")
                     self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
-                    self.clear_Entrys("restaurar_botones")
-                    self.clear_Entrys("datos_Todo")
+                    self.limpiar_Entradas("restaurar_botones")
+                    self.limpiar_Entradas("datos_Todo")
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
-    def action_btneliminar(self):
+    def accion_Eliminar(self):
         opcion_borrar = self.opcion_seleccionada.get()
         numero_Inscrito = self.seleccionar_Dato(event=None)
         informacion_Inscrito = self.seleccionar_Dato(event=None, todos=True)
@@ -861,11 +852,11 @@ class Inscripciones_2:
         if opcion_borrar == 1:
             respuesta = messagebox.askyesno(title="Eliminar", message=f"¿Desea eliminar el curso con código {codigo_Curso} del estudiante con Id No. {alumno_Inscrito}?")
             if respuesta:
-                count=self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
-                self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito} AND Código_Curso = '{codigo_Curso}'")
-                if count[0][0] == 1:
-                    year, month, day = map(str, str(date.today()).split('-'))
-                    self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '[Sin cursos]', '')")
+                contador=self.correr_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")
+                self.correr_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito} AND Código_Curso = '{codigo_Curso}'")
+                if contador[0][0] == 1:
+                    anio, mes, dia = map(str, str(date.today()).split('-'))
+                    self.correr_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{anio}-{mes}-{dia}', '[Sin cursos]', '')")
                 self.eliminacion_Exitosa()
             else:
                 self.ventana_btneliminar.destroy()
@@ -873,14 +864,14 @@ class Inscripciones_2:
         elif opcion_borrar == 2:
             respuesta = messagebox.askyesno(title="Eliminar", message=f"¿Desea eliminar todos los estudiantes del curso con código {codigo_Curso}?")
             if respuesta:
-                estudiantes = self.run_Query(f"SELECT * FROM Inscritos WHERE Código_Curso = {codigo_Curso}")
-                self.run_Query(f"DELETE FROM Inscritos WHERE Código_Curso = '{codigo_Curso}'")
+                estudiantes = self.correr_Query(f"SELECT * FROM Inscritos WHERE Código_Curso = {codigo_Curso}")
+                self.correr_Query(f"DELETE FROM Inscritos WHERE Código_Curso = '{codigo_Curso}'")
                 for estudiante in estudiantes:
-                    count = self.run_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {estudiante[0]}")
+                    contador = self.correr_Query(f"SELECT COUNT (*) FROM Inscritos WHERE No_Inscripción = {estudiante[0]}")
                     # Por si alguno solo tenía ese curso inscrito...
-                    if count[0][0] == 0:
-                        year, month, day = map(str, str(date.today()).split('-'))
-                        self.run_Query(f"INSERT INTO Inscritos VALUES ({estudiante[0]}, {estudiante[1]}, '{year}-{month}-{day}', '[Sin cursos]', '')")
+                    if contador[0][0] == 0:
+                        anio, mes, dia = map(str, str(date.today()).split('-'))
+                        self.correr_Query(f"INSERT INTO Inscritos VALUES ({estudiante[0]}, {estudiante[1]}, '{anio}-{mes}-{dia}', '[Sin cursos]', '')")
                 self.eliminacion_Exitosa()
             else:
                 self.ventana_btneliminar.destroy()
@@ -888,26 +879,25 @@ class Inscripciones_2:
         elif opcion_borrar == 3:
             respuesta = messagebox.askyesno(title="Eliminar", message=f"¿Desea eliminar todos los cursos del estudiante con Id No. {alumno_Inscrito}?")
             if respuesta:
-                self.run_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")     
-                year, month, day = map(str, str(date.today()).split('-'))
-                self.run_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{year}-{month}-{day}', '[Sin cursos]', '')")
+                self.correr_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {numero_Inscrito}")     
+                anio, mes, dia = map(str, str(date.today()).split('-'))
+                self.correr_Query(f"INSERT INTO Inscritos VALUES ({numero_Inscrito}, '{alumno_Inscrito}', '{anio}-{mes}-{dia}', '[Sin cursos]', '')")
                 self.eliminacion_Exitosa()
             else:
                 self.ventana_btneliminar.destroy()
 
     def eliminacion_Exitosa(self):
         self.ventana_btneliminar.destroy()
-        self.create_Treeview("Inscritos")
+        self.crear_Treeview("Inscritos")
         self.actualizacion_Numeros_Inscripcion()
         messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
         self.btnEliminar.configure(state='normal')
-        self.btnEliminar.bind("<1>", lambda _:self.action_Button('El'))
-        
+        self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))        
     
     '''================================================================================================================'''
     '''Funciones para botón Consultar (<Lupa>)'''
     ''' Ventana consultar '''    
-    def action_btnconsultar(self, event):
+    def accion_Consultar(self, event):
         self.ventana_btnconsultar = tk.Toplevel()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=335, width=325)
         alto=335
@@ -932,22 +922,22 @@ class Inscripciones_2:
         self.btnconsultar_alumnos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_alumnos")
         self.btnconsultar_alumnos.configure(text='Alumnos')
         self.btnconsultar_alumnos.place(anchor="nw", x=20, y=50)
-        self.btnconsultar_alumnos.bind("<1>", lambda _:self.create_Treeview("Alumnos"))
+        self.btnconsultar_alumnos.bind("<1>", lambda _:self.crear_Treeview("Alumnos"))
 
         self.btnconsultar_carreras = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_carreras")
         self.btnconsultar_carreras.configure(text='Carreras')
         self.btnconsultar_carreras.place(anchor="nw", x=125, y=50)
-        self.btnconsultar_carreras.bind("<1>", lambda _:self.create_Treeview("Carreras"))
+        self.btnconsultar_carreras.bind("<1>", lambda _:self.crear_Treeview("Carreras"))
 
         self.btnconsultar_cursos = ttk.Button(self.ventana_btnconsultar, name="btnconsultar_cursos")
         self.btnconsultar_cursos.configure(text='Cursos')
         self.btnconsultar_cursos.place(anchor="nw", x=230, y=50)
-        self.btnconsultar_cursos.bind("<1>", lambda _:self.create_Treeview("Cursos"))
+        self.btnconsultar_cursos.bind("<1>", lambda _:self.crear_Treeview("Cursos"))
 
         #Separador
-        separator1 = ttk.Separator(self.ventana_btnconsultar)
-        separator1.configure(orient="horizontal")
-        separator1.place(anchor="nw", width=285, x=20, y=90)
+        separador1 = ttk.Separator(self.ventana_btnconsultar)
+        separador1.configure(orient="horizontal")
+        separador1.place(anchor="nw", width=285, x=20, y=90)
 
         #Label filtros
         self.lblFiltros = ttk.Label(self.ventana_btnconsultar, name="lblFiltros")
@@ -971,13 +961,12 @@ class Inscripciones_2:
         #Botón confirmar consulta alumno
         self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
         self.btnFiltrar_alumno.place(anchor="nw", x=260, y=168)
-        self.btnFiltrar_alumno.configure(state='disabled')
-        #self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))        
+        self.btnFiltrar_alumno.configure(state='disabled')    
 
         #Combobox Alumno de ventana consulta
         self.cmbx_Id_Alumno_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
         self.cmbx_Id_Alumno_Consulta.place(anchor="nw", width=85, x=160, y=170)
-        self.ids_Alumnos = self.run_Query("SELECT Id_Alumno FROM Alumnos")
+        self.ids_Alumnos = self.correr_Query("SELECT Id_Alumno FROM Alumnos")
         self.lista_Ids_Alumnos = []
         for tupla in self.ids_Alumnos:
             self.lista_Ids_Alumnos.append(tupla[0])
@@ -1001,7 +990,7 @@ class Inscripciones_2:
         #Combobox Curso  de ventana consulta
         self.cmbx_Id_Curso_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
         self.cmbx_Id_Curso_Consulta.place(anchor="nw", width=85, x=160, y=230)
-        self.ids_Cursos = self.run_Query("SELECT Código_Curso FROM Cursos")
+        self.ids_Cursos = self.correr_Query("SELECT Código_Curso FROM Cursos")
         self.lista_Ids_Cursos = []
         for tupla in self.ids_Cursos:
             self.lista_Ids_Cursos.append(tupla[0])
@@ -1032,15 +1021,15 @@ class Inscripciones_2:
         self.btnConsultar.configure(state='disabled')  # Deshabilitamos el botón
         self.btnConsultar.unbind('<1>')
         try:
-            def on_close(): 
+            def despues_Cerrar(): 
                 '''
                 Función que se llama cuando se pulsa el botón de cierre
                 del gestor de ventanas 
                 '''        
                 self.ventana_btnconsultar.destroy()  # Destruimos la ventana secundaria
                 self.btnConsultar.config(state='normal')  # habilitamos el botón
-                self.btnConsultar.bind("<1>", self.action_btnconsultar)
-            self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                self.btnConsultar.bind("<1>", self.accion_Consultar)
+            self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
         except: pass
 
     '''Funcion abilitar botones de los filtros'''
@@ -1048,13 +1037,13 @@ class Inscripciones_2:
         match lupa:
             case 1:
                 self.btnFiltrar_alumno.configure(state='normal')
-                self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))
+                self.btnFiltrar_alumno.bind("<1>", lambda _:self.accion_Filtrar('Alumno'))
             case 2:
                 self.btnFiltrar_curso.configure(state='normal')
-                self.btnFiltrar_curso.bind("<1>", lambda _:self.action_btnfiltrar('Curso'))
+                self.btnFiltrar_curso.bind("<1>", lambda _:self.accion_Filtrar('Curso'))
             case 3:
                 self.btnFiltrar_fecha.configure(state='normal')
-                self.btnFiltrar_fecha.bind("<1>", lambda _:self.action_btnfiltrar('Fecha'))
+                self.btnFiltrar_fecha.bind("<1>", lambda _:self.accion_Filtrar('Fecha'))
     
     def valida_Fecha_Consulta(self, event=None):     
         if event.char.isdigit() or event.char == "" or event.keysym == "Return":
@@ -1075,14 +1064,14 @@ class Inscripciones_2:
                 self.ventana_btnconsultar.deiconify()
 
     '''Funcion para botones filtrar'''
-    def action_btnfiltrar(self, filtro) :
+    def accion_Filtrar(self, filtro) :
         match  filtro:
             case 'Alumno':
                 #Crear ventana filtrar alumno
                 self.ventana_btnfiltrar_alumno = tk.Toplevel()
                 self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=640)
-                alto=295
-                ancho=640
+                alto = 295
+                ancho = 640
                 self.ventana_btnfiltrar_alumno.geometry(str(ancho)+"x"+str(alto))
                 #Centrar Ventana filtrar alumno
                 x = self.ventana_btnfiltrar_alumno.winfo_screenwidth()
@@ -1096,28 +1085,29 @@ class Inscripciones_2:
                 self.frm_2 = tk.Frame(self.ventana_btnfiltrar_alumno, name="frm_2")
                 self.frm_2.configure(background="#f7f9fd", height=500, width=700)
                 #Label filtar alumno
-                datos=self.run_Query(f"SELECT Nombres, Apellidos FROM Alumnos WHERE Id_Alumno='{self.cmbx_Id_Alumno_Consulta.get()}'")
+                datos = self.correr_Query(f"SELECT Nombres, Apellidos FROM Alumnos WHERE Id_Alumno='{self.cmbx_Id_Alumno_Consulta.get()}'")
                 self.lblFilalumno = ttk.Label(self.frm_2, name="lblFilalumno")
                 self.lblFilalumno.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text='Cursos del alumno '+ datos[0][0] + ' ' + datos[0][1] +' (' + self.cmbx_Id_Alumno_Consulta.get() + ')')
                 self.lblFilalumno.place(anchor="c", relx=0.5, y=25)
                 #Treeview filtrar alumno
-                self.create_Filter_Treeview(1)
+                self.crear_Treeview_Filtro(1)
                 self.btnFiltrar_alumno.config(state='disabled')  # Deshabilitamos el botón
                 self.btnFiltrar_alumno.unbind('<1>')
                 self.cmbx_Id_Alumno_Consulta.configure(state='disabled')
                 try:
-                    def on_close(): 
+                    def despues_Cerrar(): 
                         '''
                         Función que se llama cuando se pulsa el botón de cierre
                         del gestor de ventanas 
                         '''        
                         self.ventana_btnfiltrar_alumno.destroy()  # Destruimos la ventana secundaria
                         self.btnFiltrar_alumno.config(state='normal')  # habilitamos el botón
-                        self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))
+                        self.btnFiltrar_alumno.bind("<1>", lambda _:self.accion_Filtrar('Alumno'))
                         self.cmbx_Id_Alumno_Consulta.configure(state='readonly')
 
-                    self.ventana_btnfiltrar_alumno.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                    self.ventana_btnfiltrar_alumno.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
+            
             case 'Curso':
                 #Crear ventana filtrar curso
                 self.ventana_btnfiltrar_curso = tk.Toplevel()
@@ -1137,27 +1127,28 @@ class Inscripciones_2:
                 self.frm_2 = tk.Frame(self.ventana_btnfiltrar_curso, name="frm_2")
                 self.frm_2.configure(background="#f7f9fd", height=500, width=700)
                 #Label filtar curso
-                datos=self.run_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso='{self.cmbx_Id_Curso_Consulta.get()}'")
+                datos=self.correr_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso='{self.cmbx_Id_Curso_Consulta.get()}'")
                 self.lblFilcurso = ttk.Label(self.frm_2, name="lblFilcurso")
                 self.lblFilcurso.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos del curso {datos[0][0]} ({self.cmbx_Id_Curso_Consulta.get()})")
                 self.lblFilcurso.place(anchor="c", relx=0.5, y=25)
                 #Treeview filtrar curso
-                self.create_Filter_Treeview(2)
+                self.crear_Treeview_Filtro(2)
                 self.btnFiltrar_curso.config(state='disable')  # Deshabilitamos el botón
                 self.btnFiltrar_curso.unbind('<1>')
                 self.cmbx_Id_Curso_Consulta.configure(state='disabled')
                 try:
-                    def on_close(): 
+                    def despues_Cerrar(): 
                         '''
                         Función que se llama cuando se pulsa el botón de cierre
                         del gestor de ventanas 
                         '''        
                         self.ventana_btnfiltrar_curso.destroy()  # Destruimos la ventana secundaria
                         self.btnFiltrar_curso.config(state='normal')  # habilitamos el botón
-                        self.btnFiltrar_curso.bind("<1>", lambda _:self.action_btnfiltrar('Curso'))
+                        self.btnFiltrar_curso.bind("<1>", lambda _:self.accion_Filtrar('Curso'))
                         self.cmbx_Id_Curso_Consulta.configure(state="readonly")
-                    self.ventana_btnfiltrar_curso.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                    self.ventana_btnfiltrar_curso.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
+            
             case 'Fecha':
                 if self.fecha_Valida(self.Fecha_Consulta.get()):
                     try:
@@ -1186,110 +1177,104 @@ class Inscripciones_2:
                     self.lblFilfecha.configure(background="#f7f9fd",font="{Arial} 11 {bold}",takefocus=False, text=f"Alumnos inscritos el {self.Fecha_Consulta.get()}")
                     self.lblFilfecha.place(anchor="c", relx=0.5, y=25)
                     #Treeview filtrar fecha
-                    self.create_Filter_Treeview(3)
+                    self.crear_Treeview_Filtro(3)
                     self.btnFiltrar_fecha.config(state='disabled')  # Deshabilitamos el botón
                     self.btnFiltrar_fecha.unbind('<1>')
                     self.Fecha_Consulta.configure(state='disabled')
                     try:
-                        def on_close(): 
+                        def despues_Cerrar(): 
                             '''
                             Función que se llama cuando se pulsa el botón de cierre
                             del gestor de ventanas 
                             '''        
                             self.ventana_btnfiltrar_fecha.destroy()  # Destruimos la ventana secundaria
                             self.btnFiltrar_fecha.config(state='normal')  # habilitamos el botón
-                            self.btnFiltrar_fecha.bind("<1>", lambda _:self.action_btnfiltrar('Fecha'))
+                            self.btnFiltrar_fecha.bind("<1>", lambda _:self.accion_Filtrar('Fecha'))
                             self.Fecha_Consulta.configure(state='normal')
-                        self.ventana_btnfiltrar_fecha.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+                        self.ventana_btnfiltrar_fecha.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                     except: pass                    
 
-    def create_Filter_Treeview(self, num):
+    def crear_Treeview_Filtro(self, tipo):
         # Crear TreeView
-        self.filterView = ttk.Treeview(self.frm_2, name="filter_tview")
-        self.filterView.configure(selectmode="extended")
-        self.filterView.place(anchor="nw", x=20, y=50, height=225, width=600)
-        self.filterView.bind("<B1-Motion>", "break")
-        match num:
+        self.tView_Filtro = ttk.Treeview(self.frm_2, name="filter_tview")
+        self.tView_Filtro.configure(selectmode="extended")
+        self.tView_Filtro.place(anchor="nw", x=20, y=50, height=225, width=600)
+        self.tView_Filtro.bind("<B1-Motion>", "break")
+        match tipo:
             case 1:
                 id_Alumno = self.cmbx_Id_Alumno_Consulta.get()
                 #Columnas del Treeview
                 self.tView_cols = ['ftV_codigo', 'ftV_nombre_curso', 'ftV_horario']
                 self.tView_dcols = ['ftV_codigo', 'ftV_nombre_curso', 'ftV_horario']
-                self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.filterView.column("#0",anchor="w",width=100,minwidth=100, stretch=False)
-                self.filterView.column("ftV_codigo",anchor="w",width=100,minwidth=100, stretch=False)
-                self.filterView.column("ftV_nombre_curso",anchor="w",width=230,minwidth=230, stretch=False)
-                self.filterView.column("ftV_horario", anchor="w", width=168, minwidth=168, stretch=False)
+                self.tView_Filtro.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.tView_Filtro.column("#0",anchor="w",width=100,minwidth=100, stretch=False)
+                self.tView_Filtro.column("ftV_codigo",anchor="w",width=100,minwidth=100, stretch=False)
+                self.tView_Filtro.column("ftV_nombre_curso",anchor="w",width=230,minwidth=230, stretch=False)
+                self.tView_Filtro.column("ftV_horario", anchor="w", width=168, minwidth=168, stretch=False)
                 #Cabeceras
-                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
-                self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
-                self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
-                self.filterView.heading("ftV_horario", anchor="w", text='Horario')
-                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView_Filtro.heading("ftV_codigo", anchor="w", text='Código Curso')
+                self.tView_Filtro.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
+                self.tView_Filtro.heading("ftV_horario", anchor="w", text='Horario')
                 #Configura los datos de la tabla
-                query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
+                query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
                 for i in query:
-                    self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
+                    self.tView_Filtro.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3]))
         
             case 2:
                 codigo_Curso = self.cmbx_Id_Curso_Consulta.get()
                 #Columnas del Treeview
                 self.tView_cols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_fecha']
                 self.tView_dcols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_fecha']
-                self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.filterView.column("#0",anchor="w",stretch=False,width=100,minwidth=100)
-                self.filterView.column("ftV_id_alumno",anchor="w",stretch=False,width=100,minwidth=100)
-                self.filterView.column("ftV_nombre",anchor="w",stretch=False,width=115,minwidth=115)
-                self.filterView.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
-                self.filterView.column("ftV_fecha", anchor="w", stretch=False, width=168, minwidth=168)
+                self.tView_Filtro.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.tView_Filtro.column("#0",anchor="w",stretch=False,width=100,minwidth=100)
+                self.tView_Filtro.column("ftV_id_alumno",anchor="w",stretch=False,width=100,minwidth=100)
+                self.tView_Filtro.column("ftV_nombre",anchor="w",stretch=False,width=115,minwidth=115)
+                self.tView_Filtro.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
+                self.tView_Filtro.column("ftV_fecha", anchor="w", stretch=False, width=168, minwidth=168)
                 #Cabeceras
-                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
-                self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
-                self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
-                self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
-                self.filterView.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
-                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView_Filtro.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
+                self.tView_Filtro.heading("ftV_nombre", anchor="w", text='Nombres')
+                self.tView_Filtro.heading("ftV_apellidos", anchor="w", text='Apellidos')
+                self.tView_Filtro.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
                 #Configura los datos de la tabla
-                query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos. Horario FROM Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Inscritos.No_Inscripción DESC")
+                query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos. Horario FROM Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Inscritos.No_Inscripción DESC")
                 for i in query:
-                    self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
+                    self.tView_Filtro.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
             
             case 3:
-                day, month, year = map(str, self.Fecha_Consulta.get().split('/'))
+                dia, mes, anio = map(str, self.Fecha_Consulta.get().split('/'))
                 #Columnas del Treeview
                 self.tView_cols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_codigo', 'ftV_nombre_curso']
                 self.tView_dcols = ['ftV_id_alumno', 'ftV_nombre', 'ftV_apellidos', 'ftV_codigo', 'ftV_nombre_curso']
-                self.filterView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
-                self.filterView.column("#0",anchor="w",stretch=False,width=100,minwidth=100)
-                self.filterView.column("ftV_id_alumno",anchor="w",stretch=False,width=100,minwidth=100)
-                self.filterView.column("ftV_nombre",anchor="w",stretch=False,width=115,minwidth=115)
-                self.filterView.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
-                self.filterView.column("ftV_codigo", anchor="w", stretch=False, width=100, minwidth=100)
-                self.filterView.column("ftV_nombre_curso", anchor="w", stretch=False, width=230, minwidth=230)
+                self.tView_Filtro.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
+                self.tView_Filtro.column("#0",anchor="w",stretch=False,width=100,minwidth=100)
+                self.tView_Filtro.column("ftV_id_alumno",anchor="w",stretch=False,width=100,minwidth=100)
+                self.tView_Filtro.column("ftV_nombre",anchor="w",stretch=False,width=115,minwidth=115)
+                self.tView_Filtro.column("ftV_apellidos", anchor="w", stretch=False, width=115, minwidth=115)
+                self.tView_Filtro.column("ftV_codigo", anchor="w", stretch=False, width=100, minwidth=100)
+                self.tView_Filtro.column("ftV_nombre_curso", anchor="w", stretch=False, width=230, minwidth=230)
                 #Cabeceras
-                self.filterView.heading("#0", anchor="w", text='No. Inscripción')
-                self.filterView.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
-                self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
-                self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
-                self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
-                self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
-                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
+                self.tView_Filtro.heading("#0", anchor="w", text='No. Inscripción')
+                self.tView_Filtro.heading("ftV_id_alumno", anchor="w", text='Id Alumno')
+                self.tView_Filtro.heading("ftV_nombre", anchor="w", text='Nombres')
+                self.tView_Filtro.heading("ftV_apellidos", anchor="w", text='Apellidos')
+                self.tView_Filtro.heading("ftV_codigo", anchor="w", text='Código Curso')
+                self.tView_Filtro.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
                 #Configura los datos de la tabla
-                query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{year}-{month}-{day}' ORDER BY Inscritos.No_Inscripción DESC;")
+                query = self.correr_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{anio}-{mes}-{dia}' ORDER BY Inscritos.No_Inscripción DESC;")
                 for i in query:
-                    self.filterView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
-                self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filter_scroll_h", command=self.filterView.xview)
+                    self.tView_Filtro.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4], i[5]))
+                self.filter_scroll_H = ttk.Scrollbar(self.frm_2, name="filter_scroll_h", command=self.tView_Filtro.xview)
                 self.filter_scroll_H.configure(orient="horizontal")
                 self.filter_scroll_H.place(anchor="s", height=10, width=600, x=320, y=289)
-                self.filterView['xscrollcommand'] = self.filter_scroll_H.set
+                self.tView_Filtro['xscrollcommand'] = self.filter_scroll_H.set
         #Scrollbars
-        self.filter_scroll_Y = ttk.Scrollbar(self.frm_2, name="filter_scroll_y", command=self.filterView.yview)
-        self.filter_scroll_Y.configure(orient="vertical")
-        self.filter_scroll_Y.place(anchor="s", height=225, width=12, x=629, y=275)
-        self.filterView['yscrollcommand'] = self.filter_scroll_Y.set
+        self.scroll_Y_Filtro = ttk.Scrollbar(self.frm_2, name="filter_scroll_y", command=self.tView_Filtro.yview)
+        self.scroll_Y_Filtro.configure(orient="vertical")
+        self.scroll_Y_Filtro.place(anchor="s", height=225, width=12, x=629, y=275)
+        self.tView_Filtro['yscrollcommand'] = self.scroll_Y_Filtro.set
         self.frm_2.pack(side="top")
         self.frm_2.pack_propagate(0)
 
