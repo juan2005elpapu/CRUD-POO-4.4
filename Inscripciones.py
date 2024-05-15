@@ -742,7 +742,6 @@ class Inscripciones_2:
                     # Para editar curso (y horario)...
                     else:           
                         if not(self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            #day, month, year = map(str, self.fecha.get().split('/'))
                             self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
                             self.create_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
@@ -971,8 +970,7 @@ class Inscripciones_2:
         #Botón confirmar consulta alumno
         self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
         self.btnFiltrar_alumno.place(anchor="nw", x=260, y=168)
-        self.btnFiltrar_alumno.configure(state='disabled')
-        #self.btnFiltrar_alumno.bind("<1>", lambda _:self.action_btnfiltrar('Alumno'))        
+        self.btnFiltrar_alumno.configure(state='disabled')      
 
         #Combobox Alumno de ventana consulta
         self.cmbx_Id_Alumno_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_alumno", state="readonly")
@@ -1225,8 +1223,6 @@ class Inscripciones_2:
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
                 self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
                 self.filterView.heading("ftV_horario", anchor="w", text='Horario')
-                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Código_Curso, Cursos.Descrip_Curso, Inscritos.Horario FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Id_Alumno = '{id_Alumno}' ORDER BY Cursos.Descrip_Curso ASC")
                 for i in query:
@@ -1249,8 +1245,6 @@ class Inscripciones_2:
                 self.filterView.heading("ftV_nombre", anchor="w", text='Nombres')
                 self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
                 self.filterView.heading("ftV_fecha", anchor="w", text='Fecha Inscripción')
-                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos. Horario FROM Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno WHERE Inscritos.Código_Curso = '{codigo_Curso}' ORDER BY Inscritos.No_Inscripción DESC")
                 for i in query:
@@ -1275,8 +1269,6 @@ class Inscripciones_2:
                 self.filterView.heading("ftV_apellidos", anchor="w", text='Apellidos')
                 self.filterView.heading("ftV_codigo", anchor="w", text='Código Curso')
                 self.filterView.heading("ftV_nombre_curso", anchor="w", text='Nombre Curso')
-                #self.filterView.place(anchor="nw", height=300, width=790, x=4, y=300)
-                #self.filterView.bind('<ButtonRelease-1>', self.seleccionar_Dato)
                 #Configura los datos de la tabla
                 query = self.run_Query(f"SELECT Inscritos.No_Inscripción, Inscritos.Id_Alumno, Alumnos.Nombres, Alumnos.Apellidos, Inscritos.Código_Curso, Cursos.Descrip_Curso FROM Cursos INNER JOIN (Inscritos INNER JOIN Alumnos ON Inscritos.Id_Alumno=Alumnos.Id_Alumno) ON Inscritos.Código_Curso = Cursos.Código_Curso WHERE Inscritos.Fecha_Inscripción = '{year}-{month}-{day}' ORDER BY Inscritos.No_Inscripción DESC;")
                 for i in query:
