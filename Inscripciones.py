@@ -216,18 +216,23 @@ class Inscripciones_2:
         self.mainwindow.mainloop()    
 
     '''========== Funciones para validar información =========='''
-    def campo_Existente(self, tabla, campo_1, campo_2):
+    def registro_Existente(self, id_Alumno : str, codigo_Curso : str) -> bool:
         """
-        Checks if a given field value already exists in a specified table.
+        Verifica si el registro de un estudiante en un curso ya existe.
 
-        Args:
-            campo (str): The field value to check.
-            tabla (str): The table to search in.
+        Parámetros
+        ----------
+        id_Alumno : str
+            El ID del Alumno
+        codigo_Curso : str
+            El código del curso
 
-        Returns:
-            bool: True if the field value exists in the table, False otherwise.
+        Retornos
+        --------
+        bool
+            True si el registro ya existe en la tabla Inscritos. False de lo contrartio.
         """
-        query = f"SELECT COUNT(*) FROM {tabla} WHERE Id_Alumno = '{campo_1}' AND Código_Curso = '{campo_2}'"
+        query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{id_Alumno}' AND Código_Curso = '{codigo_Curso}'"
         resultado = self.correr_Query(query)
         contador = resultado[0][0]
         return contador > 0
@@ -310,7 +315,7 @@ class Inscripciones_2:
                 self.mostrar_Error_Entradas_Vacias()
                 return False
         # Verifica que la fecha sea válida, que el estudiante no haya sido inscrito en ese curso anteriormente y que no haya sido inscrito en otro curso con el mismo horario
-        if not self.fecha_Valida(self.fecha.get()) or self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()) or self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
+        if not self.fecha_Valida(self.fecha.get()) or self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()) or self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
             return False
         return True
 
@@ -727,7 +732,7 @@ class Inscripciones_2:
                         else:
                             num_Inscripcion = self.inscrito_Existente(self.cmbx_Id_Alumno.get())
                             # Verifica si al estudiante se le habían eliminado los cursos para borrar ese registro
-                            if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), "[Sin cursos]"):
+                            if self.registro_Existente(self.cmbx_Id_Alumno.get(), "[Sin cursos]"):
                                 self.correr_Query(f"DELETE FROM Inscritos WHERE No_Inscripción = {num_Inscripcion}")
                         self.correr_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{anio}-{mes}-{dia}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.crear_Treeview("Inscritos")
@@ -735,7 +740,7 @@ class Inscripciones_2:
                         messagebox.showinfo(title="guardar", message="Guardado con éxito")
                         self.limpiar_Entradas("datos_Todo")
                     else:
-                        if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
+                        if self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                             messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
                         elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
                             messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
@@ -759,8 +764,8 @@ class Inscripciones_2:
                             messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
                     # Para editar curso (y horario)...
                     else:           
-                        if not(self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.run_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
+                        if not(self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
                             self.create_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
                             # Para volver a la normalidad...
@@ -772,7 +777,7 @@ class Inscripciones_2:
                             self.id = -1
                             self.curso_Anterior = ""
                         else:
-                            if self.campo_Existente("Inscritos", self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
+                            if self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
                                 messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
                             elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
                                 messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
