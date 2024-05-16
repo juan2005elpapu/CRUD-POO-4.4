@@ -147,11 +147,12 @@ class Inscripciones_2:
         self.estilo_boton_can_el.configure("Can_El.TButton")
         self.estilo_boton_can_el.map("Can_El.TButton", foreground=[("active", "red")], background=[("active", "red")])  
         #Botón Consultar
+        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar")
         try:
             ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
             self.img = PhotoImage(file=ruta_Lupa)
+            self.btnConsultar.configure(image=self.img)
         except: pass
-        self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
         self.btnConsultar.bind("<1>", self.accion_Consultar)
         #Botón Guardar
@@ -1121,13 +1122,14 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.lblSlcalumno.place(anchor="nw", x=40, y=170)
 
         #Definir path de la lupa 2 para los botones de los filtros
+        self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno")
         try:
             ruta_Lupa2  = self.dir_pro + "\\img\\lupa2.png"
             self.img2 = PhotoImage(file=ruta_Lupa2)
+            self.btnFiltrar_alumno.configure(image=self.img2)
         except: pass
 
         #Botón confirmar consulta alumno
-        self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
         self.btnFiltrar_alumno.place(anchor="nw", x=270, y=168)
         self.btnFiltrar_alumno.configure(state='disabled')      
 
@@ -1151,9 +1153,13 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.lblSlccurso.place(anchor="nw", x=40, y=230)
 
         #Botón confirmar consulta curso
-        self.btnFiltrar_curso = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_curso", image=self.img2)
+        self.btnFiltrar_curso = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_curso")
+        try:
+            self.btnFiltrar_curso.configure(image=self.img2)
+        except: pass
         self.btnFiltrar_curso.place(anchor="nw", x=270, y=228)
         self.btnFiltrar_curso.configure(state='disabled')
+        
 
         #Combobox Curso  de ventana consulta
         self.cmbx_Id_Curso_Consulta = ttk.Combobox(self.ventana_btnconsultar, name="cmbx_id_curso", state="readonly")
@@ -1176,7 +1182,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.lblIgfecha.place(anchor="nw", x=40, y=290)
 
         #Botón confirmar consulta fecha
-        self.btnFiltrar_fecha = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_Fecha", image=self.img2)
+        self.btnFiltrar_fecha = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_Fecha")
+        try:
+            self.btnFiltrar_fecha.configure(image=self.img2)
+        except: pass
         self.btnFiltrar_fecha.place(anchor="nw", x=270, y=288)
         self.btnFiltrar_fecha.configure(state='disabled')
 
