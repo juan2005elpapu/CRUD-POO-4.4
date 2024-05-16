@@ -43,8 +43,10 @@ class Inscripciones_2:
         self.win.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
         self.win.resizable(False, False)
         self.win.title("Inscripción de Cursos")
-        ruta_Icon = self.dir_pro + "\\img\\icon.ico"
-        self.win.iconbitmap(bitmap=ruta_Icon)
+        try:
+            ruta_Icon = self.dir_pro + "\\img\\icon.ico"
+            self.win.iconbitmap(bitmap=ruta_Icon)
+        except: pass
         #Crea el frame
         self.frm_1 = tk.Frame(self.win, name="frm_1")
         self.frm_1.configure(background="#f7f9fd", height=600, width=800)
@@ -145,8 +147,10 @@ class Inscripciones_2:
         self.estilo_boton_can_el.configure("Can_El.TButton")
         self.estilo_boton_can_el.map("Can_El.TButton", foreground=[("active", "red")], background=[("active", "red")])  
         #Botón Consultar
-        ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
-        self.img = PhotoImage(file=ruta_Lupa)
+        try:
+            ruta_Lupa  = self.dir_pro + "\\img\\lupa.png"
+            self.img = PhotoImage(file=ruta_Lupa)
+        except: pass
         self.btnConsultar = ttk.Button(self.frm_1, name="btnconsultar", image=self.img)
         self.btnConsultar.place(anchor="nw", x=20, y=15)
         self.btnConsultar.bind("<1>", self.accion_Consultar)
@@ -195,8 +199,10 @@ class Inscripciones_2:
         self.ventana_info.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
         self.ventana_info.resizable(False, False)
         self.ventana_info.title("Información inicial")
-        ruta_Icon = self.dir_pro + "\\img\\icon.ico"
-        self.ventana_info.iconbitmap(bitmap=ruta_Icon)
+        try:
+            ruta_Icon = self.dir_pro + "\\img\\icon.ico"
+            self.ventana_info.iconbitmap(bitmap=ruta_Icon)
+        except: pass
         #Label titulo ventana info
         self.lblInfo = ttk.Label(self.ventana_info, name="lblinfo") 
         self.lblInfo.configure(background="#f7f9fd", text='Proyecto POO 2024 - 2')
@@ -362,11 +368,14 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 resultado (list[tuple]): El resultado de la ejecución de la consulta
         """
         ruta_db = self.dir_pro + "\\db\\Inscripciones.db"
-        with sqlite3.connect(ruta_db) as conn:
-            cursor = conn.cursor()
-            resultado = cursor.execute(query, parametros)
-            conn.commit()
-        return resultado.fetchall()
+        try:
+            with sqlite3.connect(ruta_db) as conn:
+                cursor = conn.cursor()
+                resultado = cursor.execute(query, parametros)
+                conn.commit()
+            return resultado.fetchall()
+        except:
+            return []
 
     def cambiar_Nombre_Completo(self, event=None) -> None:
         """
@@ -440,7 +449,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         
         # Cambia valor en No. de Inscripción
         self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(num_Inscripcion))
-        self.cmbx_No_Inscripcion.configure(state="disable")
+        self.cmbx_No_Inscripcion.configure(state="disabled")
 
         # Cambia valor en las demás entradas
         horario=resultado[3].split(" ")
@@ -472,7 +481,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         resultado = self.correr_Query(query)
         id_Alumno = resultado[0][0]
         self.cmbx_Id_Alumno.current(self.lista_Ids_Alumnos.index(id_Alumno))
-        self.cmbx_Id_Alumno.configure(state="disable")
+        self.cmbx_Id_Alumno.configure(state="disabled")
         self.cambiar_Nombre_Completo()
 
     def limpiar_Entradas(self, opcion : str) -> None:
@@ -570,11 +579,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             self.btnConsultar.configure(state="normal")
             self.btnConsultar.bind("<1>", self.accion_Consultar)
         # Elimina TreeView anterior (si existe)
-        try :
+        try:
             self.borrar_Treeview()
             self.scroll_H.destroy()
-        except :
-            pass
+        except: pass
         # Crear Treeview
         self.tView = ttk.Treeview(self.frm_1, name="tview")
         self.tView.configure(selectmode="extended")
@@ -610,11 +618,11 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 """
                 #Columnas del Treeview
                 self.btnEliminar.unbind('<1>')
-                self.btnEliminar.configure(state="disable")
+                self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind('<1>')
-                self.btnGuardar.configure(state="disable")
+                self.btnGuardar.configure(state="disabled")
                 self.btnEditar.unbind('<1>')
-                self.btnEditar.configure(state="disable")
+                self.btnEditar.configure(state="disabled")
                 self.tView_cols = ['tV_Descripcion', 'tV_semestres']
                 self.tView_dcols = ['tV_Descripcion', 'tV_semestres']
                 self.tView.configure(columns=self.tView_cols,displaycolumns=self.tView_dcols)
@@ -635,11 +643,11 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 Creates the correponding TreeView for the table Cursos.
                 """
                 self.btnEliminar.unbind('<1>')
-                self.btnEliminar.configure(state="disable")
+                self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind('<1>')
-                self.btnGuardar.configure(state="disable")
+                self.btnGuardar.configure(state="disabled")
                 self.btnEditar.unbind('<1>')
-                self.btnEditar.configure(state="disable")
+                self.btnEditar.configure(state="disabled")
                 #Columnas del Treeview
                 self.tView_cols = ['tV_descripción', 'tV_horas']
                 self.tView_dcols = ['tV_descripción', 'tV_horas']
@@ -661,11 +669,11 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 Creates the correponding TreeView for the table Alumnos.
                 """
                 self.btnEliminar.unbind('<1>')
-                self.btnEliminar.configure(state="disable")
+                self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind('<1>')
-                self.btnGuardar.configure(state="disable")
+                self.btnGuardar.configure(state="disabled")
                 self.btnEditar.unbind('<1>')
-                self.btnEditar.configure(state="disable")
+                self.btnEditar.configure(state="disabled")
                 #Columnas del Treeview
                 self.tView_cols = ['tV_id_carrera', 'tV_nombres', 'tV_apellidos', 'tV_fecha_inscripcion', 'tV_dirección', 'tV_telef_celu', 'tV_telef_fijo', 'tV_ciudad', 'tV_departamento']
                 self.tView_dcols = ['tV_id_carrera', 'tV_nombres', 'tV_apellidos', 'tV_fecha_inscripcion', 'tV_dirección', 'tV_telef_celu', 'tV_telef_fijo', 'tV_ciudad', 'tV_departamento']
@@ -908,8 +916,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.ventana_btneliminar.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
                     self.ventana_btneliminar.resizable(False, False)
                     self.ventana_btneliminar.title('Eliminar')
-                    ruta_ventana_btneliminar = self.dir_pro + "\\img\\basura.ico"
-                    self.ventana_btneliminar.iconbitmap(bitmap=ruta_ventana_btneliminar)
+                    try:
+                        ruta_ventana_btneliminar = self.dir_pro + "\\img\\basura.ico"
+                        self.ventana_btneliminar.iconbitmap(bitmap=ruta_ventana_btneliminar)
+                    except: pass
 
                     # Radiobuttons
                     self.cuadro = tk.LabelFrame(self.ventana_btneliminar, background="#f7f9fd")
@@ -927,14 +937,14 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.btneliminar_opcion.configure(text='Confirmar')
                     self.btneliminar_opcion.place(anchor="nw", x=90, y=120)
                     self.btneliminar_opcion.bind("<1>", lambda _:self.accion_Eliminar())  
-                    self.btnEliminar.config(state='disabled')  # Deshabilitamos el botón
+                    self.btnEliminar.configure(state='disabled')  # Deshabilitamos el botón
                     self.btnEliminar.unbind('<1>')
                 self.btnEliminar.after(100, lambda: self.btnEliminar.state(["!pressed"]))
                 try:
                     def despues_Cerrar() -> None: 
                         """Función que se llama cuando se pulsa el botón de cierre de la ventana con las opciones de eliminación."""        
                         self.ventana_btneliminar.destroy()  # Destruimos la ventana secundaria
-                        self.btnEliminar.config(state='normal')  # habilitamos el botón
+                        self.btnEliminar.configure(state='normal')  # habilitamos el botón
                         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
                     self.ventana_btneliminar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
@@ -1063,8 +1073,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.ventana_btnconsultar.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
         self.ventana_btnconsultar.resizable(False, False)
         self.ventana_btnconsultar.title('Consultar')
-        ruta_ventana_btnconsultar = self.dir_pro + "\\img\\lupa.ico"
-        self.ventana_btnconsultar.iconbitmap(bitmap=ruta_ventana_btnconsultar)
+        try:
+            ruta_ventana_btnconsultar = self.dir_pro + "\\img\\lupa.ico"
+            self.ventana_btnconsultar.iconbitmap(bitmap=ruta_ventana_btnconsultar)
+        except: pass
 
         #Label listados
         self.lblListados = ttk.Label(self.ventana_btnconsultar, name="lblListados")
@@ -1109,8 +1121,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.lblSlcalumno.place(anchor="nw", x=40, y=170)
 
         #Definir path de la lupa 2 para los botones de los filtros
-        ruta_Lupa2  = self.dir_pro + "\\img\\lupa2.png"
-        self.img2 = PhotoImage(file=ruta_Lupa2)
+        try:
+            ruta_Lupa2  = self.dir_pro + "\\img\\lupa2.png"
+            self.img2 = PhotoImage(file=ruta_Lupa2)
+        except: pass
 
         #Botón confirmar consulta alumno
         self.btnFiltrar_alumno = ttk.Button(self.ventana_btnconsultar, name="btnfiltrar_alumno", image=self.img2)
@@ -1178,7 +1192,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             def despues_Cerrar() -> None: 
                 """Función que se llama cuando se pulsa el botón de cierre de la ventana con las opciones de consulta."""      
                 self.ventana_btnconsultar.destroy()  # Destruimos la ventana secundaria
-                self.btnConsultar.config(state='normal')  # habilitamos el botón
+                self.btnConsultar.configure(state='normal')  # habilitamos el botón
                 self.btnConsultar.bind("<1>", self.accion_Consultar)
             self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
         except: pass
@@ -1261,8 +1275,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 self.ventana_btnfiltrar_alumno.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
                 self.ventana_btnfiltrar_alumno.resizable(False, False)
                 self.ventana_btnfiltrar_alumno.title('Filtrar cursos de un alumno')
-                ruta_ventana_btnfiltrar_alumno = self.dir_pro + "\\img\\lupa.ico"
-                self.ventana_btnfiltrar_alumno.iconbitmap(bitmap=ruta_ventana_btnfiltrar_alumno)
+                try:
+                    ruta_ventana_btnfiltrar_alumno = self.dir_pro + "\\img\\lupa.ico"
+                    self.ventana_btnfiltrar_alumno.iconbitmap(bitmap=ruta_ventana_btnfiltrar_alumno)
+                except: pass
                 #Frame filtro alumno
                 self.frm_2 = tk.Frame(self.ventana_btnfiltrar_alumno, name="frm_2")
                 self.frm_2.configure(background="#f7f9fd", height=500, width=700)
@@ -1273,14 +1289,14 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 self.lblFilalumno.place(anchor="c", relx=0.5, y=25)
                 #Treeview filtrar alumno
                 self.crear_Treeview_Filtro(1)
-                self.btnFiltrar_alumno.config(state='disabled')  # Deshabilitamos el botón
+                self.btnFiltrar_alumno.configure(state='disabled')  # Deshabilitamos el botón
                 self.btnFiltrar_alumno.unbind('<1>')
                 self.cmbx_Id_Alumno_Consulta.configure(state='disabled')
                 try:
                     def despues_Cerrar(): 
                         """Función que se llama cuando se pulsa el botón de cierre de la ventana con la tabla tras el filtro a partir del ID del alumno."""    
                         self.ventana_btnfiltrar_alumno.destroy()  # Destruimos la ventana secundaria
-                        self.btnFiltrar_alumno.config(state='normal')  # habilitamos el botón
+                        self.btnFiltrar_alumno.configure(state='normal')  # habilitamos el botón
                         self.btnFiltrar_alumno.bind("<1>", lambda _:self.accion_Filtrar('Alumno'))
                         self.cmbx_Id_Alumno_Consulta.configure(state='readonly')
 
@@ -1300,8 +1316,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 self.ventana_btnfiltrar_curso.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
                 self.ventana_btnfiltrar_curso.resizable(False, False)
                 self.ventana_btnfiltrar_curso.title('Filtrar alumnos en un curso')
-                ruta_ventana_btnfiltrar_curso = self.dir_pro + "\\img\\lupa.ico"
-                self.ventana_btnfiltrar_curso.iconbitmap(bitmap=ruta_ventana_btnfiltrar_curso)
+                try:
+                    ruta_ventana_btnfiltrar_curso = self.dir_pro + "\\img\\lupa.ico"
+                    self.ventana_btnfiltrar_curso.iconbitmap(bitmap=ruta_ventana_btnfiltrar_curso)
+                except: pass
                 #Frame filtro
                 self.frm_2 = tk.Frame(self.ventana_btnfiltrar_curso, name="frm_2")
                 self.frm_2.configure(background="#f7f9fd", height=500, width=700)
@@ -1312,14 +1330,14 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 self.lblFilcurso.place(anchor="c", relx=0.5, y=25)
                 #Treeview filtrar curso
                 self.crear_Treeview_Filtro(2)
-                self.btnFiltrar_curso.config(state='disable')  # Deshabilitamos el botón
+                self.btnFiltrar_curso.configure(state='disabled')  # Deshabilitamos el botón
                 self.btnFiltrar_curso.unbind('<1>')
                 self.cmbx_Id_Curso_Consulta.configure(state='disabled')
                 try:
                     def despues_Cerrar(): 
                         """Función que se llama cuando se pulsa el botón de cierre de la ventana con la tabla tras el filtro a partir del código del curso."""     
                         self.ventana_btnfiltrar_curso.destroy()  # Destruimos la ventana secundaria
-                        self.btnFiltrar_curso.config(state='normal')  # habilitamos el botón
+                        self.btnFiltrar_curso.configure(state='normal')  # habilitamos el botón
                         self.btnFiltrar_curso.bind("<1>", lambda _:self.accion_Filtrar('Curso'))
                         self.cmbx_Id_Curso_Consulta.configure(state="readonly")
                     self.ventana_btnfiltrar_curso.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
@@ -1339,8 +1357,10 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.ventana_btnfiltrar_fecha.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
                     self.ventana_btnfiltrar_fecha.resizable(False, False)
                     self.ventana_btnfiltrar_fecha.title('Filtrar inscripciones por fecha')
-                    ruta_ventana_btnfiltrar_fecha = self.dir_pro + "\\img\\lupa.ico"
-                    self.ventana_btnfiltrar_fecha.iconbitmap(bitmap=ruta_ventana_btnfiltrar_fecha)
+                    try:
+                        ruta_ventana_btnfiltrar_fecha = self.dir_pro + "\\img\\lupa.ico"
+                        self.ventana_btnfiltrar_fecha.iconbitmap(bitmap=ruta_ventana_btnfiltrar_fecha)
+                    except: pass
                     #Frame filtro
                     self.frm_2 = tk.Frame(self.ventana_btnfiltrar_fecha, name="frm_2")
                     self.frm_2.configure(background="#f7f9fd", height=500, width=700)
@@ -1350,14 +1370,14 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.lblFilfecha.place(anchor="c", relx=0.5, y=25)
                     #Treeview filtrar fecha
                     self.crear_Treeview_Filtro(3)
-                    self.btnFiltrar_fecha.config(state='disabled')  # Deshabilitamos el botón
+                    self.btnFiltrar_fecha.configure(state='disabled')  # Deshabilitamos el botón
                     self.btnFiltrar_fecha.unbind('<1>')
                     self.Fecha_Consulta.configure(state='disabled')
                     try:
                         def despues_Cerrar(): 
                             """Función que se llama cuando se pulsa el botón de cierre de la ventana con la tabla tras el filtro a partir de la fecha."""    
                             self.ventana_btnfiltrar_fecha.destroy()  # Destruimos la ventana secundaria
-                            self.btnFiltrar_fecha.config(state='normal')  # habilitamos el botón
+                            self.btnFiltrar_fecha.configure(state='normal')  # habilitamos el botón
                             self.btnFiltrar_fecha.bind("<1>", lambda _:self.accion_Filtrar('Fecha'))
                             self.Fecha_Consulta.configure(state='normal')
                         self.ventana_btnfiltrar_fecha.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
