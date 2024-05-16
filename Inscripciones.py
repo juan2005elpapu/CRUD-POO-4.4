@@ -7,9 +7,10 @@ from tkinter import PhotoImage
 from os import path
 import sqlite3
 from datetime import datetime, date
-from tkinter import font 
+from tkinter import font
+from typing import Optional, Union
 
-'''==============================================================
+"""==============================================================
 CRUD Programación Orientada a Objetos
 Universidad Nacional de Colombia - 2024-1S
 Repo: https://github.com/juan2005elpapu/CRUD-POO-4.4
@@ -19,15 +20,15 @@ Integrantes:
   - Juan Sebastián Ramirez Villalobos   (juaramirezv@unal.edu.co)
   - Jesús David Sánchez Cobos           (jesanchezco@unal.edu.co)
   - Juan Camilo Vergara Tao             (juvergarat@unal.edu.co)
-    =============================================================='''
+    =============================================================="""
 
 class Inscripciones_2:
-    def __init__(self, master=None):
+    def __init__(self, master=None) -> None:
         #Dirección programa
         self.dir_pro = path.dirname(__file__)
         self.db_name = 'Inscripciones.db'
         
-        '''Ventana principal'''
+        """Ventana principal"""
         self.win = tk.Tk(master)
         self.win.configure(background="#f7f9fd", height=600, width=800)
         alto=600
@@ -135,7 +136,7 @@ class Inscripciones_2:
         self.horarios_Horas = ["7:00 - 9:00", "9:00 - 11:00", "11:00 - 13:00", "14:00 - 16:00", "16:00 - 18:00"]
         self.cmbx_Horario['values'] = self.horarios_Horas
         
-        '''Botones  de la interfaz'''
+        """Botones  de la interfaz"""
         #Estilo botones
         self.estilo_botones = ttk.Style()
         self.estilo_botones.configure("TButton")
@@ -176,10 +177,10 @@ class Inscripciones_2:
         separador1.configure(orient="horizontal")
         separador1.place(anchor="nw", width=796, x=2, y=245)
 
-        '''Treeview inicial de la Aplicación'''
+        """Treeview inicial de la Aplicación"""
         self.crear_Treeview("Inscritos")
 
-        '''Main widget'''
+        """Main widget"""
         self.mainwindow = self.win
 
         '''Ventana información'''
@@ -203,8 +204,7 @@ class Inscripciones_2:
         self.lblInfo = ttk.Label(self.ventana_info, name="lblinfo") 
         self.lblInfo.configure(background="#f7f9fd", text='Proyecto POO 2024 - 2')
         self.lblInfo.place(anchor="c", relx=0.5, y=25)
-
-        
+ 
         self.textInfo = tk.Text(self.ventana_info, name="textInfo", height = 5, width = 52) 
         self.informacion = """La Segunda Guerra Mundial (también escrito II Guerra Mundial)1​ fue un conflicto militar global que se desarrolló entre 1939 y 1945. 
         En ella se vieron implicadas la mayor parte de las naciones del mundo —incluidas todas las grandes potencias, así como prácticamente todas las naciones europeas— agrupadas en dos alianzas militares enfrentadas: los Aliados, por un lado, y las Potencias del Eje, por otro. Fue la mayor contienda bélica en la historia de la humanidad, con más de 100 millones de militares movilizados y un estado de guerra total en que los grandes contendientes destinaron"""
@@ -212,67 +212,72 @@ class Inscripciones_2:
         self.textInfo.place(anchor="c", relx=0.5, y=100)
         self.textInfo.configure(background="#f7f9fd", borderwidth=0, state="disabled")
 
-    def run(self):
+    def run(self) -> None:
         self.mainwindow.mainloop()    
 
-    '''========== Funciones para validar información =========='''
+    """========== Funciones para validar información =========="""
     def registro_Existente(self, id_Alumno : str, codigo_Curso : str) -> bool:
         """
         Verifica si el registro de un estudiante en un curso ya existe.
 
-        Parámetros
-        ----------
-        id_Alumno : str
-            El ID del Alumno
-        codigo_Curso : str
-            El código del curso
+            Parámetros:
+                id_Alumno (str): El ID del Alumno
+                codigo_Curso (str) : El código del curso
 
-        Retornos
-        --------
-        bool
-            True si el registro ya existe en la tabla Inscritos. False de lo contrartio.
+            Devoluciones: 
+                (bool): True si el registro ya existe en la tabla Inscritos; False de lo contrario
         """
         query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{id_Alumno}' AND Código_Curso = '{codigo_Curso}'"
         resultado = self.correr_Query(query)
         contador = resultado[0][0]
         return contador > 0
     
-    def horario_Existente(self, alumno, dias, horario):
+    def horario_Existente(self, alumno : str, dias : str, horario : str) -> bool:
         """
-        Checks if a given student already has a given scheduel (days + times).
-        
-        Args:
-            alumno (str): The student id.
-            dias (str): The schedule days.
-            horario (str): The schedule time.
-        
-        Returns:
-            bool: True if the student already has a course with the given schedule, False otherwise.
+        Verifica si un estudiante ya tiene un curso registrado en el horario especificado.
+
+            Parámetros:
+                alumno (str): El ID del alumno
+                dias (str): El horario del alumno (los días)
+                horario (str): El horario del alumno (las horas)
+            
+            Devoluciones:
+                (bool): True si el estudiante ya tiene un curso registrado en dicho horario; False de lo contrario
         """
         query = f"SELECT COUNT(*) FROM Inscritos WHERE Id_Alumno = '{alumno}' AND Horario = '{dias} {horario}'"
         resultado = self.correr_Query(query)
         contador = resultado[0][0]
         return contador > 0
     
-    def inscrito_Existente(self, id_Alumno):
+    def inscrito_Existente(self, id_Alumno : str) -> Optional[int]:
         """
-        Checks if a given student already has a sign-up number associated.
-        
-        Args:
-            id_Alumno (str)
-        
-        Returns:
-            numero_inscripcion (int) if there are any. Otherwise None.
+        Verifica si un estudiante ya tiene un número de inscripción asociado.
+
+            Parámetros:
+                id_Alumno (str): El ID del alumno
+            
+            Devoluciones:
+                numero_Inscripcion (int): El número de inscripción asociado (si existe)
+                None: Si el estudiante no ha sido registrado previamente
         """
         query = f"SELECT No_Inscripción FROM Inscritos WHERE Id_Alumno = '{id_Alumno}'"
         resultado = self.correr_Query(query)
         if len(resultado) > 0:
-            numero_inscripcion = resultado[0][0]
-            return numero_inscripcion
+            numero_Inscripcion = resultado[0][0]
+            return numero_Inscripcion
         else:
             return None
     
-    def valida_Fecha(self, event=None):     
+    def valida_Fecha(self, event=None) -> None:
+        """
+        Verifica que la fecha ingresada en el entry de fecha de la ventana principal esté bien escrita.
+
+            Parámetros:
+                (event): Evento (opcional)
+            
+            Devoluciones:
+                None
+        """
         if event.char.isdigit() or event.char == "" or event.keysym == "Return":
             fecha_Ingresada = self.fecha.get()
             if len(fecha_Ingresada) > 10:
@@ -287,7 +292,16 @@ class Inscripciones_2:
             self.fecha.delete(len(self.fecha.get())-1, "end")
             messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
 
-    def fecha_Valida(self, fecha):
+    def fecha_Valida(self, fecha : str) -> bool:
+        """
+        Verifica que la fecha ingresada sea válida.
+
+            Parámetros:
+                fecha (str): La fecha a verificar
+
+            Devoluciones:
+                (bool): True si la fecha es válida; False de lo contrario
+        """
         try: 
             dia, mes, anio = map(int, fecha.split('/'))
             datetime(anio, mes, dia)
@@ -296,17 +310,15 @@ class Inscripciones_2:
             messagebox.showerror('Error!!','.. ¡Fecha equivocada! por favor corrijala ..')
             return False   
 
-    def verificar_Entradas(self):
+    def verificar_Entradas(self) -> bool:
         """
-        Checks if the needed entradas to sign up a student are filled. Furthermore, it checks is the date is valid, if the student hasn't
-        already been signed up in a course and if the student doesn't have any other course at the same schedule (days + hours).
-
-        Args:
-            None
+        Verifica si las entradas necesarias para registrar un estudiante en un curso están completas. Adicionalmente verifica que la fecha sea válida, si el estudiante ya fue registrado en ese curso y si el estudiante no tiene otro curso en el mismo horario (días y horas).
         
-        Returns:
-            bool: False if any of the needed entradas is empty or the previous mentioned conditions aren't met; True if everything is
-            alright in order to sign up the student.
+            Parámetros:
+                None
+
+            Devoluciones:
+                (bool): False si alguna de las entradas necesarias está vacía o si alguna de las condiciones mencionadas anteriormente no se cumple; True de lo contrario
         """
         # Verifica que todos los campos estén llenos
         entradas_A_Revisar = [self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get(), self.fecha.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()]
@@ -319,15 +331,15 @@ class Inscripciones_2:
             return False
         return True
 
-    def mostrar_Error_Entradas_Vacias(self):
+    def mostrar_Error_Entradas_Vacias(self) -> None:
         """
-        Shows an error message indicating the empty entradas that need to be filled in order to save correctly.
+        Muestra un mensaje de error indicando las entradas que necesitan ser completadas para guardar correctamente.
 
-        Args:
-            None
+            Parámetros:
+                None
         
-        Returns:
-            None
+            Devoluciones:
+                None
         """
         entradas = {"Id Alumno":self.cmbx_Id_Alumno.get(), "Id Curso":self.cmbx_Id_Curso.get(), "Fecha":self.fecha.get(), "Horario (Días)":self.cmbx_Dias.get(), "Horario (Hora)":self.cmbx_Horario.get()}
         entradas_Vacias = []
@@ -337,34 +349,34 @@ class Inscripciones_2:
         mensaje = "Faltan campos por llenar: " + ", ".join(entradas_Vacias)
         messagebox.askretrycancel(title="Error al guardar", message=mensaje)
 
-    '''========== Funciones para el manejo de la base de datos =========='''
-    def correr_Query(self, query, parameters=()):
+    """========== Funciones para el manejo de la base de datos =========="""
+    def correr_Query(self, query : str, parametros: tuple=()) -> list[tuple]:
         """
-        Executes the given SQL query with optional parameters and returns the resultado.
+        Ejecuta la consulta SQL dada con parámetros opcionaes y retorna el resultado.
 
-        Args:
-            query (str): The SQL query to execute.
-            parameters (tuple): Optional parameters to be used in the query.
+            Parámetros:
+                query (str): La consulta SQL a ejecutar
+                parametros (tuple): Los parámetros de la consulta SQL (opcional)
 
-        Returns:
-            resultado: The resultado of the query execution.
+            Devoluciones:
+                resultado (list[tuple]): El resultado de la ejecución de la consulta
         """
         ruta_db = self.dir_pro + "\\db\\Inscripciones.db"
         with sqlite3.connect(ruta_db) as conn:
             cursor = conn.cursor()
-            resultado = cursor.execute(query, parameters)
+            resultado = cursor.execute(query, parametros)
             conn.commit()
         return resultado.fetchall()
 
-    def cambiar_Nombre_Completo(self, event=None):
+    def cambiar_Nombre_Completo(self, event=None) -> None:
         """
-        Retrieves the full name of a student based on their ID and updates the corresponding entrada fields.
+        Obtiene el nombre completo del estudiante a partir de su ID y actualiza la información en las entradas correspondientes de la interfaz.
 
-        Args:
-            event: The event object triggered by the user action.
+            Parámetros:
+                (event): Evento (opcional)
 
-        Returns:
-            None
+            Devoluciones:
+                None
         """
         id_Alumno = self.cmbx_Id_Alumno.get()
         nombres_Alumno = self.correr_Query(f"SELECT Nombres FROM Alumnos WHERE Id_Alumno = '{id_Alumno}'")
@@ -386,25 +398,35 @@ class Inscripciones_2:
             self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
             self.cmbx_No_Inscripcion.configure(state="disabled")
 
-    def cambiar_Curso(self, event=None):
+    def cambiar_Curso(self, event=None) -> None:
         """
-        Retrieves the full name of a student based on their ID and updates the corresponding entrada fields.
+        Obtiene el nombre del curso a partir de su código y actualiza la información en las entradas correspondientes de la interfaz.
 
-        Args:
-            event: The event object triggered by the user action.
-
-        Returns:
-            None
+            Parámetros:
+                (event): Evento (opcional)
+        
+            Devoluciones:
+                None
         """
-        id_Curso = self.cmbx_Id_Curso.get()
-        descripcion = self.correr_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso = '{id_Curso}'")
+        codigo_Curso = self.cmbx_Id_Curso.get()
+        descripcion = self.correr_Query(f"SELECT Descrip_Curso FROM Cursos WHERE Código_Curso = '{codigo_Curso}'")
         self.descripc_Curso.configure(state = "normal")
         self.descripc_Curso.delete(0, 'end')
         self.descripc_Curso.insert(0, descripcion[0][0])
         self.descripc_Curso.configure(state = "readonly")
 
-    def insertar_Informacion(self,num_Inscripcion, id_Curso):
-        query= f"SELECT * FROM Inscritos WHERE No_Inscripción = {num_Inscripcion} AND Código_Curso = '{id_Curso}'"
+    def insertar_Informacion(self, num_Inscripcion : int, codigo_Curso : str) -> None:
+        """
+        Inserta la información del registro a partir del no. de inscripción y el código del curso en las entradas correspondientes de la interfaz.
+
+            Parámetros:
+                num_Inscripcion (int): El número de inscripción del registro
+                codigo_Curso (str): El código del curso del registro
+            
+            Devoluciones:
+                None
+        """
+        query= f"SELECT * FROM Inscritos WHERE No_Inscripción = {num_Inscripcion} AND Código_Curso = '{codigo_Curso}'"
         resultado = self.correr_Query(query)
         resultado = list(resultado[0])
 
@@ -436,7 +458,16 @@ class Inscripciones_2:
             pass
         self.cambiar_Nombre_Completo()
         
-    def insertar_Estudiante(self, no_Inscripcion):
+    def insertar_Estudiante(self, no_Inscripcion : int) -> None:
+        """
+        Inserta información del estudiante a partir del no. de inscripción en las entradas correspondientes de la interfaz.
+
+            Parámetros:
+                no_Inscripcion (int): El número de inscripción del estudiante
+            
+            Devoluciones:
+                None
+        """
         query = f"SELECT Id_Alumno FROM Inscritos WHERE No_Inscripción = {no_Inscripcion}"
         resultado = self.correr_Query(query)
         id_Alumno = resultado[0][0]
@@ -444,8 +475,17 @@ class Inscripciones_2:
         self.cmbx_Id_Alumno.configure(state="disable")
         self.cambiar_Nombre_Completo()
 
-    def limpiar_Entradas(self,vaciar):
-        match vaciar:
+    def limpiar_Entradas(self, opcion : str) -> None:
+        """
+        Limpia las entradas de la interfaz de acuerdo a diferentes casos.
+
+            Parámetros:
+                opcion (str): El caso para limpiar las entradas (["datos_Alumno", "datos_Curso", "datos_Todo", "restaurar_Botones"])
+            
+            Devoluciones:
+                None
+        """
+        match opcion:
             case "datos_Alumno":
                 self.cmbx_Id_Alumno.set("")
                 self.nombres.configure(state = "normal")
@@ -479,7 +519,7 @@ class Inscripciones_2:
                 self.cmbx_Dias.set("")
                 self.cmbx_No_Inscripcion.set("")
                 self.fecha.delete(0, "end")
-            case "restaurar_botones":
+            case "restaurar_Botones":
                 # Restaura los botones Eliminar, Guardar y Editar
                 self.btnEliminar.configure(state='normal')
                 self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
@@ -488,7 +528,16 @@ class Inscripciones_2:
                 self.btnEditar.configure(state='normal')
                 self.btnEditar.bind("<1>", lambda _:self.accion_Boton('Ed'))
 
-    def actualizacion_Numeros_Inscripcion(self):
+    def actualizacion_Numeros_Inscripcion(self) -> None:
+        """
+        Actualiza la lista de números de inscripción para evitar duplicados y agregar la opción "Todos" al inicio de la lista.
+
+            Parámetros:
+                None
+        
+            Devoluciones:
+                None
+        """
         ids_No_Inscripcion = self.correr_Query("SELECT No_Inscripción FROM Inscritos DESC")
         self.lista_No_Inscripcion = []
         for tupla in ids_No_Inscripcion:
@@ -499,8 +548,22 @@ class Inscripciones_2:
         self.lista_No_Inscripcion.insert(0, "Todos")
         self.cmbx_No_Inscripcion['values'] = self.lista_No_Inscripcion
     
-    '''========== Funciones para manejar TreeViews =========='''
-    def crear_Treeview(self, tipo):
+    """========== Funciones para manejar TreeViews =========="""
+    def crear_Treeview(self, tipo : str) -> None:
+        """
+        Crea el TreeView de la ventana principal de acuerdo al tipo solicitado.
+
+            Parámetros:
+                tipo (str): El tipo de TreeView; las opciones disponbiles son las siguientes:
+                    "Inscritos" : Para la tabla Inscritos
+                    "Carreras" : Para la tabla Carreras
+                    "Cursos" : Para la tabla Cursos
+                    "Alumnos" : Para la tabla Alumnos
+                    "No_Inscripcion" : Para la tabla Inscritos filtrando a partir de un número de inscripción
+            
+            Devoluciones:
+                None
+        """
         # Elimina ventana emergente
         if tipo in ["Carreras", "Cursos", "Alumnos"]:
             self.ventana_btnconsultar.destroy()
@@ -636,7 +699,7 @@ class Inscripciones_2:
                 self.tView['xscrollcommand'] = self.scroll_H.set
             
             case "No_Inscripcion" :
-                self.limpiar_Entradas("restaurar_botones")
+                self.limpiar_Entradas("restaurar_Botones")
                 """
                 Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is entrada_Seleccionada.
                 """
@@ -679,44 +742,59 @@ class Inscripciones_2:
         self.frm_1.pack(side="top")
         self.frm_1.pack_propagate(0)
 
-    def borrar_Treeview(self):
+    def borrar_Treeview(self) -> None:
         """
-        Deletes the current TreeView shown in the frame.
+        Borra el TreeView existente en el frame de la ventana principal.
 
-        Args:
-            None
-        
-        Returns:
-            None
+            Parámetros:
+                None
+            
+            Devoluciones:
+                None
         """
         self.tView.delete(*self.tView.get_children())
         self.tView.destroy()
 
-    def seleccionar_Dato(self, event, todos=None):
+    def seleccionar_Dato(self, event, todos : bool=False) -> Union[int, list[str]]:
         """
-        Select a data from the TViewInscritos
+        Selecciona un registro del TreeView de la ventana principal y retorna el número de inscripción asociado.
         
-        Args:
-            None
-        
-        Returns:
-            Id_Alumno
+        Parámetros:
+            todos (bool): Opción para retornar el ID del alumno y el código del curso del registro (opcional, por defecto False)
+
+        Devoluciones:
+            numero_Inscripcion (int): El número de inscripción asociado al registro seleccionado (si todos = False)
+            [alumno, código_curso] (list[str]): Lista con el ID del alumno y el código del curso del registro (si todos = True)
         """
         try:
             item_Seleccionado = self.tView.item(self.tView.focus()) 
-            numero_inscripcion = item_Seleccionado["text"]
+            numero_Inscripcion = item_Seleccionado["text"]
             if todos == True:
                 alumno=item_Seleccionado["values"][0]
                 codigo_curso=item_Seleccionado["values"][2]
                 return [alumno, codigo_curso]
             else:
-                return numero_inscripcion
+                return numero_Inscripcion
         except IndexError:
             messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
     
-    '''========== Funciones para el uso de los botones =========='''      
-    def accion_Boton(self, opcion) :
+    """========== Funciones para el uso de los botones =========="""      
+    def accion_Boton(self, opcion : str) -> None:
+        """
+        Manejar la funcionalidad de los botones Guardar, Editar, Eliminar y Cancelar de la ventana principal.
+
+            Parámetros:
+                opcion (str): El botón del cual se quiere hace uso; las opciones disponibles son las siguientes:
+                    'G' : Guardar
+                    'Ed' : Editar
+                    'El' : Eliminar
+                    'C' : Cancelar
+
+            Devoluciones:
+                None
+        """
         match  opcion:
+            #Boton Guardar
             case 'G':
                 self.btnEliminar.configure(state='disabled')
                 # Para guardar nueva entrada...
@@ -788,6 +866,7 @@ class Inscripciones_2:
                 self.btnEliminar.configure(state='normal')
                 self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
 
+            #Boton Editar
             case 'Ed':
                 entrada_Seleccionada = self.tView.focus()
                 clave = self.tView.item(entrada_Seleccionada,'text')
@@ -807,6 +886,7 @@ class Inscripciones_2:
                         self.fecha.configure(state='readonly')
                 self.btnEditar.after(100, lambda: self.btnEditar.state(["!pressed"]))
 
+            #Boton Eliminar
             case 'El':
                 entrada_Seleccionada = self.tView.focus()
                 info = self.tView.item(entrada_Seleccionada)
@@ -851,17 +931,15 @@ class Inscripciones_2:
                     self.btnEliminar.unbind('<1>')
                 self.btnEliminar.after(100, lambda: self.btnEliminar.state(["!pressed"]))
                 try:
-                    def despues_Cerrar(): 
-                        '''
-                        Función que se llama cuando se pulsa el botón de cierre
-                        del gestor de ventanas 
-                        '''        
+                    def despues_Cerrar() -> None: 
+                        """Función que se llama cuando se pulsa el botón de cierre de la ventana con las opciones de eliminación."""        
                         self.ventana_btneliminar.destroy()  # Destruimos la ventana secundaria
                         self.btnEliminar.config(state='normal')  # habilitamos el botón
                         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))
                     self.ventana_btneliminar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                 except: pass
             
+            #Boton Cancelar
             case 'C':
                 respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
                 if respuesta:
@@ -869,11 +947,20 @@ class Inscripciones_2:
                     self.cmbx_No_Inscripcion.configure(state="readonly")
                     self.cmbx_Id_Alumno.configure(state='readonly')
                     self.fecha.configure(state='normal')
-                    self.limpiar_Entradas("restaurar_botones")
+                    self.limpiar_Entradas("restaurar_Botones")
                     self.limpiar_Entradas("datos_Todo")
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
-    def accion_Eliminar(self):
+    def accion_Eliminar(self) -> None:
+        """
+        Maneja la funcionalidad de las diferentes opciones de eliminación disponibles en la ventana mostrada el presionar el botón Eliminar.
+
+            Parámetros:
+                None
+            
+            Devoluciones:
+                None
+        """
         opcion_borrar = self.opcion_seleccionada.get()
         numero_Inscrito = self.seleccionar_Dato(event=None)
         informacion_Inscrito = self.seleccionar_Dato(event=None, todos=True)
@@ -917,7 +1004,16 @@ class Inscripciones_2:
             else:
                 self.ventana_btneliminar.destroy()
 
-    def eliminacion_Exitosa(self):
+    def eliminacion_Exitosa(self) -> None:
+        """
+        Secuencia de acciones a realizar después de una eliminación exitosa (e.g. restaurar el botón Eliminar).
+
+            Parámetros:
+                None
+
+            Devoluciones:
+                None
+        """
         self.ventana_btneliminar.destroy()
         self.crear_Treeview("Inscritos")
         self.actualizacion_Numeros_Inscripcion()
@@ -925,8 +1021,17 @@ class Inscripciones_2:
         self.btnEliminar.configure(state='normal')
         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))        
     
-    '''========== Funciones para el botón Consultar (<Lupa>) =========='''
-    def accion_Consultar(self, event):
+    """========== Funciones para el botón Consultar (<Lupa>) =========="""
+    def accion_Consultar(self, event) -> None:
+        """
+        Maneja la funcionalidad del botón Consultar (<Lupa>); abre una ventana con el menú de consulta.
+
+            Parámetros:
+                (event): Evento
+            
+            Devoluciones:
+                None
+        """
         self.ventana_btnconsultar = tk.Toplevel()
         self.ventana_btnconsultar.configure(background="#f7f9fd", height=335, width=325)
         alto=335
@@ -1050,19 +1155,28 @@ class Inscripciones_2:
         self.btnConsultar.configure(state='disabled')  # Deshabilitamos el botón
         self.btnConsultar.unbind('<1>')
         try:
-            def despues_Cerrar(): 
-                '''
-                Función que se llama cuando se pulsa el botón de cierre
-                del gestor de ventanas 
-                '''        
+            def despues_Cerrar() -> None: 
+                """Función que se llama cuando se pulsa el botón de cierre de la ventana con las opciones de consulta."""      
                 self.ventana_btnconsultar.destroy()  # Destruimos la ventana secundaria
                 self.btnConsultar.config(state='normal')  # habilitamos el botón
                 self.btnConsultar.bind("<1>", self.accion_Consultar)
             self.ventana_btnconsultar.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
         except: pass
 
-    def habilitar_Filtros(self,lupa):
-        match lupa:
+    def habilitar_Filtros(self, opcion : int) -> None:
+        """
+        Habilita los distintos filtros según la opción ingresada.
+
+            Parámetros:
+                opcion (int): El filtro que se desea habilitar; las opciones son las siguientes:
+                    1 : Filtro a partir del ID del alumno
+                    2 : Filtro a partir del código del curso
+                    3 : Filtro a partir de la fecha
+            
+            Devoluciones:
+                None
+        """
+        match opcion:
             case 1:
                 self.btnFiltrar_alumno.configure(state='normal')
                 self.btnFiltrar_alumno.bind("<1>", lambda _:self.accion_Filtrar('Alumno'))
@@ -1073,7 +1187,16 @@ class Inscripciones_2:
                 self.btnFiltrar_fecha.configure(state='normal')
                 self.btnFiltrar_fecha.bind("<1>", lambda _:self.accion_Filtrar('Fecha'))
     
-    def valida_Fecha_Consulta(self, event=None):     
+    def valida_Fecha_Consulta(self, event=None) -> None:
+        """
+         Verifica que la fecha ingresada en el entry de fecha de la ventana de consulta esté bien escrita.
+
+            Parámetros:
+                (event): Evento (opcional)
+            
+            Devoluciones:
+                None
+        """
         if event.char.isdigit() or event.char == "" or event.keysym == "Return":
             self.habilitar_Filtros(3)  
             fecha_Ingresada = self.Fecha_Consulta.get()
@@ -1091,9 +1214,25 @@ class Inscripciones_2:
             if respuesta_mensaje:
                 self.ventana_btnconsultar.deiconify()
 
-    def accion_Filtrar(self, filtro) :
+    def accion_Filtrar(self, filtro : str) -> None:
+        """
+        Crea la ventana correspondiente al filtro seleccionado con un label indicando el título de la tabla (TreView) a presentar.
+
+            Parámetros:
+                filtro (str): El tipo de filtro seleccionado; las opciones son las siguientes:
+                    'Alumno' : Filtro a partir del ID del alumno
+                    'Curso' : Filtro a partir del código del curso
+                    'Fecha' : Filtro a partir de la fecha
+            
+            Devoluciones:
+                None
+        """
         match  filtro:
             case 'Alumno':
+                try:
+                    self.ventana_btnfiltrar_curso.destroy()
+                    self.ventana_btnfiltrar_fecha.destroy()
+                except: pass
                 #Crear ventana filtrar alumno
                 self.ventana_btnfiltrar_alumno = tk.Toplevel()
                 self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=640)
@@ -1123,10 +1262,7 @@ class Inscripciones_2:
                 self.cmbx_Id_Alumno_Consulta.configure(state='disabled')
                 try:
                     def despues_Cerrar(): 
-                        '''
-                        Función que se llama cuando se pulsa el botón de cierre
-                        del gestor de ventanas 
-                        '''        
+                        """Función que se llama cuando se pulsa el botón de cierre de la ventana con la tabla tras el filtro a partir del ID del alumno."""    
                         self.ventana_btnfiltrar_alumno.destroy()  # Destruimos la ventana secundaria
                         self.btnFiltrar_alumno.config(state='normal')  # habilitamos el botón
                         self.btnFiltrar_alumno.bind("<1>", lambda _:self.accion_Filtrar('Alumno'))
@@ -1136,6 +1272,10 @@ class Inscripciones_2:
                 except: pass
             
             case 'Curso':
+                try:
+                    self.ventana_btnfiltrar_alumno.destroy()
+                    self.ventana_btnfiltrar_fecha.destroy()
+                except: pass
                 #Crear ventana filtrar curso
                 self.ventana_btnfiltrar_curso = tk.Toplevel()
                 self.ventana_btnfiltrar_curso.configure(background="#f7f9fd", height=295, width=640)
@@ -1165,10 +1305,7 @@ class Inscripciones_2:
                 self.cmbx_Id_Curso_Consulta.configure(state='disabled')
                 try:
                     def despues_Cerrar(): 
-                        '''
-                        Función que se llama cuando se pulsa el botón de cierre
-                        del gestor de ventanas 
-                        '''        
+                        """Función que se llama cuando se pulsa el botón de cierre de la ventana con la tabla tras el filtro a partir del código del curso."""     
                         self.ventana_btnfiltrar_curso.destroy()  # Destruimos la ventana secundaria
                         self.btnFiltrar_curso.config(state='normal')  # habilitamos el botón
                         self.btnFiltrar_curso.bind("<1>", lambda _:self.accion_Filtrar('Curso'))
@@ -1210,10 +1347,7 @@ class Inscripciones_2:
                     self.Fecha_Consulta.configure(state='disabled')
                     try:
                         def despues_Cerrar(): 
-                            '''
-                            Función que se llama cuando se pulsa el botón de cierre
-                            del gestor de ventanas 
-                            '''        
+                            """Función que se llama cuando se pulsa el botón de cierre de la ventana con la tabla tras el filtro a partir de la fecha."""    
                             self.ventana_btnfiltrar_fecha.destroy()  # Destruimos la ventana secundaria
                             self.btnFiltrar_fecha.config(state='normal')  # habilitamos el botón
                             self.btnFiltrar_fecha.bind("<1>", lambda _:self.accion_Filtrar('Fecha'))
@@ -1221,7 +1355,19 @@ class Inscripciones_2:
                         self.ventana_btnfiltrar_fecha.protocol("WM_DELETE_WINDOW", despues_Cerrar) #Protocolo que se activa cuando se intenta cerrar la ventana
                     except: pass                    
 
-    def crear_Treeview_Filtro(self, tipo):
+    def crear_Treeview_Filtro(self, tipo : int) -> None:
+        """
+        Crea el TreeView en la ventana de filtro correspondiente de acuerdo al tipo solicitado.
+
+            Parámetros:
+                tipo (int): El tipo de TreeView; las opciones disponibles son las siguientes:
+                    1 : Filtro a partir del ID del alumno
+                    2 : Filtro a partir del código del curso
+                    3 : Filtor a partir de la fecha
+            
+            Devoluciones:
+                None
+        """
         # Crear TreeView
         self.tView_Filtro = ttk.Treeview(self.frm_2, name="filter_tview")
         self.tView_Filtro.configure(selectmode="extended")
@@ -1297,6 +1443,7 @@ class Inscripciones_2:
                 self.filter_scroll_H.configure(orient="horizontal")
                 self.filter_scroll_H.place(anchor="s", height=10, width=600, x=320, y=289)
                 self.tView_Filtro['xscrollcommand'] = self.filter_scroll_H.set
+        
         #Scrollbars
         self.scroll_Y_Filtro = ttk.Scrollbar(self.frm_2, name="filter_scroll_y", command=self.tView_Filtro.yview)
         self.scroll_Y_Filtro.configure(orient="vertical")
