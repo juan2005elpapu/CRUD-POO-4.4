@@ -949,6 +949,26 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.fecha.configure(state='normal')
                     self.limpiar_Entradas("restaurar_Botones")
                     self.limpiar_Entradas("datos_Todo")
+                    try:
+                        self.btnConsultar.configure(state="normal")
+                        self.btnConsultar.bind("<1>", self.accion_Consultar)
+                        self.ventana_btnconsultar.destroy()
+                    except: pass
+                    try:
+                        self.ventana_btneliminar.destroy()
+                    except: pass
+                    try:
+                        self.ventana_btnfiltrar_alumno.destroy()
+                    except: pass
+                    try:
+                        self.ventana_btnfiltrar_curso.destroy()
+                    except: pass
+                    try:
+                        self.ventana_btnfiltrar_fecha.destroy()
+                    except: pass
+                    try:
+                        self.ventana_info.destroy()
+                    except: pass
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
 
     def accion_Eliminar(self) -> None:
@@ -1229,10 +1249,6 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         """
         match  filtro:
             case 'Alumno':
-                try:
-                    self.ventana_btnfiltrar_curso.destroy()
-                    self.ventana_btnfiltrar_fecha.destroy()
-                except: pass
                 #Crear ventana filtrar alumno
                 self.ventana_btnfiltrar_alumno = tk.Toplevel()
                 self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=640)
@@ -1272,10 +1288,6 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 except: pass
             
             case 'Curso':
-                try:
-                    self.ventana_btnfiltrar_alumno.destroy()
-                    self.ventana_btnfiltrar_fecha.destroy()
-                except: pass
                 #Crear ventana filtrar curso
                 self.ventana_btnfiltrar_curso = tk.Toplevel()
                 self.ventana_btnfiltrar_curso.configure(background="#f7f9fd", height=295, width=640)
@@ -1315,10 +1327,6 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             
             case 'Fecha':
                 if self.fecha_Valida(self.Fecha_Consulta.get()):
-                    try:
-                        self.ventana_btnfiltrar_alumno.destroy()
-                        self.ventana_btnfiltrar_curso.destroy()
-                    except: pass
                     #Crear ventana filtrar fecha
                     self.ventana_btnfiltrar_fecha = tk.Toplevel()
                     self.ventana_btnfiltrar_fecha.configure(background="#f7f9fd", height=295, width=640)
