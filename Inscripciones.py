@@ -182,7 +182,36 @@ class Inscripciones_2:
 
         """Main widget"""
         self.mainwindow = self.win
-    
+
+        '''Ventana información'''
+        self.ventana_info = tk.Toplevel()
+        self.ventana_info.configure(background="#f7f9fd", height=400, width=400)
+        alto=400
+        ancho=400
+        self.ventana_info.geometry(str(ancho)+"x"+str(alto))
+        #Centrar Ventana
+        x = self.ventana_info.winfo_screenwidth()
+        y = self.ventana_info.winfo_screenheight()
+        self.ventana_info.geometry(str(ancho)+"x"+str(alto)+"+"+str((round((x/2)-(ancho/2))))+"+"+str((round((y/2)-(alto/2))-30)))
+        self.ventana_info.resizable(False, False)
+        self.ventana_info.title("Información inicial")
+        ruta_Icon = self.dir_pro + "\\img\\icon.ico"
+        self.ventana_info.iconbitmap(bitmap=ruta_Icon)
+        #Crea el frame
+        #self.frm_3 = tk.Frame(self.ventana_info, name="frm_3")
+        #self.frm_3.configure(background="#f7f9fd", height=400, width=400)
+        #Label titulo ventana info
+        self.lblInfo = ttk.Label(self.ventana_info, name="lblinfo") 
+        self.lblInfo.configure(background="#f7f9fd", text='Proyecto POO 2024 - 2')
+        self.lblInfo.place(anchor="c", relx=0.5, y=25)
+ 
+        self.textInfo = tk.Text(self.ventana_info, name="textInfo", height = 5, width = 52) 
+        self.informacion = """La Segunda Guerra Mundial (también escrito II Guerra Mundial)1​ fue un conflicto militar global que se desarrolló entre 1939 y 1945. 
+        En ella se vieron implicadas la mayor parte de las naciones del mundo —incluidas todas las grandes potencias, así como prácticamente todas las naciones europeas— agrupadas en dos alianzas militares enfrentadas: los Aliados, por un lado, y las Potencias del Eje, por otro. Fue la mayor contienda bélica en la historia de la humanidad, con más de 100 millones de militares movilizados y un estado de guerra total en que los grandes contendientes destinaron"""
+        self.textInfo.insert(tk.END, self.informacion)
+        self.textInfo.place(anchor="c", relx=0.5, y=100)
+        self.textInfo.configure(background="#f7f9fd", borderwidth=0, state="disabled")
+
     def run(self) -> None:
         self.mainwindow.mainloop()    
 
