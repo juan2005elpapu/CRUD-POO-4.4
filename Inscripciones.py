@@ -197,17 +197,17 @@ class Inscripciones_2:
         self.ventana_info.title("Información inicial")
         ruta_Icon = self.dir_pro + "\\img\\icon.ico"
         self.ventana_info.iconbitmap(bitmap=ruta_Icon)
-        #Crea el frame
-        #self.frm_3 = tk.Frame(self.ventana_info, name="frm_3")
-        #self.frm_3.configure(background="#f7f9fd", height=400, width=400)
         #Label titulo ventana info
         self.lblInfo = ttk.Label(self.ventana_info, name="lblinfo") 
         self.lblInfo.configure(background="#f7f9fd", text='Proyecto POO 2024 - 2')
         self.lblInfo.place(anchor="c", relx=0.5, y=25)
  
         self.textInfo = tk.Text(self.ventana_info, name="textInfo", height = 5, width = 52) 
-        self.informacion = """La Segunda Guerra Mundial (también escrito II Guerra Mundial)1​ fue un conflicto militar global que se desarrolló entre 1939 y 1945. 
-        En ella se vieron implicadas la mayor parte de las naciones del mundo —incluidas todas las grandes potencias, así como prácticamente todas las naciones europeas— agrupadas en dos alianzas militares enfrentadas: los Aliados, por un lado, y las Potencias del Eje, por otro. Fue la mayor contienda bélica en la historia de la humanidad, con más de 100 millones de militares movilizados y un estado de guerra total en que los grandes contendientes destinaron"""
+        self.informacion = """Botón Consultar: Tiene la función de desplegar una nueva ventana que habilita dos opciones, por un lado, consultar los listados de alumnos, cursos y carreras que se crearon en la base de datos y por otro permite realizar filtros de las inscripciones realizadas, por alumno, por curso o por fecha de inscripción.
+Botón Guardar: Al completar los campos solicitados graba una nueva inscripción si es un alumno que no tenía una o añade el curso a la inscripción que el alumno ya había realizado.
+Botón Editar: Al seleccionar una inscripción en el treeview permite modificar el curso u horario del estudiante.
+Botón Eliminar: Al seleccionar una inscripción se habilitan tres opciones para borrar información, se puede eliminar únicamente ese curso que seleccionó del alumno, todos los estudiantes en ese curso o eliminar a ese estudiante de todos los cursos en los que está inscrito. Sin embargo, esto último no deja permite que se pierda la inscripción, el estudiante queda con su número de inscripción, pero sin ningún curso.
+Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las inscripciones en el treeview."""
         self.textInfo.insert(tk.END, self.informacion)
         self.textInfo.place(anchor="c", relx=0.5, y=100)
         self.textInfo.configure(background="#f7f9fd", borderwidth=0, state="disabled")
