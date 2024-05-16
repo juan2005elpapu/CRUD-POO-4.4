@@ -1200,6 +1200,10 @@ class Inscripciones_2:
         """
         match  filtro:
             case 'Alumno':
+                try:
+                    self.ventana_btnfiltrar_curso.destroy()
+                    self.ventana_btnfiltrar_fecha.destroy()
+                except: pass
                 #Crear ventana filtrar alumno
                 self.ventana_btnfiltrar_alumno = tk.Toplevel()
                 self.ventana_btnfiltrar_alumno.configure(background="#f7f9fd", height=295, width=640)
@@ -1239,6 +1243,10 @@ class Inscripciones_2:
                 except: pass
             
             case 'Curso':
+                try:
+                    self.ventana_btnfiltrar_alumno.destroy()
+                    self.ventana_btnfiltrar_fecha.destroy()
+                except: pass
                 #Crear ventana filtrar curso
                 self.ventana_btnfiltrar_curso = tk.Toplevel()
                 self.ventana_btnfiltrar_curso.configure(background="#f7f9fd", height=295, width=640)
