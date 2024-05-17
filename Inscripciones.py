@@ -167,6 +167,7 @@ class Inscripciones_2:
         self.btnEditar.bind("<1>", lambda _:self.accion_Boton("Ed"))
         self.id = -1 # Bandera para saber si el programa está guardando (INSERT) o editando (UPDATE)
         self.curso_Anterior = "" # Variable para guardar el curso original al oprimir el botón Editar
+        self.horario_Anterior = "" # Variable para guardar el horario original al oprimir el botón Editar
         #Botón Eliminar
         self.btnEliminar = ttk.Button(self.frm_1, name="btneliminar")
         self.btnEliminar.configure(text="Eliminar", style="Can_El.TButton")
@@ -288,16 +289,16 @@ class Inscripciones_2:
         if event.char.isdigit() or event.char == "" or event.keysym == "Return":
             fecha_Ingresada = self.fecha.get()
             if len(fecha_Ingresada) > 10:
-                messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
+                messagebox.showerror(title="Error [Fecha]", message="Error al ingresar fecha. Por favor ingrese por máximo 10 caracteres, siguiendo el formato DD/MM/AAAA.")
                 self.fecha.delete(10, "end")
-            num_char = 0
+            num_Char = 0
             for i in fecha_Ingresada:
-                num_char += 1
-            if num_char == 2: self.fecha.insert(2, "/")
-            if num_char  == 5: self.fecha.insert(6, "/")
+                num_Char += 1
+            if num_Char == 2: self.fecha.insert(2, "/")
+            if num_Char  == 5: self.fecha.insert(6, "/")
         else:
             self.fecha.delete(len(self.fecha.get())-1, "end")
-            messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+            messagebox.showerror(title="Error [Fecha]", message="Error al ingresar fecha. Por favor solo ingrese números [0-9].")
 
     def fecha_Valida(self, fecha : str) -> bool:
         """
@@ -314,8 +315,8 @@ class Inscripciones_2:
             datetime(anio, mes, dia)
             return True
         except ValueError: 
-            messagebox.showerror("Error!!",".. ¡Fecha equivocada! por favor corrijala ..")
-            return False   
+            messagebox.showerror(title="Error [Fecha]", message="¡Fecha inválida! Por favor ingrese una fecha válida siguiendo el formato DD/MM/AAAA.")
+            return False
 
     def verificar_Entradas(self) -> bool:
         """
@@ -354,7 +355,7 @@ class Inscripciones_2:
             if list(entradas.values())[i] == "":
                 entradas_Vacias.append(list(entradas.keys())[i])
         mensaje = "Faltan campos por llenar: " + ", ".join(entradas_Vacias)
-        messagebox.askretrycancel(title="Error al guardar", message=mensaje)
+        messagebox.askretrycancel(title="Error [Guardar]", message=mensaje)
 
     """========== Funciones para el manejo de la base de datos =========="""
     def correr_Query(self, query : str, parametros: tuple=()) -> list[tuple]:
@@ -400,13 +401,9 @@ class Inscripciones_2:
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
 
+        #Actualiza no. de inscripción en interfaz si existe
         numero_Inscripcion = self.inscrito_Existente(id_Alumno)
-        if numero_Inscripcion == None :
-            self.cmbx_No_Inscripcion.configure(state="readonly")
-            self.cmbx_No_Inscripcion.set("")
-        else :
-            self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
-            self.cmbx_No_Inscripcion.configure(state="disabled")
+        if numero_Inscripcion != None: self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
 
     def cambiar_Curso(self, event=None) -> None:
         """
@@ -505,6 +502,7 @@ class Inscripciones_2:
                 self.nombres.configure(state = "readonly")
                 self.apellidos.configure(state = "readonly")
                 self.cmbx_Id_Alumno.configure(state="readonly")
+            
             case "datos_Curso":
                 self.cmbx_Id_Curso.set("")
                 self.descripc_Curso.configure(state = "normal")
@@ -512,6 +510,7 @@ class Inscripciones_2:
                 self.descripc_Curso.configure(state = "readonly")
                 self.cmbx_Horario.set("")
                 self.cmbx_Dias.set("")
+            
             case "datos_Todo":
                 self.cmbx_Id_Alumno.set("")
                 self.cmbx_Id_Curso.set("")
@@ -529,6 +528,7 @@ class Inscripciones_2:
                 self.cmbx_Dias.set("")
                 self.cmbx_No_Inscripcion.set("")
                 self.fecha.delete(0, "end")
+            
             case "restaurar_Botones":
                 # Restaura los botones Eliminar, Guardar y Editar
                 self.btnEliminar.configure(state="normal")
@@ -614,9 +614,6 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
             
             case "Carreras":
-                """
-                Creates the correponding TreeView for the table Carreras.
-                """
                 #Columnas del Treeview
                 self.btnEliminar.unbind("<1>")
                 self.btnEliminar.configure(state="disabled")
@@ -640,9 +637,7 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2],))
             
             case "Cursos":
-                """
-                Creates the correponding TreeView for the table Cursos.
-                """
+                #Columnas del Treeview
                 self.btnEliminar.unbind("<1>")
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind("<1>")
@@ -666,9 +661,7 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
             
             case "Alumnos":
-                """
-                Creates the correponding TreeView for the table Alumnos.
-                """
+                #Columnas del Treeview
                 self.btnEliminar.unbind("<1>")
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind("<1>")
@@ -709,9 +702,6 @@ class Inscripciones_2:
             
             case "No_Inscripcion" :
                 self.limpiar_Entradas("restaurar_Botones")
-                """
-                Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is entrada_Seleccionada.
-                """
                 #Columnas del Treeview
                 self.tView_cols = ["tV_id_alumno", "tV_fecha_inscripcion", "tV_codigo", "tV_horario"]
                 self.tView_dcols = ["tV_id_alumno", "tV_fecha_inscripcion", "tV_codigo", "tV_horario"]
@@ -785,7 +775,8 @@ class Inscripciones_2:
             else:
                 return numero_Inscripcion
         except IndexError:
-            messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
+            messagebox.showwarning(title="Error", message="Ningún registro de la tabla ha sido seleccionado. Por favor seleccione algún registro haciendo click izquierdo sobre la fila en la tabla.")
+            #messagebox.showwarning(title="Error [Eliminar]", message="Ningún registro de la tabla ha sido seleccionado. Por favor seleccione algún registro haciendo click izquierdo sobre la fila en la tabla.")
     
     """========== Funciones para el uso de los botones =========="""      
     def accion_Boton(self, opcion : str) -> None:
@@ -824,50 +815,44 @@ class Inscripciones_2:
                         self.correr_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{anio}-{mes}-{dia}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.crear_Treeview("Inscritos")
                         self.actualizacion_Numeros_Inscripcion()
-                        messagebox.showinfo(title="guardar", message="Guardado con éxito")
+                        messagebox.showinfo(title="Confirmación [Guardar]", message="¡Guardado con éxito!")
                         self.limpiar_Entradas("datos_Todo")
                     else:
                         if self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
-                            messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                            messagebox.askretrycancel(title="Error [Guardar]", message="Ya existe un registro del estudiante con el curso seleccionado. Por favor escoja un estudiante o curso diferente e intente guardar nuevamente.")
                         elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
-                            messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                            messagebox.askretrycancel(title="Error [Guardar]", message="El alumno ya tiene un curso registrado en ese horario. Por favor seleccione un horario diferente e intente guardar nuevamente.")
                 # Para editar...
                 else :
-                    # Para editar solo el horario...
-                    if str(self.curso_Anterior) == self.cmbx_Id_Curso.get():
+                    curso_Editar = self.cmbx_Id_Curso.get()
+                    horario_Editar = self.cmbx_Dias.get() + " " + self.cmbx_Horario.get()
+                    #Para no editar nada...
+                    if str(self.curso_Anterior) == curso_Editar and str(self.horario_Anterior) == horario_Editar:
+                        self.edicion_Exitosa()
+                    #Para editar solo el horario...
+                    elif str(self.curso_Anterior) == curso_Editar:
                         if not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
-                            self.crear_Treeview("Inscritos")
-                            messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
-                            # Para volver a la normalidad...
-                            self.cmbx_No_Inscripcion.configure(state="readonly")
-                            self.cmbx_Id_Alumno.configure(state="readonly")
-                            self.fecha.configure(state="normal")
-                            self.limpiar_Entradas("datos_Todo")
-                            # Restaura banderas     
-                            self.id = -1
-                            self.curso_Anterior = ""
+                            self.correr_Query(f"UPDATE Inscritos SET Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
+                            self.edicion_Exitosa()
                         else:
-                            messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
-                    # Para editar curso (y horario)...
-                    else:           
-                        if not(self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
-                            self.create_Treeview("Inscritos")
-                            messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
-                            # Para volver a la normalidad...
-                            self.cmbx_No_Inscripcion.configure(state="readonly")
-                            self.cmbx_Id_Alumno.configure(state="readonly")
-                            self.fecha.configure(state="normal")
-                            self.limpiar_Entradas("datos_Todo")
-                            # Restaura banderas 
-                            self.id = -1
-                            self.curso_Anterior = ""
+                            messagebox.askretrycancel(title="Error [Guardar]", message="El alumno ya tiene un curso registrado en ese horario. Por favor seleccione un horario diferente e intente guardar nuevamente.")
+                    #Para editar solo el curso...
+                    elif str(self.horario_Anterior) == horario_Editar:
+                        if not(self.registro_Existente(self.cmbx_Id_Alumno.get(), curso_Editar)):
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{curso_Editar}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
+                            self.edicion_Exitosa()
                         else:
-                            if self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
-                                messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                            messagebox.askretrycancel(title="Error [Guardar]", message="Ya existe un registro del estudiante con el curso seleccionado. Por favor escoja un estudiante o curso diferente e intente guardar nuevamente.")
+                    #Para editar curso y horario...
+                    else:
+                        if not(self.registro_Existente(self.cmbx_Id_Alumno.get(), curso_Editar)) and not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{curso_Editar}', Horario = '{horario_Editar}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
+                            self.edicion_Exitosa()
+                        else:
+                            if self.registro_Existente(self.cmbx_Id_Alumno.get(), curso_Editar):
+                                messagebox.askretrycancel(title="Error [Guardar]", message="Ya existe un registro del estudiante con el curso seleccionado. Por favor escoja un estudiante o curso diferente e intente guardar nuevamente.")
                             elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
-                                messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                                messagebox.askretrycancel(title="Error [Guardar]", message="El alumno ya tiene un curso registrado en ese horario. Por favor seleccione un horario diferente e intente guardar nuevamente.")
                 
                 # Restaura estilo del botón
                 self.btnGuardar.after(100, lambda: self.btnGuardar.state(["!pressed"]))
@@ -878,11 +863,11 @@ class Inscripciones_2:
             #Boton Editar
             case "Ed":
                 entrada_Seleccionada = self.tView.focus()
-                clave = self.tView.item(entrada_Seleccionada,"text")
-                if clave == "":
-                    messagebox.showwarning("Editar", "Debes selecccionar un elemento.")
+                clave = self.tView.item(entrada_Seleccionada,'text')
+                if clave == '':
+                    messagebox.showwarning("Advertencia [Editar]", "Ningún registro de la tabla ha sido seleccionado para editar.")
                 else:
-                    respuesta = messagebox.askyesno(title="Editar", message="¿Desea editar el elemento seleccionado?")
+                    respuesta = messagebox.askyesno(title="Edición", message="¿Desea editar el elemento seleccionado?")
                     if respuesta:
                         self.btnEliminar.configure(state="disabled")
                         self.btnEliminar.unbind("<1>")
@@ -891,6 +876,7 @@ class Inscripciones_2:
                         self.insertar_Informacion(info["text"],info["values"][2])
                         self.id = clave
                         self.curso_Anterior = info["values"][2]
+                        self.horario_Anterior = " ".join(info["values"][3:4])
                         self.cmbx_Id_Alumno.configure(state="disabled")
                         self.fecha.configure(state="readonly")
                 self.btnEditar.after(100, lambda: self.btnEditar.state(["!pressed"]))
@@ -900,9 +886,9 @@ class Inscripciones_2:
                 entrada_Seleccionada = self.tView.focus()
                 info = self.tView.item(entrada_Seleccionada)
                 if info["text"] == "":
-                    messagebox.showwarning("Eliminar", "Debes selecccionar un elemento.")
+                    messagebox.showwarning("Advertencia [Eliminar]", "Ningún registro de la tabla ha sido seleccionado para eliminar.")
                 elif info["values"][2] == "[Sin cursos]":
-                    messagebox.showwarning("Error", "Ya fueron eliminados los cursos de este estudiante.")
+                    messagebox.showerror("Error [Eliminar]", "Todos los cursos de este estudiante ya fueron eliminados previamente.")
                 else:
                     # Ventana eliminar
                     self.ventana_btneliminar = tk.Toplevel()
@@ -952,7 +938,7 @@ class Inscripciones_2:
             
             #Boton Cancelar
             case "C":
-                respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
+                respuesta = messagebox.askyesno(title="Cancelar", message="¿Desea cancelar todas las acciones en curso?")
                 if respuesta:
                     self.crear_Treeview("Inscritos")
                     self.cmbx_No_Inscripcion.configure(state="readonly")
@@ -981,6 +967,28 @@ class Inscripciones_2:
                         self.ventana_info.destroy()
                     except: pass
                 self.btnCancelar.after(100, lambda: self.btnCancelar.state(["!pressed"]))
+
+    def edicion_Exitosa(self) -> None:
+        """
+        Secuencia de acciones a realizar después de una edición exitosa (e.g. restaurar el TreeView de la tabla Inscritos).
+
+            Parámetros:
+                None
+
+            Devoluciones:
+                None
+        """
+        self.crear_Treeview("Inscritos")
+        messagebox.showinfo(title="Confirmación [Editar]", message="Se ha editado el registro con éxito.")
+        # Para volver a la normalidad...
+        self.cmbx_No_Inscripcion.configure(state="readonly")
+        self.cmbx_Id_Alumno.configure(state='readonly')
+        self.fecha.configure(state='normal')
+        self.limpiar_Entradas("datos_Todo")
+        # Restaura banderas     
+        self.id = -1
+        self.curso_Anterior = ""
+        self.horario_Anterior = ""
 
     def accion_Eliminar(self) -> None:
         """
@@ -1048,7 +1056,7 @@ class Inscripciones_2:
         self.ventana_btneliminar.destroy()
         self.crear_Treeview("Inscritos")
         self.actualizacion_Numeros_Inscripcion()
-        messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
+        messagebox.showinfo(title="Confirmación [Eliminar]", message="Se ha eliminado con éxito.")
         self.btnEliminar.configure(state="normal")
         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton("El"))        
     
@@ -1243,16 +1251,16 @@ class Inscripciones_2:
             self.habilitar_Filtros(3)  
             fecha_Ingresada = self.Fecha_Consulta.get()
             if len(fecha_Ingresada) > 10:
-                messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
+                messagebox.showerror(title="Error [Fecha - Consulta]", message="Error al ingresar fecha. Por favor ingrese por máximo 10 caracteres, siguiendo el formato DD/MM/AAAA.")
                 self.Fecha_Consulta.delete(10, "end")
-            num_char = 0
+            num_Char = 0
             for i in fecha_Ingresada:
-                num_char += 1
-            if num_char == 2: self.Fecha_Consulta.insert(2, "/")
-            if num_char  == 5: self.Fecha_Consulta.insert(6, "/")
+                num_Char += 1
+            if num_Char == 2: self.Fecha_Consulta.insert(2, "/")
+            if num_Char  == 5: self.Fecha_Consulta.insert(6, "/")
         else:
             self.Fecha_Consulta.delete(len(self.Fecha_Consulta.get())-1, "end")
-            respuesta_mensaje=messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+            respuesta_mensaje=messagebox.showerror(title="Error [Fecha - Consulta]", message="Error al ingresar fecha. Por favor solo ingrese números [0-9].")
             if respuesta_mensaje:
                 self.ventana_btnconsultar.deiconify()
 
