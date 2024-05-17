@@ -863,8 +863,8 @@ class Inscripciones_2:
             #Boton Editar
             case "Ed":
                 entrada_Seleccionada = self.tView.focus()
-                clave = self.tView.item(entrada_Seleccionada,'text')
-                if clave == '':
+                clave = self.tView.item(entrada_Seleccionada,"text")
+                if clave == "":
                     messagebox.showwarning("Advertencia [Editar]", "Ningún registro de la tabla ha sido seleccionado para editar.")
                 else:
                     respuesta = messagebox.askyesno(title="Edición", message="¿Desea editar el elemento seleccionado?")
@@ -982,8 +982,8 @@ class Inscripciones_2:
         messagebox.showinfo(title="Confirmación [Editar]", message="Se ha editado el registro con éxito.")
         # Para volver a la normalidad...
         self.cmbx_No_Inscripcion.configure(state="readonly")
-        self.cmbx_Id_Alumno.configure(state='readonly')
-        self.fecha.configure(state='normal')
+        self.cmbx_Id_Alumno.configure(state="readonly")
+        self.fecha.configure(state="normal")
         self.limpiar_Entradas("datos_Todo")
         # Restaura banderas     
         self.id = -1
