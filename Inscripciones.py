@@ -288,16 +288,16 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         if event.char.isdigit() or event.char == "" or event.keysym == "Return":
             fecha_Ingresada = self.fecha.get()
             if len(fecha_Ingresada) > 10:
-                messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
+                messagebox.showerror(title="Error [Fecha]", message="Error al ingresar fecha. Por favor ingrese por máximo 10 caracteres, siguiendo el formato DD/MM/AAAA.")
                 self.fecha.delete(10, "end")
-            num_char = 0
+            num_Char = 0
             for i in fecha_Ingresada:
-                num_char += 1
-            if num_char == 2: self.fecha.insert(2, "/")
-            if num_char  == 5: self.fecha.insert(6, "/")
+                num_Char += 1
+            if num_Char == 2: self.fecha.insert(2, "/")
+            if num_Char  == 5: self.fecha.insert(6, "/")
         else:
             self.fecha.delete(len(self.fecha.get())-1, "end")
-            messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+            messagebox.showerror(title="Error [Fecha]", message="Error al ingresar fecha. Por favor solo ingrese números [0-9].")
 
     def fecha_Valida(self, fecha : str) -> bool:
         """
@@ -314,8 +314,8 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             datetime(anio, mes, dia)
             return True
         except ValueError: 
-            messagebox.showerror('Error!!','.. ¡Fecha equivocada! por favor corrijala ..')
-            return False   
+            messagebox.showerror(title="Error [Fecha]", message="¡Fecha inválida! Por favor ingrese una fecha válida siguiendo el formato DD/MM/AAAA.")
+            return False
 
     def verificar_Entradas(self) -> bool:
         """
@@ -354,7 +354,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             if list(entradas.values())[i] == "":
                 entradas_Vacias.append(list(entradas.keys())[i])
         mensaje = "Faltan campos por llenar: " + ", ".join(entradas_Vacias)
-        messagebox.askretrycancel(title="Error al guardar", message=mensaje)
+        messagebox.askretrycancel(title="Error [Guardar]", message=mensaje)
 
     """========== Funciones para el manejo de la base de datos =========="""
     def correr_Query(self, query : str, parametros: tuple=()) -> list[tuple]:
@@ -785,7 +785,8 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             else:
                 return numero_Inscripcion
         except IndexError:
-            messagebox.showerror(title="Error al eliminar", message="No escogió ningún dato de la tabla")
+            messagebox.showwarning(title="Error", message="Ningún registro de la tabla ha sido seleccionado. Por favor seleccione algún registro haciendo click izquierdo sobre la fila en la tabla.")
+            #messagebox.showwarning(title="Error [Eliminar]", message="Ningún registro de la tabla ha sido seleccionado. Por favor seleccione algún registro haciendo click izquierdo sobre la fila en la tabla.")
     
     """========== Funciones para el uso de los botones =========="""      
     def accion_Boton(self, opcion : str) -> None:
@@ -824,13 +825,13 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                         self.correr_Query(f"INSERT INTO Inscritos VALUES ({num_Inscripcion}, '{self.cmbx_Id_Alumno.get()}', '{anio}-{mes}-{dia}', '{self.cmbx_Id_Curso.get()}', '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}')")
                         self.crear_Treeview("Inscritos")
                         self.actualizacion_Numeros_Inscripcion()
-                        messagebox.showinfo(title="guardar", message="Guardado con éxito")
+                        messagebox.showinfo(title="Confirmación [Guardar]", message="¡Guardado con éxito!")
                         self.limpiar_Entradas("datos_Todo")
                     else:
                         if self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
-                            messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                            messagebox.askretrycancel(title="Error [Guardar]", message="Ya existe un registro del estudiante con el curso seleccionado. Por favor escoja un estudiante o curso diferente e intente guardar nuevamente.")
                         elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
-                            messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                            messagebox.askretrycancel(title="Error [Guardar]", message="El alumno ya tiene un curso registrado en ese horario. Por favor seleccione un horario diferente e intente guardar nuevamente.")
                 # Para editar...
                 else :
                     # Para editar solo el horario...
@@ -838,7 +839,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                         if not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
                             self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
                             self.crear_Treeview("Inscritos")
-                            messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
+                            messagebox.showinfo(title="Confirmación [Editar]", message="Se ha editado el registro con éxito.")
                             # Para volver a la normalidad...
                             self.cmbx_No_Inscripcion.configure(state="readonly")
                             self.cmbx_Id_Alumno.configure(state='readonly')
@@ -848,12 +849,12 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                             self.id = -1
                             self.curso_Anterior = ""
                         else:
-                            messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                            messagebox.askretrycancel(title="Error [Guardar]", message="El alumno ya tiene un curso registrado en ese horario. Por favor seleccione un horario diferente e intente guardar nuevamente.")
                     # Para editar curso (y horario)...
                     else:           
                         if not(self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get())) or not(self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get())):
-                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.prev_Course}'")
-                            self.create_Treeview("Inscritos")
+                            self.correr_Query(f"UPDATE Inscritos SET Código_Curso = '{self.cmbx_Id_Curso.get()}', Horario = '{self.cmbx_Dias.get() + ' ' + self.cmbx_Horario.get()}' WHERE No_Inscripción = {self.id} AND Código_Curso = '{self.curso_Anterior}'")
+                            self.crear_Treeview("Inscritos")
                             messagebox.showinfo(title="Confirmación", message="Se ha editado la entrada con éxito.")
                             # Para volver a la normalidad...
                             self.cmbx_No_Inscripcion.configure(state="readonly")
@@ -865,9 +866,9 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                             self.curso_Anterior = ""
                         else:
                             if self.registro_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Id_Curso.get()):
-                                messagebox.askretrycancel(title="Error al intentar guardar", message="Ya existe una inscripción con esos datos")
+                                messagebox.askretrycancel(title="Error [Guardar]", message="Ya existe un registro del estudiante con el curso seleccionado. Por favor escoja un estudiante o curso diferente e intente guardar nuevamente.")
                             elif self.horario_Existente(self.cmbx_Id_Alumno.get(), self.cmbx_Dias.get(), self.cmbx_Horario.get()):
-                                messagebox.askretrycancel(title="Error al intentar guardar", message="El alumno ya tiene un curso en ese horario")
+                                messagebox.askretrycancel(title="Error [Guardar]", message="El alumno ya tiene un curso registrado en ese horario. Por favor seleccione un horario diferente e intente guardar nuevamente.")
                 
                 # Restaura estilo del botón
                 self.btnGuardar.after(100, lambda: self.btnGuardar.state(["!pressed"]))
@@ -880,9 +881,9 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 entrada_Seleccionada = self.tView.focus()
                 clave = self.tView.item(entrada_Seleccionada,'text')
                 if clave == '':
-                    messagebox.showwarning("Editar", 'Debes selecccionar un elemento.')
+                    messagebox.showwarning("Advertencia [Editar]", "Ningún registro de la tabla ha sido seleccionado para editar.")
                 else:
-                    respuesta = messagebox.askyesno(title="Editar", message="¿Desea editar el elemento seleccionado?")
+                    respuesta = messagebox.askyesno(title="Edición", message="¿Desea editar el elemento seleccionado?")
                     if respuesta:
                         self.btnEliminar.configure(state='disabled')
                         self.btnEliminar.unbind('<1>')
@@ -900,9 +901,9 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                 entrada_Seleccionada = self.tView.focus()
                 info = self.tView.item(entrada_Seleccionada)
                 if info['text'] == '':
-                    messagebox.showwarning("Eliminar", 'Debes selecccionar un elemento.')
+                    messagebox.showwarning("Advertencia [Eliminar]", "Ningún registro de la tabla ha sido seleccionado para eliminar.")
                 elif info['values'][2] == '[Sin cursos]':
-                    messagebox.showwarning("Error", 'Ya fueron eliminados los cursos de este estudiante.')
+                    messagebox.showerror("Error [Eliminar]", "Todos los cursos de este estudiante ya fueron eliminados previamente.")
                 else:
                     # Ventana eliminar
                     self.ventana_btneliminar = tk.Toplevel()
@@ -952,7 +953,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             
             #Boton Cancelar
             case 'C':
-                respuesta = messagebox.askyesno(title="Cancelar", message="Desea cancelar")
+                respuesta = messagebox.askyesno(title="Cancelar", message="¿Desea cancelar todas las acciones en curso?")
                 if respuesta:
                     self.crear_Treeview("Inscritos")
                     self.cmbx_No_Inscripcion.configure(state="readonly")
@@ -1048,7 +1049,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.ventana_btneliminar.destroy()
         self.crear_Treeview("Inscritos")
         self.actualizacion_Numeros_Inscripcion()
-        messagebox.showinfo(title="Confirmación", message="Eliminado con éxito.")
+        messagebox.showinfo(title="Confirmación [Eliminar]", message="Se ha eliminado con éxito.")
         self.btnEliminar.configure(state='normal')
         self.btnEliminar.bind("<1>", lambda _:self.accion_Boton('El'))        
     
@@ -1244,16 +1245,16 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             self.habilitar_Filtros(3)  
             fecha_Ingresada = self.Fecha_Consulta.get()
             if len(fecha_Ingresada) > 10:
-                messagebox.showerror(message="Máximo 10 digitos", title="Error al ingresar fecha")
+                messagebox.showerror(title="Error [Fecha - Consulta]", message="Error al ingresar fecha. Por favor ingrese por máximo 10 caracteres, siguiendo el formato DD/MM/AAAA.")
                 self.Fecha_Consulta.delete(10, "end")
-            num_char = 0
+            num_Char = 0
             for i in fecha_Ingresada:
-                num_char += 1
-            if num_char == 2: self.Fecha_Consulta.insert(2, "/")
-            if num_char  == 5: self.Fecha_Consulta.insert(6, "/")
+                num_Char += 1
+            if num_Char == 2: self.Fecha_Consulta.insert(2, "/")
+            if num_Char  == 5: self.Fecha_Consulta.insert(6, "/")
         else:
             self.Fecha_Consulta.delete(len(self.Fecha_Consulta.get())-1, "end")
-            respuesta_mensaje=messagebox.showerror(message="Solo numeros", title="Fecha Erronea")
+            respuesta_mensaje=messagebox.showerror(title="Error [Fecha - Consulta]", message="Error al ingresar fecha. Por favor solo ingrese números [0-9].")
             if respuesta_mensaje:
                 self.ventana_btnconsultar.deiconify()
 
