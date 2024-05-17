@@ -401,13 +401,9 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
         self.nombres.configure(state = "readonly")
         self.apellidos.configure(state = "readonly")
 
+        #Actualiza no. de inscripción en interfaz si existe
         numero_Inscripcion = self.inscrito_Existente(id_Alumno)
-        if numero_Inscripcion == None :
-            self.cmbx_No_Inscripcion.configure(state="readonly")
-            self.cmbx_No_Inscripcion.set("")
-        else :
-            self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
-            self.cmbx_No_Inscripcion.configure(state="disabled")
+        if numero_Inscripcion != None: self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
 
     def cambiar_Curso(self, event=None) -> None:
         """
@@ -618,9 +614,6 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
             
             case "Carreras":
-                """
-                Creates the correponding TreeView for the table Carreras.
-                """
                 #Columnas del Treeview
                 self.btnEliminar.unbind('<1>')
                 self.btnEliminar.configure(state="disabled")
@@ -644,9 +637,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2],))
             
             case "Cursos":
-                """
-                Creates the correponding TreeView for the table Cursos.
-                """
+                #Columnas del Treeview
                 self.btnEliminar.unbind('<1>')
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind('<1>')
@@ -670,9 +661,7 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
             
             case "Alumnos":
-                """
-                Creates the correponding TreeView for the table Alumnos.
-                """
+                #Columnas del Treeview
                 self.btnEliminar.unbind('<1>')
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind('<1>')
@@ -713,9 +702,6 @@ Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las
             
             case "No_Inscripcion" :
                 self.limpiar_Entradas("restaurar_Botones")
-                """
-                Creates the corresponding TreeView for the selecte No_Inscripción or shows the whole Inscritos table if "Todos" is entrada_Seleccionada.
-                """
                 #Columnas del Treeview
                 self.tView_cols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
                 self.tView_dcols = ['tV_id_alumno', 'tV_fecha_inscripcion', 'tV_codigo', 'tV_horario']
