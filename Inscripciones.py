@@ -191,9 +191,9 @@ class Inscripciones_2:
 
         """Ventana información"""
         self.ventana_info = tk.Toplevel()
-        self.ventana_info.configure(background="#f7f9fd", height=400, width=400)
-        alto=400
-        ancho=400
+        self.ventana_info.configure(background="#f7f9fd", height=475, width=500)
+        alto=475
+        ancho=500
         self.ventana_info.geometry(str(ancho)+"x"+str(alto))
         #Centrar Ventana
         x = self.ventana_info.winfo_screenwidth()
@@ -207,18 +207,29 @@ class Inscripciones_2:
         except: pass
         #Label titulo ventana info
         self.lblInfo = ttk.Label(self.ventana_info, name="lblinfo") 
-        self.lblInfo.configure(background="#f7f9fd", text="Proyecto POO 2024 - 2")
-        self.lblInfo.place(anchor="c", relx=0.5, y=25)
+        self.lblInfo.configure(background="#f7f9fd", text="Proyecto final de programacion orientada a objetos 2024 - 2", font="Heiti 11 bold")
+        self.lblInfo.place(anchor="c", relx=0.5, y=30)
  
-        self.textInfo = tk.Text(self.ventana_info, name="textInfo", height = 5, width = 52) 
-        self.informacion = """Botón Consultar: Tiene la función de desplegar una nueva ventana que habilita dos opciones, por un lado, consultar los listados de alumnos, cursos y carreras que se crearon en la base de datos y por otro permite realizar filtros de las inscripciones realizadas, por alumno, por curso o por fecha de inscripción.
-                                Botón Guardar: Al completar los campos solicitados graba una nueva inscripción si es un alumno que no tenía una o añade el curso a la inscripción que el alumno ya había realizado.
-                                Botón Editar: Al seleccionar una inscripción en el treeview permite modificar el curso u horario del estudiante.
-                                Botón Eliminar: Al seleccionar una inscripción se habilitan tres opciones para borrar información, se puede eliminar únicamente ese curso que seleccionó del alumno, todos los estudiantes en ese curso o eliminar a ese estudiante de todos los cursos en los que está inscrito. Sin embargo, esto último no deja permite que se pierda la inscripción, el estudiante queda con su número de inscripción, pero sin ningún curso.
-                                Botón Cancelar: Su función es vaciar todos los campos y mostrar nuevamente las inscripciones en el treeview."""
+        self.textInfo = tk.Text(self.ventana_info, name="textInfo", height = 25, width = 65, spacing1=10, font="Heiti 10", wrap="word") 
+        self.informacion = """Bienvenido al sistema de inscripción de cursos.\nEste aplicativo cuenta con los siguientes botones:
+● Botón Consultar: Tiene la función de desplegar una nueva ventana que habilita dos opciones, por un lado, consultar los listados de alumnos, cursos y carreras que se crearon en la base de datos y por otro permite realizar filtros de las inscripciones realizadas, por alumno, por curso o por fecha de inscripción.
+● Botón Guardar: Al completar los campos solicitados graba una nueva inscripción si es un alumno que no tenía una o añade el curso a la inscripción que el alumno ya había realizado.
+● Botón Editar: Al seleccionar una inscripción en el treeview permite modificar el curso u horario del estudiante.
+● Botón Eliminar: Al seleccionar una inscripción se habilitan tres opciones para borrar información, se puede eliminar únicamente ese curso que se seleccionó del alumno, todos los estudiantes en ese curso o eliminar a ese estudiante de todos los cursos en los que está inscrito. Sin embargo, esto último no deja permite que se pierda la inscripción, el estudiante queda con su número de inscripción, pero sin ningún curso.
+● Botón Cancelar: Su función es vaciar todos los campos de la ventana principal, cancelar todos los procesos en curso y mostrar nuevamente las inscripciones en el treeview."""
         self.textInfo.insert(tk.END, self.informacion)
-        self.textInfo.place(anchor="c", relx=0.5, y=100)
+        self.textInfo.place(anchor="c", relx=0.5, y=370)
         self.textInfo.configure(background="#f7f9fd", borderwidth=0, state="disabled")
+        self.textInfo.tag_add("consultar", "3.2", "3.18")
+        self.textInfo.tag_config("consultar", font="Heiti 10 bold")
+        self.textInfo.tag_add("guardar", "4.2", "4.16")
+        self.textInfo.tag_config("guardar", font="Heiti 10 bold")
+        self.textInfo.tag_add("editar", "5.2", "5.15")
+        self.textInfo.tag_config("editar", font="Heiti 10 bold")
+        self.textInfo.tag_add("eliminar", "6.2", "6.17")
+        self.textInfo.tag_config("eliminar", font="Heiti 10 bold")
+        self.textInfo.tag_add("cancelar", "7.2", "7.18")
+        self.textInfo.tag_config("cancelar", font="Heiti 10 bold")
 
     def run(self) -> None:
         self.mainwindow.mainloop()    
