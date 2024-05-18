@@ -414,7 +414,11 @@ class Inscripciones_2:
 
         #Actualiza no. de inscripción en interfaz si existe
         numero_Inscripcion = self.inscrito_Existente(id_Alumno)
-        if numero_Inscripcion != None: self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
+        if numero_Inscripcion == None :
+            self.cmbx_No_Inscripcion.configure(state="readonly")
+            self.cmbx_No_Inscripcion.set("")
+        else :
+            self.cmbx_No_Inscripcion.current(self.lista_No_Inscripcion.index(numero_Inscripcion))
 
     def cambiar_Curso(self, event=None) -> None:
         """
