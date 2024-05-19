@@ -605,6 +605,8 @@ class Inscripciones_2:
         #Verifica el tipo de tabla para crear el TreeView correspondiente
         match tipo:
             case "Inscritos":
+                #Cambiar nombre botón cancelar
+                self.btnCancelar.configure(text="Cancelar")
                 """
                 Creates the correponding TreeView for the table Inscritos.
                 """
@@ -627,7 +629,9 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2], i[3], i[4]))
             
             case "Carreras":
-                #Columnas del Treeview
+                #Cambiar nombre botón cancelar
+                self.btnCancelar.configure(text="Volver")
+                #Deshabilitar botones guardar, editar y eliminar
                 self.btnEliminar.unbind("<1>")
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind("<1>")
@@ -650,7 +654,9 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2],))
             
             case "Cursos":
-                #Columnas del Treeview
+                #Cambiar nombre botón cancelar
+                self.btnCancelar.configure(text="Volver")
+                #Deshabilitar botones guardar, editar y eliminar
                 self.btnEliminar.unbind("<1>")
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind("<1>")
@@ -674,7 +680,9 @@ class Inscripciones_2:
                     self.tView.insert(parent="", index= 0, text=i[0], values=(i[1], i[2]))
             
             case "Alumnos":
-                #Columnas del Treeview
+                #Cambiar nombre botón cancelar
+                self.btnCancelar.configure(text="Volver")
+                #Deshabilitar botones guardar, editar y eliminar
                 self.btnEliminar.unbind("<1>")
                 self.btnEliminar.configure(state="disabled")
                 self.btnGuardar.unbind("<1>")
@@ -714,6 +722,8 @@ class Inscripciones_2:
                 self.tView["xscrollcommand"] = self.scroll_H.set
             
             case "No_Inscripcion" :
+                #Cambiar nombre botón cancelar
+                self.btnCancelar.configure(text="Cancelar")
                 self.limpiar_Entradas("restaurar_Botones")
                 #Columnas del Treeview
                 self.tView_cols = ["tV_id_alumno", "tV_fecha_inscripcion", "tV_codigo", "tV_horario"]
@@ -1079,6 +1089,8 @@ class Inscripciones_2:
                 self.eliminacion_Exitosa()
             else:
                 self.ventana_btneliminar.destroy()
+        else:
+            messagebox.showwarning("Advertencia [Eliminar]", "Ninguna opción ha sido seleccionada.")
 
     def eliminacion_Exitosa(self) -> None:
         """
