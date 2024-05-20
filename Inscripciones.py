@@ -68,6 +68,7 @@ class Inscripciones_2:
         self.fecha.configure(justify="center")
         self.fecha.place(anchor="nw", width=90, x=680, y=80)
         self.fecha.bind("<BackSpace>", lambda _:self.fecha.delete(0,"end"))
+        self.fecha.bind("<Delete>", lambda _:self.fecha.delete(0,"end"))
         self.fecha.bind("<KeyRelease>", self.valida_Fecha)
         #Label Alumno
         self.lblIdAlumno = ttk.Label(self.frm_1, name="lblidalumno")
@@ -205,7 +206,7 @@ class Inscripciones_2:
         except: pass
         #Label titulo ventana info
         self.lblInfo = ttk.Label(self.ventana_info, name="lblinfo") 
-        self.lblInfo.configure(background="#f7f9fd", text="Proyecto final de programacion orientada a objetos 2024 - 2", font="Heiti 11 bold")
+        self.lblInfo.configure(background="#f7f9fd", text="Proyecto final de programacion orientada a objetos 2024-1S", font="Heiti 11 bold")
         self.lblInfo.place(anchor="c", relx=0.5, y=30)
  
         self.textInfo = tk.Text(self.ventana_info, name="textInfo", height = 25, width = 65, spacing1=10, font="Heiti 10", wrap="word") 
