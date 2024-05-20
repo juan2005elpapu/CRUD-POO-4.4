@@ -1257,11 +1257,6 @@ class Inscripciones_2:
         #Cerrar ventanas abiertas
         try: 
             self.ventana_info.destroy()
-        except: pass
-        try:
-            self.ventana_btneliminar.destroy()
-            self.btnEliminar.configure(state="normal")
-            self.btnEliminar.bind("<1>", lambda _:self.accion_Boton("El"))  
         except: pass            
         try:
             def despues_Cerrar() -> None: 
